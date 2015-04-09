@@ -3,7 +3,7 @@
 .buildpath
 .project
 log
-library/My/debug.log.txt
+library/My/debuglog.txt
 .htaccess.original
 tmp
 application/configs/application.ini

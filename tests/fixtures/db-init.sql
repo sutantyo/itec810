@@ -145,3 +145,6 @@ CREATE TABLE `question_concepts` (
   CONSTRAINT `question_concepts_ibfk_2` FOREIGN KEY (`conceptsconcept_name`) REFERENCES `concepts` (`concept_name`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=83;
 
+
+
+GRANT ALL PRIVILEGES ON `quiz\_db\_test`.* TO 'quizuser'@'localhost'WITH GRANT OPTION;

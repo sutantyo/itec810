@@ -359,71 +359,17 @@ class AdminController extends Zend_Controller_Action {
 	 * In doing so, all pre-generated questions will be removed.
 	 */
 	public function rebuildxmlAction() {
+	    $path = APPLICATION_PATH . '/../xml/questions';
+	    //$path = APPLICATION_PATH . '/../tests/fixtures';
+	    $importer = new Model_XML_Importer($path);
+	    $importer->delegate = function ($msg){
+	        echo $msg;
+	    };
 		$process = $this->_getParam("process");
-		if( is_null($process) || $process !== "1" ) {
-			
-			// Get the amount of files in the Questions Dir
-			$counter = 0;
-				if ($handle = opendir(APPLICATION_PATH . '/../xml/questions')) {
-				    while (false !== ($file = readdir($handle))) {
-				        if(strtolower(substr($file,-3))=="xml"){
-							$counter = $counter + 1;
-						}
-				    }
-					closedir($handle);
-				}
-			$this->view->count = $counter;		
+		if ( is_null($process) || $process !== "1" ) {
+			$this->view->count = $importer->getTotalQuestions();		
 		}else{
-			
-			// Process the XML Files
-			if ($handle = opendir(APPLICATION_PATH . '/../xml/questions')) {
-			    while (false !== ($file = readdir($handle))) {
-			        if(strtolower(substr($file,-3))=="xml"){
-						echo "Parsing file: $file <br/>\nConcepts: ";
-						
-						//Begin Processing
-						$vQuestion = new Model_Shell_GenericQuestion(APPLICATION_PATH . '/../xml/questions/' . $file);
-
-						//Add to questionBase (if not already there)
-						$vQuestionBase = Model_Quiz_QuestionBase::fromXml($file);
-						if($vQuestionBase == null){
-							$vQuestionBase = Model_Quiz_QuestionBase::fromScratch($file, $vQuestion->getDifficulty(), $vQuestion->getEstimatedTime(), $vQuestion->getFriendlyType(), strtotime("today"));
-						}
-
-
-						//Now look at the concepts
-						$vConcepts = $vQuestion->getConcepts();
-						foreach($vConcepts as $vConcept){
-							//Make sure this concept exists in the database
-							$vConceptObj = Model_Quiz_Concept::fromID($vConcept);
-							if($vConceptObj==null){
-								//Doesn't exist... we should make a record
-								$vConceptObj = Model_Quiz_Concept::fromScratch($vConcept);
-							}
-							echo $vConcept . "; ";
-
-							//Now we need to make sure that this question has this concept associated with it
-							$vQuestionBase->addConcept($vConceptObj);					
-
-						}
-
-						//Update the questionBase's Difficulty & EstimatedTime (these are the things most likely to change)
-						$vQuestionBase->setDifficulty($vQuestion->getDifficulty());
-						$vQuestionBase->setEstimated_time($vQuestion->getEstimatedTime());
-
-						echo "<br/>Difficulty: " . $vQuestion->getDifficulty();
-						echo "<br/>Estimated time to complete: " . $vQuestion->getEstimatedTime();
-
-
-
-						echo "<br/><br/>\n";
-
-					}
-			    }
-				closedir($handle);
-				
-				Model_Quiz_GeneratedQuestion::removePregeneratedQuestions();	// Remove all Pre-Generated questions, so as to not cause any conficts
-			}			
+			$importer->processFiles();			
 		}
 	}
 
