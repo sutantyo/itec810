@@ -1,0 +1,52 @@
+<?php
+/**
+ *  Randomised Programming Quiz System - A quiz system that develops random programming questions from defined templates
+ *  Copyright (C) 2010-2012 Ben Evans <ben@nebev.net>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+?><p>Below are the people who have completed the quizzes with the best marks and the best times.</p>
+<?php
+	
+if( sizeof($this->quiz_rows) > 0 ) {
+	
+	foreach( $this->quiz_rows as $qr ) {
+		echo "<h3>" . $qr['name'] . "</h3>\n";
+		
+		if( array_key_exists("scores", $qr) && sizeof($qr['scores']) > 0 ) {
+			
+			echo "<table>\n";
+			echo "<tr><th>Who</th><th>Score</th><th>Time in Seconds</th></tr>\n";
+			foreach( $qr['scores'] as $score ) {
+				echo "<tr>";
+				echo "<td>" . $score['name'] . "</td>";
+				echo "<td>" . $score['score'] . "</td>";
+				echo "<td>" . $score['time'] . "</td>";
+				echo "</tr>\n";
+			}
+			
+			echo "</table>\n";
+		}else{
+			echo "<p>Nobody has passed this quiz yet</p>\n";
+		}
+		
+	}
+
+}else{
+	echo "<p>There are no quizzes available</p>\n";
+}
+	
+
+
+?>

@@ -1,0 +1,62 @@
+<?php
+
+/**
+ *  Randomised Programming Quiz System - A quiz system that develops random programming questions from defined templates
+ *  Copyright (C) 2010-2012 Ben Evans <ben@nebev.net>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+
+?><h2>List of Quizzes currently in the system</h2>
+<p>Click on the corresponding <img src='<?php echo $this->baseUrl; ?>/images/edit_small.png' /> to edit a quiz.<br/>
+Click on the corresponding <img src='<?php echo $this->baseUrl; ?>/images/delete_small.png' /> to delete a quiz.<br/>
+Click on the quiz <em>name</em> to view/edit the concepts it tests.
+</p>
+
+<table>
+	<tr>
+		<th>Quiz Name</th>
+		<th>Quiz Group</th>
+		<th>Opens on</th>
+		<th>Closes On</th>
+		<th>Max Attempts</th>
+		<th>Pass Mark</th>
+		<th>Actions</th>
+	</tr>
+<?php
+	$vQuizzes = $this->quizzes;
+	foreach($vQuizzes as $vQuiz){
+		echo "\t<tr>\n";
+		echo "\t\t<td><a class='thickbox' href='". $this->url(array("controller"=>"admin", "action"=>"showconcepts")) ."?id=".$vQuiz->getID()."'>".$vQuiz->getQuiz_name()."</a></td>\n";
+		echo "\t\t<td>".$vQuiz->getPermissions_group()."</td>\n";
+		echo "\t\t<td>".date(DEFAULT_DATE_FORMAT,$vQuiz->getOpen_date())."</td>\n";
+		echo "\t\t<td>".date(DEFAULT_DATE_FORMAT,$vQuiz->getClose_date())."</td>\n";
+		echo "\t\t<td>".$vQuiz->getMax_attempts()."</td>\n";
+		echo "\t\t<td>".$vQuiz->getPercentage_pass()."</td>\n";
+		echo "\t\t<td><a href='". $this->url(array("controller" => "admin", "action" => "addedit"))  . "?id=".$vQuiz->getID()."'><img src='". $this->baseUrl ."/images/edit_small.png'/></a> 
+						<a href='". $this->url(array("controller" => "admin", "action" => "deletequiz")) ."?id=".$vQuiz->getID()."' onClick='var answer=confirm(\"Are you sure you want to delete this quiz? All associated results will also be deleted.\"); if(!answer){ return false; }'><img src='". $this->baseUrl ."/images/delete_small.png'/></a></td>\n";
+		echo "\t</tr>\n";
+	}
+
+?>	
+</table>
+
+<!--
+<hr>
+<p>Time/Performance: <?php echo $this->loadtime->getTotalElapsedSecs(); ?></p>
+<hr>
+-->
+
+
+<img src="<?php echo $this->baseUrl; ?>/images/add_16.png" /> <a href="<?php echo $this->url(array("controller" => "admin", "action" => "addedit")) ?>">Add new Quiz</a>

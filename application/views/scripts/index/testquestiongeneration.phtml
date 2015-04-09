@@ -1,0 +1,156 @@
+<?php
+/**
+ *  Randomised Programming Quiz System - A quiz system that develops random programming questions from defined templates
+ *  Copyright (C) 2010-2012 Ben Evans <ben@nebev.net>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
+?><!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Test Question Generation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/assets/js/highlight/styles/idea.css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/assets/js/highlight/highlight.pack.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		  $('pre').each(function(i, e) {hljs.highlightBlock(e)});
+		});
+	</script>
+  </head>
+
+<body>
+	
+	<div class="container">
+	
+	<!-- Header -->
+	<div class="row">
+    	<div class="col-lg-12">
+        	<div class="page-header">
+            	<h1 id="type">Test Question Generation</h1>
+          </div>
+       	</div>
+    </div>
+
+
+	<!-- The Selection Form -->
+	<div class="row">
+    	<div class="col-lg-12">
+			<h3>Select an XML File to Test</h3>
+        	<div class="well">
+
+				<form action="" method="GET">
+					<select name="q">	
+				<?php
+						foreach( $this->available_selects as $ae ) {
+							echo $ae;
+						}
+				?>
+					</select>
+					<input type="submit" value="Change" />
+				</form>
+          </div>
+       	</div>
+    </div>
+	
+	
+	
+	
+
+	
+<?php if( isset($this->question) ) : ?>
+
+	<!-- Question information -->
+	<div class="row">
+    	<div class="col-lg-12">
+			<h3>Question Information</h3>
+
+		
+		
+		
+			<?php	$mQuestion = $this->question; ?>
+			<table>
+				<tr>
+					<th>Question Type</th>
+					<td><?php echo $mQuestion->getFriendlyType(); ?></td>
+				</tr>
+				<tr>
+					<th>Question Concepts</th>
+					<td><?php foreach($mQuestion->getConcepts() as $vConcept){ echo $vConcept . " ";} ?></td>
+				</tr>
+				<tr>
+					<th>Difficulty</th>
+					<td><?php echo $mQuestion->getDifficulty(); ?></td>
+				</tr>
+				<tr>
+					<th>Instructions</th>
+					<td><?php try{ echo $mQuestion->getInstructions(); }catch(Exception $e) { echo "Unavaliable as question didn't compile"; } ?></td>
+				</tr>
+			</table>
+		</div>
+	</div> <!-- End Row -->
+	
+
+	<div class="row">
+    	<div class="col-lg-12">
+			
+<?php	try{
+
+		
+			$problem = $mQuestion->getProblem();
+			$exploded_problem = explode("\n", $problem);
+			$new_problem = array();
+			foreach( $exploded_problem as $ep ) {
+				if( strpos($ep, "//HIDE") === false ) {
+					$new_problem[] = $ep;
+				}
+			}
+			$problem = implode("\n", $new_problem);
+		
+			echo "<h3>Problem</h3>";
+			echo "<pre>" . str_replace("<","&lt;",str_replace(">","&gt;", $problem )) . "</pre>\n";
+
+			echo "<h3>Solution</h3>";
+			echo "Actual Output: <pre>" . $mQuestion->getCorrectOutput() . "</pre>";
+		}catch(Exception $e) {
+			echo "<p>An error occured getting the correct output.</p><p>The log leading up to the exception is listed below</p>";
+			echo "<pre>" . Model_Shell_Debug::getInstance()->getLog() . "\n\n" . $e->getMessage() . "\n" .$e->getTraceAsString() . "</pre>";
+		}
+
+
+		if($mQuestion->getFriendlyType()=="multiple"){
+			echo "Alternate answers: ";
+			foreach($mQuestion->getAnswers() as $vAnswer){
+
+				if(is_array($vAnswer)){
+					echo "<pre>" . $vAnswer[0] . "</pre><p><strong>Why it's wrong:</strong> " . $vAnswer[1] . "</p>\n<hr/>\n";
+				}else
+					echo "<pre>" . $vAnswer . "</pre>\n<hr/>\n";
+			}
+		}elseif($mQuestion->getFriendlyType()=="fill-in"){
+			echo "Your complete solution specified: <pre>".$mQuestion->getDebugProblem()."</pre>\n";
+		}
+		
+	endif;
+
+?>
+		</div>
+	</div><!-- End Row -->
+
+	</div><!-- End Container -->
+</body>
+</html>
