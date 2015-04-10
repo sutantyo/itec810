@@ -30,6 +30,7 @@ if( !extension_loaded('ldap') ) {
 	die("The LDAP Extension for PHP is not enabled. Please enable it");
 }
 
+require_once 'functions.php'; //for randset
 
 /** Zend_Application */
 require_once 'Zend/Application.php';
