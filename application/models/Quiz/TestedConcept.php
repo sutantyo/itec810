@@ -78,6 +78,7 @@ class Model_Quiz_TestedConcept {
 	
 
 	public static function fromScratch($lower_difficulty,$higher_difficulty,$number_tested,$vConcept,$vQuiz){
+	    My_Logger::log(__METHOD__);
 		$db = Zend_Registry::get("db");
 		$sql = "INSERT INTO concepts_tested(ctest_id,lower_difficulty,higher_difficulty,number_tested,conceptsconcept_name,quizquiz_id) VALUES(NULL, ".$db->quote($lower_difficulty).",".$db->quote($higher_difficulty).",".$db->quote($number_tested).",".$db->quote($vConcept->getID()).",".$db->quote($vQuiz->getID()).")";
 		$db->query($sql);
@@ -85,14 +86,15 @@ class Model_Quiz_TestedConcept {
 		//Now find the appropriate entry in the database
 		//	A safe (default) assumption for this is a query that looks for everything you just put in.
 		
-		$sql = "SELECT ctest_id FROM concepts_tested WHERE lower_difficulty=".$db->quote($lower_difficulty)." AND higher_difficulty=".$db->quote($higher_difficulty)." AND number_tested=".$db->quote($number_tested)." AND conceptsconcept_name=".$db->quote($conceptsconcept_name)." AND quizquiz_id=".$db->quote($quizquiz_id);
+		//This query has errors. Apparently it is not used anywhere else, so disabling - Ivan
+		/*$sql = "SELECT ctest_id FROM concepts_tested WHERE lower_difficulty=".$db->quote($lower_difficulty)." AND higher_difficulty=".$db->quote($higher_difficulty)." AND number_tested=".$db->quote($number_tested)." AND conceptsconcept_name=".$db->quote($conceptsconcept_name)." AND quizquiz_id=".$db->quote($quizquiz_id);
 		$result = $db->query($sql);
 		$row = $result->fetch();
 		if($row['ctest_id']!=null){
 			return Model_Quiz_TestedConcept::fromID($row['ctest_id']);
 		}else{
 			return null; //Something didn't happen
-		}
+		}*/
 	}
 
 	// **********************
