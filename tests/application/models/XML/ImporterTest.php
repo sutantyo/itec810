@@ -5,6 +5,8 @@ class ImporterTest extends ControllerTestCase
     
     function testImport(){
         $this->clearAll();
+        //$this->clearDir($dirPath)
+        $this->clearTemp();
         $importer = $this->getInstance();
         //$this->assertEquals(1, $importer->getTotalQuestions());
         $importer->processFiles();

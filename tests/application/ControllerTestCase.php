@@ -61,6 +61,18 @@ class ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
         
     }
     
+    function clearDir($dirPath){
+        My_Logger::log(__METHOD__ . " will clear $dirPath");
+        //return;
+        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $path) {
+        	$path->isDir() && !$path->isLink() ? rmdir($path->getPathname()) : unlink($path->getPathname());
+        }
+    }
+    
+    function clearTemp(){
+        $this->clearDir(APPLICATION_PATH . '/../tmp');
+    }
+    
     function createQuiz($name, $permissions, $starts=false, $ends=false, $attempts=50, $percentage=100){
         return Model_Quiz_Quiz::fromScratch($name
         		, $permissions
