@@ -20,7 +20,7 @@
 	
 <substitutions>
   		<substitution val="s1">return randset(array('i', 'j', 'k'));</substitution>
-  		<substitution val="s2">return '"foo"'--;</substitution> 
+  		<substitution val="s2">return '"foo"';</substitution> 
 </substitutions>	
 
 </question>

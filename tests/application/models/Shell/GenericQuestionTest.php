@@ -201,7 +201,7 @@ class GenericQuestionTest extends ControllerTestCase{
     
     
     	//Here comes the compilation. After this single call, all the artifacts are produced
-    	$this->assertEquals('Random substitution', $mQuestion->getInstructions());
+    	$this->assertEquals(trim((string)$xml->instructions), $mQuestion->getInstructions());
     
     	//return;
     
