@@ -36,8 +36,7 @@
 		 * @throws Exception
 		 */
 		public function __construct($vFileName){
-			//Model_Shell_Debug::getInstance()->log("Attempting to create generic question from XML File $vFileName");
-			My_Logger::log(__METHOD__ .  "Attempting to create generic question from XML File $vFileName");
+			Model_Shell_Debug::getInstance()->log("Attempting to create generic question from XML File $vFileName", __METHOD__);
 			$file_contents = Model_XML_Parser::xml2array($vFileName);
 			if( !is_array($file_contents) || sizeof($file_contents) == 0 ) {
 				throw new Exception("Could not parse XML File " . $vFileName);
@@ -158,7 +157,7 @@
 		    		$new_problem[] = $ep;
 		    	}
 		    }
-		    return trim(implode("\n", $new_problem));
+		    return implode("\n", $new_problem);
 		}
 		
 		
