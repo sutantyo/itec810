@@ -177,7 +177,7 @@
 			//There's essentially 2x the amount of array keys in this array because the XML parser puts both the VALUE and ATTRIBUTE in
 		    for($vCounter = 0; $vCounter<(sizeof($this->mFileContents['question']['substitutions']['substitution'])/2); $vCounter++ ){
 			//for($vCounter = 0; $vCounter<$total; $vCounter++ ){
-
+				$tag = $this->mFileContents['question']['substitutions']['substitution'][$vCounter."_attr"]['val'];
 				
 				//Firstly we look at the XML value
 				$toGen = $this->mFileContents['question']['substitutions']['substitution'][$vCounter];
@@ -188,10 +188,22 @@
 				}
 				
 				$toGen = $this->substitutePercentages($toGen);
-						
-				$this->mSubstitutions[$this->mFileContents['question']['substitutions']['substitution'][$vCounter."_attr"]['val']] = eval($toGen);
-				//$key = $this->mFileContents['question']['substitutions'][$vCounter]['substitution_attr']['val'];
-				//$this->mSubstitutions[$key] = eval($toGen);
+
+				//Let's eval the code and capture any errors - Ivan
+				if (!$this->phpCodeChecker($toGen)){
+				    //code is going to fail, so report back to caller about problem with this substitution
+				    ob_start();
+				    eval($toGen);
+				    if ('' !== $error = ob_get_clean()) {
+				    	throw new EvalException("Error evaluating substitution `$tag`"
+				    	    . "\n\nExpression:\n$toGen"
+				    	    . "\n\nError: $error"
+				    	    );
+				    }
+				}
+				
+
+				$this->mSubstitutions[$tag] = eval($toGen);
 
 			}//End FOR
 			
@@ -199,7 +211,9 @@
 			
 		}//End populateSubstitutions
 		
-		
+		private function phpCodeChecker($code){
+			return @eval('return true;' . $code);
+		}
 		
 		
 		private function substitutePercentages($toGen){
@@ -383,3 +397,5 @@
 				
 		
 	}//End Class
+
+	class EvalException extends Exception{}
