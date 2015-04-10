@@ -129,7 +129,7 @@ class Model_Quiz_GeneratedQuestion
 		$db = Zend_Registry::get("db");
 		
 		//Firstly see if there's any 'spare' Model_Quiz_GeneratedQuestions
-		Model_Shell_Debug::getInstance()->log(__METHOD__ . " Seeing if there are any Pregenerated Questions for Question Identifier " . $vQB->getID());
+		Model_Shell_Debug::getInstance()->log(" Seeing if there are any Pregenerated Questions for Question Identifier " . $vQB->getID(), __METHOD__);
 		$result = $db->query("SELECT generated_id FROM generated_questions WHERE question_basequestion_id=".$db->quote($vQB->getID())." AND generated_id NOT IN(SELECT generated_questionsgenerated_id AS generated_id FROM question_attempt)");
 		$row = $result->fetch();
 		if($row['generated_id']!=null){
@@ -398,9 +398,3 @@ class Model_Quiz_GeneratedQuestion
 
 
 
-function randset($vArray){
-	return $vArray[(rand(0,(sizeof($vArray))-1))];
-}
-
-
-?>

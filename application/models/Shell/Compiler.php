@@ -160,7 +160,11 @@ class Model_Shell_Compiler{
 		
 		// Java sometimes generates more than one class... so we put the compiled things in a directory
 		mkdir( $mTempFolder . "\\" . $vFilePrefix );
-		$toExec = "\"". JAVAC_PATH ."\" \"" . $mTempFolder . "\\".$vFilePrefix.".java\" -d \"" . $mTempFolder . "\\" . $vFilePrefix . "\"";
+		$error_file = $mTempFolder .'\\' . $vFilePrefix .'.error.txt';
+		$toExec = "\"". JAVAC_PATH ."\" \"" . $mTempFolder . "\\".$vFilePrefix.".java\" -d \"" . $mTempFolder . "\\" . $vFilePrefix . "\""
+				//capture any errors
+				. ' 2> "' . $error_file . '"'
+				;
 		My_Logger::log('toExec: ' . $toExec);
 		$execResult = exec($toExec);
 		
@@ -169,6 +173,18 @@ class Model_Shell_Compiler{
 		// OK Now we need to see what classes have been generated in this directory, and then call that when executing
 		$directory_contents = scandir( $mTempFolder . "\\" . $vFilePrefix );
 		if( sizeof($directory_contents) < 3 ) {
+		    
+		    if(file_exists($error_file)){
+		        $compiler_errors = file_get_contents($error_file);
+		        if(strlen($compiler_errors)>0){
+		            $cex = new CompilerException("There were compiler errors.");
+		            $cex->compiler_output = $compiler_errors;
+		            $cex->error_file = $error_file;
+		            My_Logger::log(__METHOD__ . " win compiler errors:\n" . $compiler_errors);
+		            throw $cex;
+		        }
+		    }
+		    
 			throw new Exception("When Trying to generate a new randomised question, Compilation Failed. Reason: " . $execResult);
 		}
 		
@@ -367,4 +383,11 @@ class Model_Shell_Compiler{
 	
 }
 
-?>
+class CompilerException extends Exception{
+    public  $error_file;
+    public  $compiler_output;
+
+	function __construct($message="",$code=0, $previous=null){
+        parent::__construct($message, $code, $previous);
+    }
+} 

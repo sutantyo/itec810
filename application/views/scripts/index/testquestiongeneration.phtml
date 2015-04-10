@@ -119,8 +119,23 @@
 			echo "<h3>Solution</h3>";
 			echo "Actual Output: <pre>" . $mQuestion->getCorrectOutput() . "</pre>";
 		}catch(Exception $e) {
-			echo "<p>An error occured getting the correct output.</p><p>The log leading up to the exception is listed below</p>";
-			echo "<pre>" . Model_Shell_Debug::getInstance()->getLog() . "\n\n" . $e->getMessage() . "\n" .$e->getTraceAsString() . "</pre>";
+			echo "<p>An error occured getting the correct output.</p>";
+			
+			//echo "<>"
+			if($e instanceof CompilerException){
+			    echo "<p>Compiler errors:</p>";
+				echo "<pre>" . $e->compiler_output. "</pre>"; 
+			}
+			
+			
+     		echo "<p>The log leading up to the exception is listed below</p>";
+			echo "<pre>" . Model_Shell_Debug::getInstance()->getLog(). "</pre>";
+			
+			echo "<p>Exception Message:</p>";
+			echo "<pre>" . $e->getMessage(). "</pre>";
+			
+			echo "<p>Exception Trace:</p>";
+			echo "<pre>" . $e->getTraceAsString() . "</pre>";
 		}
 
 

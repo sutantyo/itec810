@@ -164,4 +164,60 @@ class GenericQuestionTest extends ControllerTestCase{
     	$this->assertTrue(in_array($mQuestion->getCorrectOutput(), range(3,5)));
     }
     
+    
+    function testRandset(){
+    	$this->clearAll();
+    	$this->clearTemp();
+    	
+    	$filename = 'randset.xml';
+    	$filepath = $this->config->xml->import_path . "/" . $filename;
+    	$xml = simplexml_load_file($filepath);
+    	$concept = (string)$xml->concepts->concept; //from source
+    	
+    	$importer = $this->createXmlImporter();
+    	
+    	$importer->parseFile($filename);
+    
+    	//Create the quiz
+    	$qz = $this->createQuiz("Some Quiz", 'comp115-students');
+    
+    	//Add tested concept to quiz
+    	$this->addTestedConcept($qz, $concept, 3);
+    
+    	My_Logger::clearLog();
+    	$this->clearMysqlLog();
+    
+    	My_Logger::log('**** BEGIN ******');
+    
+    	// Get the Question XML
+    	$mQuestion = new Model_Shell_GenericQuestion($filepath );
+    	
+    	
+    
+    	$this->assertEquals('output', $mQuestion->getFriendlyType());
+    	$this->assertTrue(in_array($concept, $mQuestion->getConcepts()));
+    	$this->assertEquals('1', $mQuestion->getDifficulty());
+    
+    
+    
+    	//Here comes the compilation. After this single call, all the artifacts are produced
+    	$this->assertEquals('Random substitution', $mQuestion->getInstructions());
+    
+    	//return;
+    
+    	//for fun let's ourselves load the xml
+    	
+    	My_Logger::log( __METHOD__. ": simpleXml ". print_r($xml, true));
+    	My_Logger::log( __METHOD__. ": substitution ". print_r($xml->substitutions->substitution[0], true));
+    	My_Logger::log( __METHOD__. ": substitution ". (string)$xml->substitutions->substitution[0]->attributes()->{'val'});
+    	My_Logger::log( __METHOD__. ": substitution ". (string)$xml->substitutions->substitution[0]);
+    
+    	My_Logger::log( __METHOD__. "problem:" . (string)$xml->problem);
+    	My_Logger::log( __METHOD__. "actual:" . $mQuestion->getProblem());
+    
+    	//$this->clearTemp();
+    	//$this->assertTrue(in_array($mQuestion->getCorrectOutput(), range(3,5)));
+    	$this->assertEquals('foo', $mQuestion->getCorrectOutput());
+    }
+    
 }
