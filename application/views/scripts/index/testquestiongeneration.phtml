@@ -111,15 +111,7 @@
 <?php	try{
 
 		
-			$problem = $mQuestion->getProblem();
-			$exploded_problem = explode("\n", $problem);
-			$new_problem = array();
-			foreach( $exploded_problem as $ep ) {
-				if( strpos($ep, "//HIDE") === false ) {
-					$new_problem[] = $ep;
-				}
-			}
-			$problem = implode("\n", $new_problem);
+			$problem = $mQuestion->getProblemNoHiddenLines();
 		
 			echo "<h3>Problem</h3>";
 			echo "<pre>" . str_replace("<","&lt;",str_replace(">","&gt;", $problem )) . "</pre>\n";

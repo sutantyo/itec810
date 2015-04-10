@@ -36,11 +36,13 @@
 		 * @throws Exception
 		 */
 		public function __construct($vFileName){
-			Model_Shell_Debug::getInstance()->log("Attempting to create generic question from XML File $vFileName");
+			//Model_Shell_Debug::getInstance()->log("Attempting to create generic question from XML File $vFileName");
+			My_Logger::log(__METHOD__ .  "Attempting to create generic question from XML File $vFileName");
 			$file_contents = Model_XML_Parser::xml2array($vFileName);
 			if( !is_array($file_contents) || sizeof($file_contents) == 0 ) {
 				throw new Exception("Could not parse XML File " . $vFileName);
 			}
+			My_Logger::log(__METHOD__ . " mFileContents:" . print_r($file_contents, true));
 			$this->mFileContents = $file_contents;
 			$this->mFileName = $vFileName;
 			$this->mSubstitutions = array();
@@ -143,6 +145,21 @@
 			return $this->mProblem;
 		}//End getProblem
 		
+		/**
+		 * Move to model the logic to remove the HIDE lines - Ivan
+		 * @return string
+		 */
+		public function getProblemNoHiddenLines(){
+		    $problem = $this->getProblem();
+		    $exploded_problem = explode("\n", $problem);
+		    $new_problem = array();
+		    foreach( $exploded_problem as $ep ) {
+		    	if( strpos($ep, "//HIDE") === false ) {
+		    		$new_problem[] = $ep;
+		    	}
+		    }
+		    return trim(implode("\n", $new_problem));
+		}
 		
 		
 		private function populateSubstitutions(){
@@ -153,15 +170,19 @@
 					- Firstly changing %value%'s that are present in <substitution> keys to previously computed values
 					- Evaluating the PHP code inside the <substitution> keys and saving the results to $mSubstitutions
 			*/
+		    //$total = max(1, sizeof($this->mFileContents['question']['substitutions']['substitution']/2)); //Apparently system was not designed to work with just 1 substitution (let alone 0)
 			
-			Model_Shell_Debug::getInstance()->log("Populating ". sizeof($this->mFileContents['question']['substitutions']['substitution']) ."/2 Substitutions");
+		    Model_Shell_Debug::getInstance()->log("Populating ". sizeof($this->mFileContents['question']['substitutions']['substitution']) ."/2 Substitutions", __METHOD__);
+		    //Model_Shell_Debug::getInstance()->log("Populating $total Substitutions");
 			
 			//There's essentially 2x the amount of array keys in this array because the XML parser puts both the VALUE and ATTRIBUTE in
-			for($vCounter = 0; $vCounter<(sizeof($this->mFileContents['question']['substitutions']['substitution'])/2); $vCounter++ ){
+		    for($vCounter = 0; $vCounter<(sizeof($this->mFileContents['question']['substitutions']['substitution'])/2); $vCounter++ ){
+			//for($vCounter = 0; $vCounter<$total; $vCounter++ ){
 
 				
 				//Firstly we look at the XML value
 				$toGen = $this->mFileContents['question']['substitutions']['substitution'][$vCounter];
+				My_Logger::log(__METHOD__ . " toGen: $toGen");
 				if(strstr($toGen,";")==false){
 					//Assuming its just a function without ; and return
 					$toGen = "return " . $toGen . ";";
@@ -170,6 +191,8 @@
 				$toGen = $this->substitutePercentages($toGen);
 						
 				$this->mSubstitutions[$this->mFileContents['question']['substitutions']['substitution'][$vCounter."_attr"]['val']] = eval($toGen);
+				//$key = $this->mFileContents['question']['substitutions'][$vCounter]['substitution_attr']['val'];
+				//$this->mSubstitutions[$key] = eval($toGen);
 
 			}//End FOR
 			
@@ -212,7 +235,7 @@
 				return $this->mActualAnswer;
 			}
 
-			Model_Shell_Debug::getInstance()->log(__METHOD__ .  " Attempting to generate correct answer for Question.");
+			Model_Shell_Debug::getInstance()->log(" Attempting to generate correct answer for Question.", __METHOD__);
 
 			$this->mActualAnswer = Model_Shell_Compiler::compileAndReturn(time() . rand(1,99999), $this->mProblem);
 			$this->mSubstitutions['ans'] = $this->mActualAnswer;

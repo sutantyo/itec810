@@ -8,6 +8,7 @@ class ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
     */
     protected $application;
     protected $db;
+    protected $config;
     
     public function setUp() {
         $this->bootstrap = array($this, 'appBootstrap');
@@ -22,13 +23,27 @@ class ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
         }
         
         $this->db = Zend_Registry::get("db");
-        
+        $this->config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
         
     }
     
     public function appBootstrap() {
         $this->application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/configs/application.ini');
         $this->application->bootstrap();
+    }
+    
+    protected function createXmlImporter($path=false){
+    	//$obj = new Model_XML_Importer(APPLICATION_PATH . '/../tests/fixtures');
+        $obj = new Model_XML_Importer($path?:$this->config->xml->import_path);
+    	$obj->delegate = function ($msg){
+    		My_Logger::log($msg);
+    	};
+    	return $obj;
+    }
+    
+    function clearMysqlLog(){
+        //windows only
+        file_put_contents("C:\\wamp\\logs\\genquery.log", '');
     }
     
     //Utilities

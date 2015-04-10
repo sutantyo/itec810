@@ -35,7 +35,9 @@ class My_Logger{
     
   	$fd = fopen($filename, 'w');
   	ftruncate($fd,0);
+  	fflush($fd);
   	fclose($fd);
+  	//file_put_contents($filename, '');
   	if($logThis) self::log(__METHOD__ . ": $place Log cleared");
   }
   

@@ -61,8 +61,8 @@ class Model_Shell_Debug {
 	 * @param string $text 
 	 * @return void
 	 */
-	public function log($text) {
-	    My_Logger::log($text);
+	public function log($text, $pre='') {
+	    My_Logger::log($pre . ": " .$text);
 		$backtrace = debug_backtrace();
 
 		if( is_array($backtrace) && sizeof($backtrace > 1) ) {

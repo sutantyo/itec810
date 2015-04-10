@@ -16,8 +16,8 @@
 	</problem>
 	
 <substitutions>
-  		<substitution val="s1">return rand(1,5);
-		</substitution> 
+  		<substitution val="s1">return rand(1,5);</substitution>
+  		<substitution val="s2">return rand(6,9);</substitution> 
 </substitutions>	
 
 </question>

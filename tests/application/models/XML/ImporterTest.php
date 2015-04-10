@@ -5,9 +5,8 @@ class ImporterTest extends ControllerTestCase
     
     function testImport(){
         $this->clearAll();
-        //$this->clearDir($dirPath)
         $this->clearTemp();
-        $importer = $this->getInstance();
+        $importer = $this->createXmlImporter();
         //$this->assertEquals(1, $importer->getTotalQuestions());
         $importer->processFiles();
         
@@ -18,16 +17,10 @@ class ImporterTest extends ControllerTestCase
         $this->addTestedConcept($qz, 'Concept_0', 3);
         
         //now student logs in
-        $this->dispatch('/shell/attempt?quiz='.$qz->getID());
+        //$this->dispatch('/shell/attempt?quiz='.$qz->getID());
         
     }
     
-    function getInstance(){
-        $obj = new Model_XML_Importer(APPLICATION_PATH . '/../tests/fixtures');
-        $obj->delegate = function ($msg){
-            My_Logger::log($msg);
-        };
-        return $obj;
-    }
+    
     
 }
