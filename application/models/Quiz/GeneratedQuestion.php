@@ -129,7 +129,7 @@ class Model_Quiz_GeneratedQuestion
 		$db = Zend_Registry::get("db");
 		
 		//Firstly see if there's any 'spare' Model_Quiz_GeneratedQuestions
-		Model_Shell_Debug::getInstance()->log("Seeing if there are any Pregenerated Questions for Question Identifier " . $vQB->getID());
+		Model_Shell_Debug::getInstance()->log(__METHOD__ . " Seeing if there are any Pregenerated Questions for Question Identifier " . $vQB->getID());
 		$result = $db->query("SELECT generated_id FROM generated_questions WHERE question_basequestion_id=".$db->quote($vQB->getID())." AND generated_id NOT IN(SELECT generated_questionsgenerated_id AS generated_id FROM question_attempt)");
 		$row = $result->fetch();
 		if($row['generated_id']!=null){
@@ -163,7 +163,14 @@ class Model_Quiz_GeneratedQuestion
 	 * @return Model_Quiz_GeneratedQuestion
 	 */
 	public static function generateNewFromQuestionBase( Model_Quiz_QuestionBase $vQuestionBase ) {
-		
+		/*
+	    $path = "/../xml/questions/";
+	    $path = "/../tests/fixtures/";*/
+	    
+	    $config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
+	    $path = $config->xml->import_path;
+	    My_Logger::log(__METHOD__ . " Using path: $path");
+	    
 		$vGenerated = null;
 		$error_threshold = 4;
 		$error_counter = 0;
@@ -171,7 +178,7 @@ class Model_Quiz_GeneratedQuestion
 		while( $error_counter <= $error_threshold && is_null($vGenerated) ) {
 
 			// Start by ensuring the Question is has instructions outputs etc etc
-			$vQuestion = new Model_Shell_GenericQuestion(APPLICATION_PATH . "/../xml/questions/" . $vQuestionBase->getXml());
+			$vQuestion = new Model_Shell_GenericQuestion( $path . '/'  .$vQuestionBase->getXml());
 			$problem_string = $vQuestion->getProblem();
 			$question_output = $vQuestion->getCorrectOutput();
 			

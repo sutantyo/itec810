@@ -112,7 +112,7 @@ class AdminController extends Zend_Controller_Action {
 		if( $this->getRequest()->isPost() ) {
 			
 			$formData = $_POST;
-			
+			//My_Logger::log(var_export($formData, true));
 			if (!$form->isValid($_POST)) {
 				// Failed validation; redisplay form
 				$this->view->form = $form;
@@ -121,7 +121,10 @@ class AdminController extends Zend_Controller_Action {
 				
 				if( is_null($editing) ) {
 					// New Quiz
-					$vQuiz = Model_Quiz_Quiz::fromScratch($formData['name'],$formData['permissions'],$formData['opendate'],$formData['closedate'],$formData['attempts'],$formData['percentage']);
+					$vQuiz = Model_Quiz_Quiz::fromScratch($formData['name']
+					    ,$formData['permissions']
+					    ,$formData['opendate'],$formData['closedate']
+					    ,$formData['attempts'],$formData['percentage']);
 				}else{
 					// Editing Quiz
 					$editing->setQuiz_name($formData['name']);
@@ -188,7 +191,7 @@ class AdminController extends Zend_Controller_Action {
 	 */
 	public function addconceptAction() {
 		$form = new Form_AddQuizConcept();
-		$quiz_id = $this->_getParam("quiz_id");
+		$quiz_id = $this->_getParam("quiz_id"); //part of the url
 		$tested_concept = $this->_getParam("tested_concept");
 		
 		if( is_numeric($tested_concept) ) {
@@ -209,6 +212,7 @@ class AdminController extends Zend_Controller_Action {
 		
 		if( $this->getRequest()->isPost() ) {
 			$formdata = $this->getRequest()->getPost();
+			My_Logger::log(var_export($formdata, true));
 			if( $form->isValid($formdata) ) {
 				
 				// Either update the existing tested concept or add a new one
@@ -221,7 +225,9 @@ class AdminController extends Zend_Controller_Action {
 					$params = array( 'id' => $tested_concept_ob->getQuiz()->getID() );
 				}else{
 					$vConcept = Model_Quiz_Concept::fromID( $formdata['concept_id'] );
-					$vTestedConcept = Model_Quiz_TestedConcept::fromScratch($formdata['difficulty_from'], $formdata['difficulty_to'], $formdata['number_of_questions'], $vConcept, $quiz_ob);
+					$vTestedConcept = Model_Quiz_TestedConcept::fromScratch($formdata['difficulty_from']
+					    , $formdata['difficulty_to'], $formdata['number_of_questions']
+					    , $vConcept, $quiz_ob);
 					$params = array('id' => $quiz_ob->getID());
 				}
 				
@@ -359,8 +365,11 @@ class AdminController extends Zend_Controller_Action {
 	 * In doing so, all pre-generated questions will be removed.
 	 */
 	public function rebuildxmlAction() {
-	    $path = APPLICATION_PATH . '/../xml/questions';
+	    //$path = APPLICATION_PATH . '/../xml/questions';
 	    //$path = APPLICATION_PATH . '/../tests/fixtures';
+	    $config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
+	    $path = $config->xml->import_path;
+	    
 	    $importer = new Model_XML_Importer($path);
 	    $importer->delegate = function ($msg){
 	        echo $msg;

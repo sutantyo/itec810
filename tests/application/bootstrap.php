@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL | E_STRICT);
+define('TEST_ENV', true);
 
 // Define path to application directory
 defined('APPLICATION_PATH')

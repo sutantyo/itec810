@@ -66,6 +66,14 @@ class IndexController extends Zend_Controller_Action {
 		$this->view->headTitle("Welcome");
 		
     }
+    
+    public function envAction(){
+    
+    	$this->view->title = "Environment Check";
+    	$this->view->headTitle("Env");
+    	$this->view->env = APPLICATION_ENV; //At the moment this is set on the public/.htaccess file
+    
+    }
 	
 	/**
 	 * Displays basic User information
@@ -236,7 +244,10 @@ class IndexController extends Zend_Controller_Action {
 		
 		
 		/* Get the appropriate files and show them in a nice little combobox */
-		$xml_path = APPLICATION_PATH . '/../xml/questions';
+		//$xml_path = APPLICATION_PATH . '/../xml/questions';
+		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
+		$xml_path = $config->xml->import_path;
+		
 		$available_selects = array();
 		if ($handle = opendir($xml_path)) {
 		    while (false !== ($file = readdir($handle))) {

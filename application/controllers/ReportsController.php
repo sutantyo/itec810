@@ -174,7 +174,11 @@
 				$attempts = Model_Quiz_QuestionAttempt::getAllFromQuestionBase($question_base);
 				
 				// Generate a sample question
-				$sample_question = new Model_Shell_GenericQuestion(APPLICATION_PATH . "/../xml/questions/" . $question_base->getXml());
+				$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
+	    		$path = $config->xml->import_path;
+	    		
+				//$sample_question = new Model_Shell_GenericQuestion(APPLICATION_PATH . "/../xml/questions/" . $question_base->getXml());
+	    		$sample_question = new Model_Shell_GenericQuestion( $path . '/' . $question_base->getXml());
 				
 				$this->view->question_base = $question_base;
 				$this->view->attempts = $attempts;
