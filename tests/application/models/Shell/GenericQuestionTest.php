@@ -218,6 +218,45 @@ class GenericQuestionTest extends ControllerTestCase{
     	$this->assertEquals('foo', $mQuestion->getCorrectOutput());
     }
     
+    /**
+     * @expectedException CompilerException
+     */
+    function testCompilerError(){
+        $this->clearAll();
+        $this->clearTemp();
+        
+        $filename = 'compiler_error.xml';
+        $filepath = $this->config->xml->import_path . "/" . $filename;
+        $xml = simplexml_load_file($filepath);
+        $concept = (string)$xml->concepts->concept; //from source
+        
+        $importer = $this->createXmlImporter();
+        
+        $importer->parseFile($filename);
+        
+        //Create the quiz
+        $qz = $this->createQuiz("Some Quiz", 'comp115-students');
+        
+        //Add tested concept to quiz
+        $this->addTestedConcept($qz, $concept, 3);
+        
+        
+        My_Logger::log('**** BEGIN ******');
+        
+        // Get the Question XML
+        $mQuestion = new Model_Shell_GenericQuestion($filepath );
+        
+        
+        
+        $this->assertEquals('output', $mQuestion->getFriendlyType());
+        $this->assertTrue(in_array($concept, $mQuestion->getConcepts()));
+        $this->assertEquals('1', $mQuestion->getDifficulty());
+        
+        //Forces compilation.
+        $mQuestion->getInstructions();
+        
+    }
+    
     
     /**
      * @expectedException EvalException 
