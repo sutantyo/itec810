@@ -260,7 +260,17 @@ class GenericQuestionTest extends ControllerTestCase{
         $this->assertEquals('1', $mQuestion->getDifficulty());
         
         //Forces compilation.
-        $mQuestion->getInstructions();
+        try {
+            $mQuestion->getInstructions();
+        } catch (Exception $e) {
+            
+            //read error file
+            $str = file_get_contents($e->error_file);
+            $this->assertContains('error:', $str); //verify that error file was generated and contains an error string
+            
+            throw $e;
+        }
+        
         
     }
     

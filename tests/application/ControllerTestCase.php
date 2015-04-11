@@ -43,13 +43,16 @@ class ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
     }
     
     function clearMysqlLog(){
-        //windows only
-        file_put_contents("C:\\wamp\\logs\\genquery.log", '');
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'){
+            //windows only
+            file_put_contents("C:\\wamp\\logs\\genquery.log", '');
+        }
+        
     }
     
     //Utilities
     function clearAll(){
-        file_put_contents("C:\\wamp\\logs\\genquery.log", '');
+        $this->clearMysqlLog();
         My_Logger::clearLog();
         
         $this->db->query("SET FOREIGN_KEY_CHECKS=0;");

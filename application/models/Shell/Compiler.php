@@ -75,12 +75,16 @@ class Model_Shell_Compiler{
 			// Java sometimes generates more than one class... so we put the compiled things in a directory
 			mkdir( $mTempFolder . "/" . $vFilePrefix );
 			
-			
+			$error_file = $mTempFolder . '/' . $vFilePrefix . '.error.txt'; //Capture error messages here - Ivan
 			// Run the program that we outputted to a file into a fully functioning Executable
-			$toExec = "javac \"" . $mTempFolder . "/".$vFilePrefix.".java\" -d \"" . $mTempFolder . "/" . $vFilePrefix . "\"";
+			$toExec = "javac \"" . $mTempFolder . "/".$vFilePrefix.".java\" -d \"" . $mTempFolder . "/" . $vFilePrefix . "\""
+				. ' 2> "' . $error_file . '"'    
+				;
 			Model_Shell_Debug::getInstance()->log("Attempted to execute: $toExec");
 			$execResult = exec($toExec);
 			Model_Shell_Debug::getInstance()->log("Execution result was: " . $execResult);
+			
+			self::proccessErrorFile($error_file); //Ivan
 
 			// OK Now we need to see what classes have been generated in this directory, and then call that when executing
 			$directory_contents = scandir( $mTempFolder . "/" . $vFilePrefix );
@@ -102,6 +106,7 @@ class Model_Shell_Compiler{
 				if(in_array(strtolower(PHP_OS), array('darwin'))){
 					$toExec = realpath( APPLICATION_PATH . "/../resources/osx_timeout.sh" ) . " 5 java -cp \"" . $mTempFolder . "/" . $vFilePrefix . "\" " . $program_to_run . " > \"" . $mTempFolder . "/" . $vFilePrefix . ".txt\"";
 				}else{
+				    //For now we will only support our target platform (Ubuntu) - Ivan
 					$toExec = "timeout 5 java -cp \"" . $mTempFolder . "/" . $vFilePrefix . "\" " . $program_to_run . " > \"" . $mTempFolder . "/" . $vFilePrefix . ".txt\"";
 				}
 
@@ -127,109 +132,116 @@ class Model_Shell_Compiler{
 
 
 		}else{
-			
-		//We're running Windows (probably)
+		    //We're running Windows (probably)
+			return self::java_win($mTempFolder, $vFilePrefix, $mSource);
+		}
 		
-		
+	}
+	
+	static protected function java_win($mTempFolder, $vFilePrefix, $mSource) {
 		// We have to make sure that the user has defined the JAVA Path (unlike Linux where it's just in the PATH)
-		if( !defined("JAVAC_PATH") ) {
+		if (!defined("JAVAC_PATH")) {
 			throw new Exception("The Windows Javac.exe Path is not defined. Please define it in general.php");
-		}else{
-			if( !file_exists(JAVAC_PATH) ) {
+		} else {
+			if (!file_exists(JAVAC_PATH)) {
 				throw new Exception("The JavaC Path defined (Windows) is not accessible by this application");
 			}
 		}
 		
-		
 		// Remove all old stuff
-		if(file_exists("$mTempFolder/".$vFilePrefix.".java")){
-			@unlink(   Model_Shell_Compiler::os_slash("$mTempFolder/".$vFilePrefix.".java")  );
+		if (file_exists("$mTempFolder/" . $vFilePrefix . ".java")) {
+			@unlink(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix . ".java"));
 		}
 		
-		if(file_exists("$mTempFolder/".$vFilePrefix.".exe")){
-			@unlink(   Model_Shell_Compiler::os_slash("$mTempFolder/".$vFilePrefix.".exe") );
+		if (file_exists("$mTempFolder/" . $vFilePrefix . ".exe")) {
+			@unlink(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix . ".exe"));
 		}
-
-		My_Logger::log("$mTempFolder/".$vFilePrefix.".java");
 		
-		$fh = fopen(  Model_Shell_Compiler::os_slash("$mTempFolder/".$vFilePrefix.".java"), 'w');
-		fwrite($fh,$mSource);
+		My_Logger::log("$mTempFolder/" . $vFilePrefix . ".java");
+		
+		$fh = fopen(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix . ".java"), 'w');
+		fwrite($fh, $mSource);
 		fclose($fh);
 		
-		My_Logger::log(file_get_contents("$mTempFolder/".$vFilePrefix.".java")); //apparently ok
-		
+		My_Logger::log(file_get_contents("$mTempFolder/" . $vFilePrefix . ".java")); // apparently ok
+		                                                                         
 		// Java sometimes generates more than one class... so we put the compiled things in a directory
-		mkdir( $mTempFolder . "\\" . $vFilePrefix );
-		$error_file = $mTempFolder .'\\' . $vFilePrefix .'.error.txt';
-		$toExec = "\"". JAVAC_PATH ."\" \"" . $mTempFolder . "\\".$vFilePrefix.".java\" -d \"" . $mTempFolder . "\\" . $vFilePrefix . "\""
-				//capture any errors
-				. ' 2> "' . $error_file . '"'
-				;
+		mkdir($mTempFolder . "\\" . $vFilePrefix);
+		$error_file = $mTempFolder . '\\' . $vFilePrefix . '.error.txt';
+		$toExec = "\"" . JAVAC_PATH . "\" \"" . $mTempFolder . "\\" . $vFilePrefix . ".java\" -d \"" . $mTempFolder . "\\" . $vFilePrefix . "\"" 
+			// capture any errors
+			. ' 2> "' . $error_file . '"'
+		    ;
+		    
 		My_Logger::log('toExec: ' . $toExec);
 		$execResult = exec($toExec);
-		
 		My_Logger::log('execResult: ' . $execResult);
 		
+		self::proccessErrorFile($error_file);
+		
 		// OK Now we need to see what classes have been generated in this directory, and then call that when executing
-		$directory_contents = scandir( $mTempFolder . "\\" . $vFilePrefix );
-		if( sizeof($directory_contents) < 3 ) {
-		    
-		    if(file_exists($error_file)){
-		        $compiler_errors = file_get_contents($error_file);
-		        if(strlen($compiler_errors)>0){
-		            $cex = new CompilerException("There were compiler errors.");
-		            $cex->compiler_output = $compiler_errors;
-		            $cex->error_file = $error_file;
-		            My_Logger::log(__METHOD__ . " win compiler errors:\n" . $compiler_errors);
-		            throw $cex;
-		        }
-		    }
-		    
+		$directory_contents = scandir($mTempFolder . "\\" . $vFilePrefix);
+		if (sizeof($directory_contents) < 3) {
 			throw new Exception("When Trying to generate a new randomised question, Compilation Failed. Reason: " . $execResult);
 		}
 		
 		// At this point, I'm assuming we have only 1 main class
 		$program_to_run = null;
-		foreach( $directory_contents as $dc ) {
-			if( strlen($dc) > 5 ) {
+		foreach ( $directory_contents as $dc ) {
+			if (strlen($dc) > 5) {
 				$program_to_run = str_replace(".class", "", $dc);
 			}
 		}
-
-
-		if( !is_null($program_to_run) ){
+		
+		if (!is_null($program_to_run)) {
 			
 			$toExec = "java -cp \"" . $mTempFolder . "\\" . $vFilePrefix . "\" " . $program_to_run . " > \"" . $mTempFolder . "\\" . $vFilePrefix . ".txt\"";
-			$fh = fopen("$mTempFolder/".$vFilePrefix.".bat", 'w');
-			fwrite($fh,$toExec);
+			$fh = fopen("$mTempFolder/" . $vFilePrefix . ".bat", 'w');
+			fwrite($fh, $toExec);
 			fclose($fh);
-		
-			//Apparently this line is trying to execute the generated .bat file, but since my os doesn't have the limitexec.exe utility
-			//php trhows a warning and the expecte txt afterwards is not generated, so for now I'm commenting this out and
-			//replacing with a direct call to the .bat file
-			//$toExec = '"' . $mTempFolder . "\\limitexec.exe\" 5 ".$vFilePrefix; 
-			$toExec = $mTempFolder . "\\" .$vFilePrefix . ".bat";
-			//echo "EXECUTING: " . $toExec;
+			
+			// Apparently this line is trying to execute the generated .bat file, but since my os doesn't have the limitexec.exe utility
+			// php trhows a warning and the expecte txt afterwards is not generated, so for now I'm commenting this out and
+			// replacing with a direct call to the .bat file
+			// $toExec = '"' . $mTempFolder . "\\limitexec.exe\" 5 ".$vFilePrefix;
+			$toExec = $mTempFolder . "\\" . $vFilePrefix . ".bat";
+			// echo "EXECUTING: " . $toExec;
 			My_Logger::log(__METHOD__ . ": " . $toExec);
-			exec($toExec);	
-		
-			$vContents = file_get_contents( Model_Shell_Compiler::os_slash( "$mTempFolder/".$vFilePrefix.".txt" ) );
-		
-			//Delete all the stuff we made
-		      /*
-			unlink("$mTempFolder/".$vFilePrefix.".bat");
-			unlink("$mTempFolder/".$vFilePrefix.".java");
-			unlink("$mTempFolder/".$vFilePrefix.".txt");
-			exec( "rmdir \"" . $mTempFolder . "\\" . $vFilePrefix . "\" /S /Q" );
-		      */
+			exec($toExec);
+			
+			$vContents = file_get_contents(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix . ".txt"));
+			
+			// Delete all the stuff we made
+			/*
+			 * unlink("$mTempFolder/".$vFilePrefix.".bat");
+			 * unlink("$mTempFolder/".$vFilePrefix.".java");
+			 * unlink("$mTempFolder/".$vFilePrefix.".txt");
+			 * exec( "rmdir \"" . $mTempFolder . "\\" . $vFilePrefix . "\" /S /Q" );
+			 */
 			return $vContents;
-	
-		}else{
+		} else {
 			return "Compilation failed! Reason:" . $execResult;
 		}
-
-		}//End Windows-specific code
-		
+	}
+	
+	/**
+	 * Inspect the contents of the error.txt file for any compilation errors.
+	 * If there were errors, throw and terminate
+	 * @param string $error_file
+	 * @throws CompilerException
+	 * @author Ivan
+	 */
+	static protected function proccessErrorFile($error_file){
+	    if (file_exists($error_file)) {
+	    	$compiler_errors = file_get_contents($error_file);
+	    	if (strlen($compiler_errors) > 0) {
+	    		$cex = new CompilerException("There were compiler errors.");
+	    		$cex->compiler_output = $compiler_errors;
+	    		$cex->error_file = $error_file;
+	    		My_Logger::log(__METHOD__ . " win compiler errors:\n" . $compiler_errors);
+	    		throw $cex;
+	    	}
+	    }
 	}
 	
 	
