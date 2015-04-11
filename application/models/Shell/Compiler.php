@@ -49,93 +49,93 @@ class Model_Shell_Compiler{
 		Model_Shell_Debug::getInstance()->log("Temporary Folder Given: $mTempFolder . File Prefix: $vFilePrefix");
 		Model_Shell_Debug::getInstance()->log("Source passed was:\n$mSource");
 		
+		//We are probably better off using a strategy pattern - Ivan
 		if(in_array(strtolower(PHP_OS), explode(",", self::NIX_OSES) )){
-			
-			// Clean up any old existing files
-			if(file_exists(   Model_Shell_Compiler::os_slash("$mTempFolder/".$vFilePrefix.".java")  )){
-				Model_Shell_Debug::getInstance()->log("Existing file exists. Removing");
-				unlink(  Model_Shell_Compiler::os_slash("$mTempFolder/".$vFilePrefix.".java")  );
-			}
-			if(file_exists(  Model_Shell_Compiler::os_slash("$mTempFolder/".$vFilePrefix) ) ){
-				Model_Shell_Debug::getInstance()->log("Existing folder exists. Removing");
-				unlink(  Model_Shell_Compiler::os_slash("$mTempFolder/".$vFilePrefix) );
-			}
-		
-			$mTempFolder = self::os_slash( $mTempFolder );
-		
-			// Output the program that's been generated into a File.
-			$fh = fopen( Model_Shell_Compiler::os_slash("$mTempFolder/".$vFilePrefix.".java")  , 'w');
-	        fwrite($fh,$mSource);
-	        fclose($fh);
-			
-			if(!is_writable($mTempFolder)) {
-				throw new Exception("Cannot write to $mTempFolder Please ensure permissions are correctly set");
-			}
-			
-			// Java sometimes generates more than one class... so we put the compiled things in a directory
-			mkdir( $mTempFolder . "/" . $vFilePrefix );
-			
-			$error_file = $mTempFolder . '/' . $vFilePrefix . '.error.txt'; //Capture error messages here - Ivan
-			// Run the program that we outputted to a file into a fully functioning Executable
-			$toExec = "javac \"" . $mTempFolder . "/".$vFilePrefix.".java\" -d \"" . $mTempFolder . "/" . $vFilePrefix . "\""
-				. ' 2> "' . $error_file . '"'    
-				;
-			Model_Shell_Debug::getInstance()->log("Attempted to execute: $toExec");
-			$execResult = exec($toExec);
-			Model_Shell_Debug::getInstance()->log("Execution result was: " . $execResult);
-			
-			self::proccessErrorFile($error_file); //Ivan
-
-			// OK Now we need to see what classes have been generated in this directory, and then call that when executing
-			$directory_contents = scandir( $mTempFolder . "/" . $vFilePrefix );
-			if( sizeof($directory_contents) < 3 ) {
-				throw new Exception("When Trying to generate a new randomised question, Compilation Failed. Reason: " . $execResult);
-			}
-
-			// At this point, I'm assuming we have only 1 main class
-			$program_to_run = null;
-			foreach( $directory_contents as $dc ) {
-				if( strlen($dc) > 5 ) {
-					$program_to_run = str_replace(".class", "", $dc);
-				}
-			}
-			
-			if( !is_null($program_to_run) ){
-
-				// Most linuxes and Unixes come with the GNU timeout program. However, OSX doesn't
-				if(in_array(strtolower(PHP_OS), array('darwin'))){
-					$toExec = realpath( APPLICATION_PATH . "/../resources/osx_timeout.sh" ) . " 5 java -cp \"" . $mTempFolder . "/" . $vFilePrefix . "\" " . $program_to_run . " > \"" . $mTempFolder . "/" . $vFilePrefix . ".txt\"";
-				}else{
-				    //For now we will only support our target platform (Ubuntu) - Ivan
-					$toExec = "timeout 5 java -cp \"" . $mTempFolder . "/" . $vFilePrefix . "\" " . $program_to_run . " > \"" . $mTempFolder . "/" . $vFilePrefix . ".txt\"";
-				}
-
-				
-				$execution_result = exec($toExec);
-				
-				Model_Shell_Debug::getInstance()->log("Java program compiled. Now executing: " . $toExec);
-				// Model_Shell_Debug::getInstance()->log("The shell Execution result (not expecting anything) was: " . $execution_result);
-				
-				$vContents = file_get_contents( Model_Shell_Compiler::os_slash( "$mTempFolder/".$vFilePrefix.".txt" ) );
-				Model_Shell_Debug::getInstance()->log("File Execution result was: " . trim($vContents) );
-
-				//Delete all the stuff we made
-				unlink("$mTempFolder/".$vFilePrefix.".java");
-				unlink("$mTempFolder/".$vFilePrefix.".txt");
-				Model_Utils_Filesystem::delete_directory($mTempFolder . "/" . $vFilePrefix );
-
-				return $vContents;
-
-			}else{
-				return "Compilation failed! Reason:" . $execResult;
-			}
-
-
+			return self::java_linux($mTempFolder, $vFilePrefix, $mSource);
 		}else{
 		    //We're running Windows (probably)
 			return self::java_win($mTempFolder, $vFilePrefix, $mSource);
 		}
 		
+	}
+	
+	static protected function java_linux($mTempFolder, $vFilePrefix, $mSource) {
+		// Clean up any old existing files
+		if (file_exists(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix . ".java"))) {
+			Model_Shell_Debug::getInstance()->log("Existing file exists. Removing");
+			unlink(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix . ".java"));
+		}
+		if (file_exists(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix))) {
+			Model_Shell_Debug::getInstance()->log("Existing folder exists. Removing");
+			unlink(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix));
+		}
+		
+		$mTempFolder = self::os_slash($mTempFolder);
+		
+		// Output the program that's been generated into a File.
+		$fh = fopen(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix . ".java"), 'w');
+		fwrite($fh, $mSource);
+		fclose($fh);
+		
+		if (!is_writable($mTempFolder)) {
+			throw new Exception("Cannot write to $mTempFolder Please ensure permissions are correctly set");
+		}
+		
+		// Java sometimes generates more than one class... so we put the compiled things in a directory
+		mkdir($mTempFolder . "/" . $vFilePrefix);
+		
+		$error_file = $mTempFolder . '/' . $vFilePrefix . '.error.txt'; // Capture error messages here - Ivan
+		// Run the program that we outputted to a file into a fully functioning Executable
+		$toExec = "javac \"" . $mTempFolder . "/" . $vFilePrefix . ".java\" -d \"" . $mTempFolder . "/" . $vFilePrefix . "\"" 
+		    	. ' 2> "' . $error_file . '"' //capture errors
+		    	;
+		Model_Shell_Debug::getInstance()->log("Attempted to execute: $toExec");
+		$execResult = exec($toExec);
+		Model_Shell_Debug::getInstance()->log("Execution result was: " . $execResult);
+		
+		self::proccessErrorFile($error_file); // Ivan
+		                                      
+		// OK Now we need to see what classes have been generated in this directory, and then call that when executing
+		$directory_contents = scandir($mTempFolder . "/" . $vFilePrefix);
+		if (sizeof($directory_contents) < 3) {
+			throw new Exception("When Trying to generate a new randomised question, Compilation Failed. Reason: " . $execResult);
+		}
+		
+		// At this point, I'm assuming we have only 1 main class
+		$program_to_run = null;
+		foreach ( $directory_contents as $dc ) {
+			if (strlen($dc) > 5) {
+				$program_to_run = str_replace(".class", "", $dc);
+			}
+		}
+		
+		if (!is_null($program_to_run)) {
+			
+			// Most linuxes and Unixes come with the GNU timeout program. However, OSX doesn't
+			if (in_array(strtolower(PHP_OS), array ('darwin'))) {
+				$toExec = realpath(APPLICATION_PATH . "/../resources/osx_timeout.sh") . " 5 java -cp \"" . $mTempFolder . "/" . $vFilePrefix . "\" " . $program_to_run . " > \"" . $mTempFolder . "/" . $vFilePrefix . ".txt\"";
+			} else {
+				// For now we will only support our target platform (Ubuntu) - Ivan
+				$toExec = "timeout 5 java -cp \"" . $mTempFolder . "/" . $vFilePrefix . "\" " . $program_to_run . " > \"" . $mTempFolder . "/" . $vFilePrefix . ".txt\"";
+			}
+			
+			$execution_result = exec($toExec);
+			
+			Model_Shell_Debug::getInstance()->log("Java program compiled. Now executing: " . $toExec);
+			// Model_Shell_Debug::getInstance()->log("The shell Execution result (not expecting anything) was: " . $execution_result);
+			
+			$vContents = file_get_contents(Model_Shell_Compiler::os_slash("$mTempFolder/" . $vFilePrefix . ".txt"));
+			Model_Shell_Debug::getInstance()->log("File Execution result was: " . trim($vContents));
+			
+			// Delete all the stuff we made
+			unlink("$mTempFolder/" . $vFilePrefix . ".java");
+			unlink("$mTempFolder/" . $vFilePrefix . ".txt");
+			Model_Utils_Filesystem::delete_directory($mTempFolder . "/" . $vFilePrefix);
+			
+			return $vContents;
+		} else {
+			return "Compilation failed! Reason:" . $execResult;
+		}
 	}
 	
 	static protected function java_win($mTempFolder, $vFilePrefix, $mSource) {
@@ -169,8 +169,7 @@ class Model_Shell_Compiler{
 		mkdir($mTempFolder . "\\" . $vFilePrefix);
 		$error_file = $mTempFolder . '\\' . $vFilePrefix . '.error.txt';
 		$toExec = "\"" . JAVAC_PATH . "\" \"" . $mTempFolder . "\\" . $vFilePrefix . ".java\" -d \"" . $mTempFolder . "\\" . $vFilePrefix . "\"" 
-			// capture any errors
-			. ' 2> "' . $error_file . '"'
+			. ' 2> "' . $error_file . '"' // capture any errors
 		    ;
 		    
 		My_Logger::log('toExec: ' . $toExec);
