@@ -1,0 +1,28 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>Concept_1</concept>
+</concepts>
+	<difficulty>1</difficulty>
+	<instructions>
+		Static substitution
+	</instructions>
+	<problem>
+		class ExampleProgram {											//HIDE
+			public static void main(String[] args){				//HIDE
+
+				int x = `s1`;
+				System.out.print(`s1`);
+
+			}//HIDE
+		}//HIDE
+	</problem>
+	
+<substitutions>
+  		<substitution val="s1">return 29;</substitution>
+  		<substitution val="s2">return "foo";</substitution> 
+</substitutions>	
+
+</question>
+
+

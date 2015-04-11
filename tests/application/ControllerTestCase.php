@@ -9,6 +9,7 @@ class ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
     protected $application;
     protected $db;
     protected $config;
+    protected $permissions_group = 'comp115-students';
     
     public function setUp() {
         $this->bootstrap = array($this, 'appBootstrap');
@@ -105,6 +106,26 @@ class ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
             $nb_questions, 
             $vConcept, 
             $quiz_ob);
+    }
+    
+    function countFiles($directory, $type=false){
+        //$files = glob($directory . '*.jpg');
+        
+        $directory = rtrim(rtrim($directory, '/'), '\\') . '/';
+        if($type)
+            $directory .= '*.' . $type;
+        else{
+            return iterator_count(new FilesystemIterator(__DIR__, FilesystemIterator::SKIP_DOTS));
+        }
+        
+        $files = glob($directory);
+        
+        if ( $files !== false ) {
+        	return count( $files );
+        }
+        else {
+        	return 0;
+        }
     }
     
 }

@@ -2,14 +2,21 @@
 
 class GenericQuestionTest extends ControllerTestCase{
     
+    protected $path;
+    
+    function setUp(){
+        parent::setUp();
+        $this->path = APPLICATION_PATH . "/../tests/fixtures";
+    }
+    
     function testGenerate(){
         $this->clearAll();
         $this->clearTemp();
-        $importer = $this->createXmlImporter();
+        $importer = $this->createXmlImporter($this->path);
         $importer->parseFile('q0.xml');
         
         //Create the quiz
-        $qz = $this->createQuiz("Some Quiz", 'comp115-students');
+        $qz = $this->createQuiz("Some Quiz", $this->permissions_group);
         
         //Add tested concept to quiz
         $this->addTestedConcept($qz, 'Concept_0', 3);
@@ -64,7 +71,7 @@ class GenericQuestionTest extends ControllerTestCase{
     function testStaticValue(){
         $this->clearAll();
         $this->clearTemp();
-        $importer = $this->createXmlImporter();
+        $importer = $this->createXmlImporter($this->path);
         $importer->parseFile('q1.xml');
         
         //Create the quiz
@@ -119,7 +126,7 @@ class GenericQuestionTest extends ControllerTestCase{
     function testRandom(){
     	$this->clearAll();
     	$this->clearTemp();
-    	$importer = $this->createXmlImporter();
+    	$importer = $this->createXmlImporter($this->path);
     	$file = 'q2.xml';
     	$concept = 'Concept_2';
     	$importer->parseFile($file);
@@ -174,7 +181,7 @@ class GenericQuestionTest extends ControllerTestCase{
     	$xml = simplexml_load_file($filepath);
     	$concept = (string)$xml->concepts->concept; //from source
     	
-    	$importer = $this->createXmlImporter();
+    	$importer = $this->createXmlImporter($this->path);
     	
     	$importer->parseFile($filename);
     
@@ -230,7 +237,7 @@ class GenericQuestionTest extends ControllerTestCase{
         $xml = simplexml_load_file($filepath);
         $concept = (string)$xml->concepts->concept; //from source
         
-        $importer = $this->createXmlImporter();
+        $importer = $this->createXmlImporter($this->path);
         
         $importer->parseFile($filename);
         
@@ -270,7 +277,7 @@ class GenericQuestionTest extends ControllerTestCase{
     	$xml = simplexml_load_file($filepath);
     	$concept = (string)$xml->concepts->concept; //from source
     	 
-    	$importer = $this->createXmlImporter();
+    	$importer = $this->createXmlImporter($this->path);
     	 
     	$importer->parseFile($filename);
     
