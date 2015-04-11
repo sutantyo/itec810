@@ -1,0 +1,169 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>_Q02</concept>
+</concepts>
+	<difficulty>1</difficulty>
+	<instructions>
+		What is printed on the screen?
+	</instructions>
+	<problem>
+		class ExampleProgram {											//HIDE
+			public static void main(String[] args){				//HIDE
+`type` `var1` = `val1`, `var2` = `val2`, `var3` = `val3`, `var4`;
+`var4` = `var2`;
+`var2` = `var3`;
+`var3` = `var1`;
+`var4` = `var3`;
+System.out.print(`var4`);
+		}//HIDE
+		}//HIDE
+	</problem>
+
+	<substitutions>
+
+		<substitution val="type">return randset(array("int", "long", "double")); 
+		</substitution>
+
+		<substitution val="var1">
+		if("%type%" == "int" || "%type%" == "long") return randset(array("i","j","k","m","n","p","q")); 
+
+      else if ("%type%" == "double") return randset(array("x","y","z","s","t","u","v","w"));  
+
+		</substitution>
+
+  		<substitution val="var2">
+		if("%type%" == "int" || "%type%" == "long") {
+		   do {
+			   $value = randset(array("i","j","k","m","n","p","q")); 
+				} 
+      while($value == "%var1%") ;
+      return $value;
+		}
+
+      else if ("%type%" == "double") {
+		do 
+		{
+		    $value = randset(array("x","y","z","s","t","u","v","w"));
+			 } 
+      while($value == "%var1%") ;
+      return $value;
+		}
+
+		</substitution> 
+
+  		<substitution val="var3">
+		if("%type%" == "int" || "%type%" == "long") {
+		   do {
+			   $value = randset(array("i","j","k","m","n","p","q")); 
+				} 
+      while($value == "%var1%" || $value == "%var2%");
+      return $value;
+		}
+
+      else if ("%type%" == "double") {
+		do 
+		{
+		    $value = randset(array("x","y","z","s","t","u","v","w"));
+			 } 
+      while($value == "%var1%" || $value == "%var2%");
+      return $value;
+		}
+
+		</substitution> 
+
+  		<substitution val="var4">
+		if("%type%" == "int" || "%type%" == "long") {
+		   do {
+			   $value = randset(array("i","j","k","m","n","p","q")); 
+				} 
+      while($value == "%var1%" || $value == "%var2%" || $value == "%var3%");
+      return $value;
+		}
+
+      else if ("%type%" == "double") {
+		do 
+		{
+		    $value = randset(array("x","y","z","s","t","u","v","w"));
+			 } 
+      while($value == "%var1%" || $value == "%var2%" || $value == "%var3%");
+      return $value;
+		}
+
+		</substitution> 
+
+
+		<substitution val="val1">
+
+		if("%type%" == "int" || "%type%" == "long") return rand(-20,20); 
+
+		else if ("%type%" == "double") return rand(-20,20) + rand(1,99)/100;  
+
+		</substitution>
+
+  		<substitution val="val2">
+		if("%type%" == "int" || "%type%" == "long") {
+		   do {
+			   $value = rand(-20,20);
+				} 
+      while($value == "%val1%") ;
+      return $value;
+		}
+
+      else if ("%type%" == "double") {
+		do 
+		{
+		    $value = rand(-20,20) + rand(1,99)/100;
+			 } 
+      while($value == "%val1%") ;
+      return $value;
+		}
+
+		</substitution> 
+
+
+  		<substitution val="val3">
+		if("%type%" == "int" || "%type%" == "long") {
+		   do {
+			   $value = rand(-20,20);
+				} 
+      while($value == "%val1%" || $value == "%val2%");
+      return $value;
+		}
+
+      else if ("%type%" == "double") {
+		do 
+		{
+		    $value = rand(-20,20) + rand(1,99)/100;
+			 } 
+      while($value == "%val1%" || $value == "%val2%");
+      return $value;
+		}
+
+		</substitution> 
+
+  		<substitution val="val4">
+		if("%type%" == "int" || "%type%" == "long") {
+		   do {
+			   $value = rand(-20,20);
+				} 
+      while($value == "%val1%" || $value == "%val2%" || $value == "%val3%");
+      return $value;
+		}
+
+      else if ("%type%" == "double") {
+		do 
+		{
+		    $value = rand(-20,20) + rand(1,99)/100;
+			 } 
+      while($value == "%val1%" || $value == "%val2%" || $value == "%val3%");
+      return $value;
+		}
+
+		</substitution> 
+
+</substitutions>	
+
+</question>
+
+

@@ -1,0 +1,68 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>_Q09</concept>
+</concepts>
+	<difficulty>1</difficulty>
+	<instructions>
+		What is printed on the screen?
+	</instructions>
+	<problem>
+		class ExampleProgram {											//HIDE
+			public static void main(String[] args){				//HIDE
+int `var1` = `val3`, `var2`;
+`var2` = `val4`;
+
+for(int `s1` = `val1`; `s1``op1``val2`; `s1``up1`)
+   if(`var2``op4``var1`)
+      `var1``op2``var1``op3``s1`;
+System.out.print(`var1`);
+
+		}//HIDE
+		}//HIDE
+	</problem>
+	
+<substitutions>
+
+  		<substitution val="var1">return randset(array("sum","total","tmp","number","count"));
+		</substitution> 
+
+  		<substitution val="var2">return randset(array("flag", "bound", "threshold", "limit"));
+		</substitution> 
+
+  		<substitution val="op2">return randset(array(" = "));
+		</substitution> 
+
+  		<substitution val="op3">return randset(array(" + "," - "));
+		</substitution> 
+
+  		<substitution val="s1">return randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+		</substitution> 
+
+   	<substitution val="op1">return randset(array(" != ", " &lt; ", " &lt;= "));
+		</substitution>
+
+		<substitution val="val1">return randset(array(1,2,3,4,5));
+		</substitution>
+
+		<substitution val="val2">return %val1% + randset(array(2,3,4,5));
+		</substitution>
+
+		<substitution val="val3">return randset(array(0,1));
+		</substitution>
+
+		<substitution val="val4">return rand(-5,5);
+		</substitution>
+
+		<substitution val="up1">return randset(array("++", " =  %s1% + 1"));
+		</substitution>
+
+   	<substitution val="op4">return randset(array(" != ", " &lt; ", " &lt;= ", " &gt; ", " &gt;= "));
+		</substitution>
+
+
+</substitutions>	
+
+</question>
+
+

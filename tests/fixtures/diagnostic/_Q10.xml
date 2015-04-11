@@ -1,0 +1,84 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>_Q10</concept>
+</concepts>
+	<difficulty>1</difficulty>
+	<instructions>
+		What is printed on the screen?
+	</instructions>
+	<problem>
+		class ExampleProgram {											//HIDE
+			public static void main(String[] args){				//HIDE
+
+for(int `s1` = `val1`; `s1``op1``val2`; `s1``up1`)
+  if(`s1``op2``val4`)
+     `stat1`
+  else 	  
+     for(int `s2` = `val5`; `s2``op3``val6`; `s2`++)		  
+        `stat2`
+
+		}//HIDE
+		}//HIDE
+	</problem>
+	
+<substitutions>
+
+  		<substitution val="s1">return randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+		</substitution> 
+
+  		<substitution val="s2">do $value = randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+      while($value == "%s1%");
+      return $value;
+		</substitution> 
+
+   	<substitution val="op1">return randset(array(" != ", " &lt; ", " &lt;= "));
+		</substitution>
+
+   	<substitution val="op2">return randset(array(" != ", " &lt; ", " &lt;= ", " &gt; ", " &gt;= "));
+		</substitution>
+
+   	<substitution val="op3">return randset(array(" != ", " &lt; ", " &lt;= "));
+		</substitution>
+
+		<substitution val="val1">return randset(array(0,1,2,3,4,5));
+		</substitution>
+
+		<substitution val="val2">return %val1% + randset(array(2,3,4));
+		</substitution>
+
+		<substitution val="up1">return randset(array("++", " =  %s1% + 1"));
+		</substitution>
+
+		<substitution val="val4">
+      if("%op2%" == " != ") 
+		    return %val1% + randset(array(-1,0,1,2));
+		else if("%op2%" == " &lt; ") 
+		    return %val1% + randset(array(1,2,3));		 
+		else if("%op2%" == " &lt;= ") 
+		    return %val1% + randset(array(0,1,2));		 
+		else if("%op2%" == " &gt; " || "%op2%" == " &gt;= ") 
+		    return %val1% + randset(array(-1,0,1));		 
+		</substitution>
+
+		<substitution val="val5">return randset(array("%s1%","%s1%","%s1%",2,4,5));
+		</substitution>
+
+		<substitution val="val6">
+		if("%val5%" == "%s1%")
+           return randset(array("%s1% + 1","%s1% + 2","%s1% + 3"));
+      else 
+           return %val5% + randset(array(1,2,2,3,3));
+		</substitution>
+
+		<substitution val="stat1">return randset(array("System.out.print('+');", "System.out.print('#');",  "System.out.print('=');", "System.out.print('*');", "System.out.print('@');", "System.out.println('+');", "System.out.println('#');", "System.out.println('=');", "System.out.println('*');", "System.out.println('@');"));
+		</substitution>
+
+		<substitution val="stat2">return randset(array("System.out.print('-');", "System.out.print('/');",	"System.out.print('!');", "System.out.print('$');", "System.out.println('-');", "System.out.println('/');",  "System.out.println('!');", "System.out.println('$');"));
+		</substitution> 
+
+</substitutions>	
+
+</question>
+
+

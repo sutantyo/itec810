@@ -1,0 +1,81 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>_Q07</concept>
+</concepts>
+	<difficulty>1</difficulty>
+	<instructions>
+		What is printed on the screen?
+	</instructions>
+	<problem>
+		class ExampleProgram {											//HIDE
+			public static void main(String[] args){				//HIDE
+`s1` `s2`, `s3`, `s4`;
+`s2` = `s5`;
+`s3` = `s6`;
+`s4` = `s7`;
+
+if(`s2``s8``s3`)
+   if(`s9``s4``s10``s2``s11`)
+      `s2` = `s2`  + 1;
+   else
+      `s2` = 2*`s2`;
+else
+   `s2` = 2*`s2` + 1;
+
+System.out.print(`s2`); 
+		}//HIDE
+		}//HIDE
+	</problem>
+	
+<substitutions>
+
+		<substitution val="s1">return randset(array("int")); 
+		</substitution>
+
+		<substitution val="s2"> return randset(array("i","j","k","m","n","p","q","r","s","t","u","v")); 
+  		</substitution>
+
+  		<substitution val="s3">do $value = randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+      while($value == "%s2%");
+      return $value;
+		</substitution> 
+
+  		<substitution val="s4">do $value = randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+      while($value == "%s2%" || $value == "%s3%");
+      return $value;
+		</substitution> 
+
+		<substitution val="s5">return randset(array(-5,-4,-3,-2,-1,1,2,3,4,5));
+		</substitution>
+
+		<substitution val="s6">return rand(-10, 10);
+		</substitution>
+
+		<substitution val="s7">return rand(-10, 10);
+		</substitution>
+
+   	<substitution val="s8">return randset(array(" == ", " != ", " &lt; ", " &lt;= ", " &gt; ", " &gt;= "));
+		</substitution>
+
+   	<substitution val="s9">return randset(array("", "", "", "!("));
+		</substitution>
+
+   	<substitution val="s10">return randset(array(" == ", " != ", " &lt; ", " &lt;= ", " &gt; ", " &gt;= "));
+		</substitution>
+
+		<substitution val="s11"> if("%s9%" == "!(") return ")"; else return "";
+		</substitution>
+
+</substitutions>	
+
+</question>
+
+
+
+
+
+
+
+
+

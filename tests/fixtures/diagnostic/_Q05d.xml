@@ -1,0 +1,60 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>_Q05</concept>
+</concepts>
+	<difficulty>1</difficulty>
+	<instructions>
+		What is printed on the screen?
+	</instructions>
+	<problem>
+		class ExampleProgram {											//HIDE
+			public static void main(String[] args){				//HIDE
+`s1` `s2` = `s3`, `s4` = `s5`;
+
+if(`s2``s6``s4`)
+   `s2` = `s2``s7``s4`;
+else 
+   `s2` = `s2``s8``s4`;
+
+System.out.print(`s2`);
+		}//HIDE
+		}//HIDE
+	</problem>
+	
+<substitutions>
+
+		<substitution val="s1">return randset(array("int")); 
+		</substitution>
+
+		<substitution val="s2"> return randset(array("i","j","k","m","n","p","q","r","s","t","u","v")); 
+  		</substitution>
+
+		<substitution val="s3">return randset(array(-10, -9, -8, -7, -6, -5, -4, -3, -2, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+		</substitution>
+
+  		<substitution val="s4">do $value = randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+      while($value == "%s2%");
+      return $value;
+		</substitution> 
+
+		<substitution val="s5">return randset(array(-10, -9, -8, -7, -6, -5, -4, -3, -2, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+		</substitution>
+
+		<substitution val="s6">return randset(array(" == ", " != ", " &lt; ", " &lt;= ", " &gt; ", " &gt;= "));
+		</substitution>
+
+		<substitution val="s7">return randset(array(" + ", " - ", "*", "/"));
+		</substitution>
+
+		<substitution val="s8">
+          if("%s7%" == " + ") return " - "; else if ("%s7%" == " - ") return " + ";
+          if("%s7%" == "*") return "/"; else if ("%s7%" == "/") return "*";
+		</substitution>
+
+
+
+</substitutions>	
+
+</question>
+

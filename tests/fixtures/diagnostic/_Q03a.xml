@@ -1,0 +1,58 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>_Q03</concept>
+</concepts>
+	<difficulty>1</difficulty>
+	<instructions>
+		What is printed on the screen?
+	</instructions>
+	<problem>
+		class ExampleProgram {												//HIDE
+			public static void main(String[] args){				//HIDE
+`type` `var1` = `val1`, `var2` = `val2`, `var3`;
+`var3` = `val3`;
+`var2` = `var1`/`var2``op1``var3`;
+System.out.print(`var2`);
+		}//HIDE
+		}//HIDE
+	</problem>
+	
+<substitutions>
+
+		<substitution val="type">return randset(array("int")); 
+		</substitution>
+
+		<substitution val="var1"> return randset(array("i","j","k","m","n","p","q","r","s","t","u","v")); 
+  		</substitution>
+
+  		<substitution val="var2">do $value = randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+      while($value == "%var1%");
+      return $value;
+		</substitution> 
+
+  		<substitution val="var3">do $value = randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+      while($value == "%var1%" || $value == "%var2%");
+      return $value;
+		</substitution> 
+
+		<substitution val="val1">return 6*rand(2,7) + 1;
+		</substitution>
+
+		<substitution val="val2">return randset(array(2, 3));
+		</substitution>
+
+		<substitution val="val3">return rand(-5, 5);
+		</substitution>
+
+		<substitution val="op1">return randset(array(" + " , " - "));
+		</substitution>
+
+
+
+
+</substitutions>	
+
+</question>
+
+

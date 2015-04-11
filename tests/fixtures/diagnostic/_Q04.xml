@@ -1,0 +1,79 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>_Q04</concept>
+</concepts>
+	<difficulty>1</difficulty>
+	<instructions>
+		What is printed on the screen?
+	</instructions>
+	<problem>
+		class ExampleProgram {												//HIDE
+			public static void main(String[] args){				//HIDE
+`type` `var1` = `val1`, `var2` = `val2`, `var3`, `var4`;
+`var4` = `val3`;
+`var3` = `var4`;
+`var2` = `par1``var1``op1``var3``par2``op2``par3``var2``op3``var4``par4`;
+System.out.print(`var2`);
+		}//HIDE
+		}//HIDE
+	</problem>
+	
+<substitutions>
+
+		<substitution val="type">return randset(array("int")); 
+		</substitution>
+
+		<substitution val="var1"> return randset(array("i","j","k","m","n","p","q","r","s","t","u","v")); 
+  		</substitution>
+
+  		<substitution val="var2">do $value = randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+      while($value == "%var1%");
+      return $value;
+		</substitution> 
+
+  		<substitution val="var3">do $value = randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+      while($value == "%var1%" || $value == "%var2%");
+      return $value;
+		</substitution> 
+
+  		<substitution val="var4">do $value = randset(array("i","j","k","m","n","p","q","r","s","t","u","v"));
+      while($value == "%var1%" || $value == "%var2%" || $value == "%var3%");
+      return $value;
+		</substitution> 
+
+		<substitution val="val1">return randset(array(-3, -2, -1, 1, 2, 3));
+		</substitution>
+
+		<substitution val="val2">return randset(array(2, 3, 5, 10));
+		</substitution>
+
+		<substitution val="val3">return randset(array(-7, -6, -4, -1, 1, 4, 6, 7)); 
+		</substitution>
+
+		<substitution val="op1"> return randset(array(" + ", " - ", "*"));
+		</substitution>
+
+ 		<substitution val="op2"> return randset(array("%", "/")); 
+  		</substitution>
+
+		<substitution val="op3"> return randset(array(" + ", " - ", "*"));
+		</substitution>
+ 
+		<substitution val="par1"> return randset(array("(", "", ""));
+		</substitution>
+
+		<substitution val="par2"> if("%par1%" == "(") return ")"; else return "";
+		</substitution>
+
+		<substitution val="par3"> return randset(array("(", "", "", ""));
+		</substitution>
+
+		<substitution val="par4"> if("%par3%" == "(") return ")"; else return "";
+		</substitution>
+
+</substitutions>	
+
+</question>
+
+

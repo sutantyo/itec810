@@ -1,0 +1,54 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>_Q01</concept>
+</concepts>
+
+	<difficulty>1</difficulty>
+	<instructions>
+		What is printed on the screen?
+	</instructions>
+	<problem>
+		class ExampleProgram {												//HIDE
+			public static void main(String[] args){							//HIDE
+`type` `var` = `val1`;
+`var` = `val2`;
+System.out.print(`var`);
+`var` = `val3`;
+		}//HIDE
+		}//HIDE
+	</problem>
+	
+<substitutions>
+		<substitution val="type">
+		    randset(array("String"))
+		</substitution>
+
+  		<substitution val="var">
+		return randset(array("name", "color", "variable", "myString", "myName","myColor"));
+		</substitution> 
+
+		<substitution val="val1">
+		return randset(array("\"blue\"","\"cerise\"","\"chestnut\"","\"cyan\"","\"denim\"","\"ginger\"","\"gold\"","\"grape\"","\"gray\"","\"green\"","\"indigo\"","\"linen\"","\"mauve\"","\"navy\"","\"olive\"","\"peach\"","\"prune\"","\"raspberry\"","\"orange\"","\"kiwi\"","\"tuscan\"","\"vanilla\"","\"violet\""));
+
+		</substitution>
+
+		<substitution val="val2">
+      do
+      {
+        $value =  randset(array("\"blue\"","\"cerise\"","\"chestnut\"","\"cyan\"","\"denim\"","\"ginger\"","\"gold\"","\"grape\"","\"gray\"","\"green\"","\"indigo\"","\"linen\"","\"mauve\"","\"navy\"","\"olive\"","\"peach\"","\"prune\"","\"raspberry\"","\"orange\"","\"kiwi\"","\"tuscan\"","\"vanilla\"","\"violet\""));
+		} 
+      while($value == "\"".%val1%."\""); return $value;
+		</substitution>
+
+		<substitution val="val3">
+		do
+      {
+        $value =          $value =  randset(array("\"blue\"","\"cerise\"","\"chestnut\"","\"cyan\"","\"denim\"","\"ginger\"","\"gold\"","\"grape\"","\"gray\"","\"green\"","\"indigo\"","\"linen\"","\"mauve\"","\"navy\"","\"olive\"","\"peach\"","\"prune\"","\"raspberry\"","\"orange\"","\"kiwi\"","\"tuscan\"","\"vanilla\"","\"violet\""));
+		} 
+      while($value == "\"".%val1%."\"" || $value == "\"".%val2%."\""); return $value;
+		</substitution>
+	</substitutions>	
+	
+	</question>
+
