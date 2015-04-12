@@ -165,6 +165,8 @@ class ShellController extends Zend_Controller_Action{
 				
 				/*	QuizAttempt isn't finished... Fetch a questionBase */
 				$vQuestionBase =  Model_Shell_QuestionChooser::select_next_question($mQuizAttempt, true);
+				
+				$path = $this->getFrontController()->getParam('xml_path'); //This way we can set it externally, otherwise, called code will just use the configuration value
 		
 				/* Make a GeneratedQuestion */
 				$vCounter = 0; //Make sure we don't get any fluke no-text answers
@@ -173,7 +175,7 @@ class ShellController extends Zend_Controller_Action{
 						Model_Shell_Debug::getInstance()->log("vQuestionBase: " . isset($vQuestionBase));
 						Model_Shell_Debug::getInstance()->log("Generating... from " . $vQuestionBase->getXml());
 						
-						$vGen = Model_Quiz_GeneratedQuestion::fromQuestionBase($vQuestionBase);
+						$vGen = Model_Quiz_GeneratedQuestion::fromQuestionBase($vQuestionBase, $path);
 				
 						if($vGen->getCorrect_answer()!="" && $vGen->getCorrect_answer()!= "\r\n"){
 							break;

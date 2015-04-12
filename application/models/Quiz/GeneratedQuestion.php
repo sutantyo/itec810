@@ -94,7 +94,7 @@ class Model_Quiz_GeneratedQuestion
 	 */
 	public static function fromScratch($instructions,$question_data,$correct_answer,$vQuestion){
 		
-		Model_Shell_Debug::getInstance()->log("Writing question to the database");
+		Model_Shell_Debug::getInstance()->log("Writing question to the database", __METHOD__);
 		
 		$db = Zend_Registry::get("db");
 		$sql = "INSERT INTO generated_questions(generated_id,instructions,question_data,correct_answer,question_basequestion_id) VALUES(NULL, ".$db->quote($instructions).",".$db->quote($question_data).",".$db->quote($correct_answer).",".$db->quote($vQuestion->getID()).")";
@@ -125,7 +125,7 @@ class Model_Quiz_GeneratedQuestion
 	 * @param Model_Quiz_QuestionBase $vQB
 	 * @return Model_Quiz_GeneratedQuestion NULL if not defined
 	 */
-	public static function fromQuestionBase($vQB){
+	public static function fromQuestionBase($vQB, $path=false){
 		$db = Zend_Registry::get("db");
 		
 		//Firstly see if there's any 'spare' Model_Quiz_GeneratedQuestions
@@ -137,7 +137,7 @@ class Model_Quiz_GeneratedQuestion
 			return Model_Quiz_GeneratedQuestion::fromID($row['generated_id']);
 		}
 
-		return self::generateNewFromQuestionBase($vQB);	//Return a new generated question as there are no spares in the database
+		return self::generateNewFromQuestionBase($vQB, $path);	//Return a new generated question as there are no spares in the database
 	}
 	
 	
@@ -162,13 +162,16 @@ class Model_Quiz_GeneratedQuestion
 	 * @param Model_Quiz_QuestionBase $vQuestionBase
 	 * @return Model_Quiz_GeneratedQuestion
 	 */
-	public static function generateNewFromQuestionBase( Model_Quiz_QuestionBase $vQuestionBase ) {
+	public static function generateNewFromQuestionBase( Model_Quiz_QuestionBase $vQuestionBase, $path=false ) {
 		/*
 	    $path = "/../xml/questions/";
 	    $path = "/../tests/fixtures/";*/
 	    
-	    $config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
-	    $path = $config->xml->import_path;
+	    if (!$path){
+	        $config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
+	        $path = $config->xml->import_path;
+	    }
+	    
 	    My_Logger::log(__METHOD__ . " Using path: $path");
 	    
 		$vGenerated = null;

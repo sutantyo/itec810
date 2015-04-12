@@ -14,7 +14,7 @@ class QuizSessionTest extends ControllerTestCase{
     	$this->path = APPLICATION_PATH . "/../tests/fixtures/quiz1";
     }
     
-    function testImport(){
+    function testSession(){
         $this->clearAll();
         $this->clearTemp();
         
@@ -27,9 +27,24 @@ class QuizSessionTest extends ControllerTestCase{
         $this->addTestedConcept($qz, 'T1', 1);
         $this->addTestedConcept($qz, 'T2', 1);
         
+        
+        $this->getFrontController()->setParam('xml_path', $this->path); //Override for our tests
+
+        return;
+        
         //Start quiz
-        //$this->assertRows()
-        	
+        //first login
+        $this->getRequest()->setMethod('POST')
+            ->setParams(array('rqz-username'=>'hugo',
+                              'rqz-password'=>'123456'
+                        ));
+        $this->dispatch('/auth/login');
+        $this->resetRequest()->resetResponse();
+        
+        $url = 'shell/attempt?quiz=' . $qz->getID();
+        My_Logger::log(__METHOD__ . " ****************** $url");
+        $this->dispatch($url);
+        $this->resetRequest()->resetResponse();
     }
     
 }
