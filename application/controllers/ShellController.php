@@ -120,9 +120,9 @@ class ShellController extends Zend_Controller_Action {
 		
 		/* Calculate the total questions needed for this quiz */
 		$vTCs = $quiz->getTestedConcepts();
-		$vTotalQuestions = 0;
+		$total_questions = 0;
 		foreach ( $vTCs as $vTC ) {
-			$vTotalQuestions = $vTotalQuestions + $vTC->getNumber_tested();
+			$total_questions = $total_questions + $vTC->getNumber_tested();
 		}
 		
 		/* We have our quizAttempt ready to go. Now we look to see if we're resuming a question or not */
@@ -149,7 +149,7 @@ class ShellController extends Zend_Controller_Action {
 			
 			/* Have we finished this quiz? */
 			
-			if ($mQuizAttempt->getQuestionAttemptCount() >= $vTotalQuestions) {
+			if ($mQuizAttempt->getQuestionAttemptCount() >= $total_questions) {
 				
 				// Close this attempt and display a result later on down the page
 				$mQuizAttempt->setDate_finished($now);
@@ -198,7 +198,7 @@ class ShellController extends Zend_Controller_Action {
 		$this->view->finished = $mFinished;
 		$this->view->marking = $mMarking;
 		$this->view->mQuizAttempt = $mQuizAttempt;
-		$this->view->vTotalQuestions = $vTotalQuestions;
+		$this->view->vTotalQuestions = $total_questions;
 	}
 
 	public function imagegenAction() {
