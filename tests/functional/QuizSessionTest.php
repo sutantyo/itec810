@@ -30,7 +30,7 @@ class QuizSessionTest extends ControllerTestCase{
         
         $this->getFrontController()->setParam('xml_path', $this->path); //Override for our tests
 
-        return;
+        //return;
         
         //Start quiz
         //first login
@@ -42,9 +42,14 @@ class QuizSessionTest extends ControllerTestCase{
         $this->resetRequest()->resetResponse();
         
         $url = 'shell/attempt?quiz=' . $qz->getID();
-        My_Logger::log(__METHOD__ . " ****************** $url");
+        My_Logger::log(__METHOD__ . " >>>>> Start test at url: $url");
         $this->dispatch($url);
         $this->resetRequest()->resetResponse();
+        
+        $this->assertRows(1, 'quiz_attempt');
+        $this->assertRows(1, 'generated_questions');
+        $this->assertRows(1, 'question_attempt');
+        
     }
     
 }

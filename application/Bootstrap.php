@@ -88,3 +88,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
 }
 
+/**
+ * Developer only class, allows use fine grained logging
+ * @author Ivan Rodriguez
+ *
+ */
+class Zend_Db_Adapter_Ex_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql{
+	function query($sql, $bind = array()){
+	    My_Logger::log('QUERY: ' .$sql);
+		return parent::query($sql, $bind);	    
+	}    
+}
