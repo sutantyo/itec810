@@ -1,0 +1,144 @@
+<?php //echo "Test";
+$vType = $this->type;
+$mQuestionAttempt = $this->questionAttempt;
+
+echo "<h3>Results</h3>\n";
+$vCorrect = false;
+
+if($vType=="output"){
+	
+	//Mark the textinput called ans
+	echo "<p>Your output:</p>\n";
+	echo "<pre>".$_POST['ans']."</pre>\n";
+
+	//echo "<p>STRCMP: " . strcmp($_POST['ans'],$mQuestionAttempt->getGeneratedQuestion()->getCorrect_answer()) . "</p>";
+
+	if(strcmp($_POST['ans'],$mQuestionAttempt->getGeneratedQuestion()->getCorrect_answer())==0)
+		$vCorrect = true;
+	else{
+		//Look at removing all the spaces and newlines
+		$s1 = str_replace("\n", "", $_POST['ans']);
+		$s1 = str_replace(" ", "", $s1);
+		$s1 = str_replace("\r", "", $s1);
+	
+		$s2 = str_replace("\n", "", $mQuestionAttempt->getGeneratedQuestion()->getCorrect_answer());
+		$s2 = str_replace(" ", "", $s2);
+		$s2 = str_replace("\r", "", $s2);
+	
+		/*
+		echo "<p>STRCMP(2): " . strcmp($s1,$s2) . "</p>";
+		echo "<p>".$s1."</p>\n";
+		echo "<p>".$s2."</p>\n";
+		*/
+	
+		if(strcmp($s1,$s2)==0){
+			$vCorrect=true;
+		}
+	}
+	
+}elseif($vType=="multiple"){
+	
+	if($_POST['altans']!="1" && $_POST['altans']!="2" && $_POST['altans']!="3" && $_POST['altans']!="4"){
+		die("Invalid Choice Passed.");
+	}
+
+	echo "<p>Your choice: " . $_SESSION['mc_data'][$_POST['altans']] . "</p>\n"; 
+	
+	//Is it right?
+	if($_SESSION['mc_data'][$_POST['altans']] == $mQuestionAttempt->getGeneratedQuestion()->getCorrect_answer() ){
+		$vCorrect=true;
+	}
+	else{
+		//Is there a hint we can offer this person?
+		$vAltAns = $mQuestionAttempt->getGeneratedQuestion()->getFullAltAnswers();
+		foreach($vAltAns as $vAA){
+			if($vAA[0]== $_SESSION['mc_data'][$_POST['altans']]){
+				//Found our match. Words of wisdom?
+				if(strlen($vAA[1])>1){
+					echo "<p><strong>Hint: </strong>".$vAA[1]."</p>\n";
+				}
+				break;
+			}
+		}
+	
+	}
+	
+}elseif($vType=="fill-in"){
+
+	//Start by taking the problem, removing the textareas and substituting our submitted solution
+	$vMyAns = $mQuestionAttempt->getGeneratedQuestion()->getQuestion_data();
+	foreach($_POST as $vKey=>$vPostVar){
+		if(substr($vKey,0,4)=="sub_"){
+			//replace it
+			$vMyAns = preg_replace("/`textarea.+".$vKey.".+textarea`/", stripslashes($vPostVar), $vMyAns);
+		}
+	}
+
+	//Now we have the student's complete problem... we have to compile it and get the result
+	$vStudentResult = Model_Shell_Compiler::compileAndReturn($mQuestionAttempt->getID() . "_" . rand(1,999),$vMyAns);
+
+	echo "<p>Your Result:</p>";
+	echo "<pre>" . $vStudentResult . "</pre>";
+
+	echo "<p>Expected Result:</p>";
+	echo "<pre>".$mQuestionAttempt->getGeneratedQuestion()->getCorrect_answer()."</pre>\n<hr/>\n";
+
+	if(strcmp($vStudentResult,$mQuestionAttempt->getGeneratedQuestion()->getCorrect_answer())==0){
+		$vCorrect=true;
+	}
+
+}
+
+
+
+//Generic marking bit
+if($vCorrect){
+
+	//Was this our first attempt or second attempt?
+	if($mQuestionAttempt->getInitial_result()==null){
+		$mQuestionAttempt->setInitial_result("1");
+	}else{
+		$mQuestionAttempt->setSecondary_result("1");			
+	}
+
+	//Mark it as finished
+	$mQuestionAttempt->setTime_finished(strtotime("now"));
+
+	//Tell the user that it was correct
+	echo "<p>Well done! That was the correct answer!<br/>Time taken in seconds: ".(strtotime("now") - $mQuestionAttempt->getTime_started())."</p>\n";
+
+}else{
+
+	//First or last attempt?
+	if($mQuestionAttempt->getInitial_result() == null){
+		
+		$mQuestionAttempt->setInitial_result("0");
+		echo "<p>That answer was incorrect. You will get a second attempt</p>\n";
+				
+	}else{
+		$mQuestionAttempt->setSecondary_result("0");			
+	
+		//Close the attempt
+		$mQuestionAttempt->setTime_finished(strtotime("now"));
+	
+		echo "<p>That answer was also incorrect. You will now be given a new question</p>\n";
+		
+		// Display the Question again
+		$question_text = $mQuestionAttempt->getGeneratedQuestion()->getQuestion_data();
+		echo "<h3>Examined Question</h3>\n";
+		echo "<div class='question-answer'>" . View_Helper_Question::output_with_hints($question_text) . "</div>\n";
+		echo "<div id='question-hint-box'></div>\n";
+		
+		//Show them the correct answer if it's not a fill-in
+		if($vType!="fill-in"){
+			echo "<h3>Correct Answer</h3>\n";
+			echo "<p>The correct answer was: </p>\n";
+			echo "<pre>".$mQuestionAttempt->getGeneratedQuestion()->getCorrect_answer()."</pre>\n";
+		}else{
+			//Fill-in answer code could go here
+		}
+	}	
+}
+
+//Continue Button
+echo "<p><input type='submit' value='Continue' /></p>\n";

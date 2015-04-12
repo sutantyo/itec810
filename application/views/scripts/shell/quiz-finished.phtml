@@ -1,0 +1,19 @@
+<?php
+$vQuiz = $this->quiz;
+$mQuizAttempt = $this->quizAttempt;
+$vTotalQuestions = $this->total_questions;
+
+ 
+echo "<h3>Quiz Results</h3>\n";
+echo "<p>Congratulations. You finished the quiz!</p>\n";
+$vTotalScore = $mQuizAttempt->getTotal_score();
+echo "<p>Your score was " . $vTotalScore . " / " . $vTotalQuestions . "</p>\n";
+if(($vTotalScore/$vTotalQuestions)*100 < $vQuiz->getPercentage_pass()){
+	echo "<p>Unfortunately you didn't meet the " . $vQuiz->getPercentage_pass() . "% needed to pass this quiz. You have failed this attempt. However, you <em>may</em> be able to take another - check the main screen.</p>\n";
+}else{
+	echo "<p>You <em>passed</em> this quiz.</p>\n";
+}
+
+echo "<button onClick='javascript:window.close();'>OK</button>\n";
+	
+	

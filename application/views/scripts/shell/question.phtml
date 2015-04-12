@@ -1,0 +1,61 @@
+<?php //echo "Test";
+$vType = $this->type;
+$mQuestionAttempt = $this->questionAttempt;
+
+echo "<p><strong>Instructions</strong>: " . $mQuestionAttempt->getGeneratedQuestion()->getInstructions() . "</p>\n";
+echo '<input type="hidden" name="marking" value="1" />';
+
+
+if($vType=="output"){
+
+	/*OUTPUT type question.
+	 Problem is an image, Solution is a single textbox
+	 */
+	echo "<p><img src='". $this->url( array("controller" => "shell", "action" => "imagegen" ) ) ."/?gid=". $mQuestionAttempt->getGeneratedQuestion()->getID() ."' /></p>\n";
+
+	echo "<p><strong>Write the program output here</strong></p>";
+	echo "<textarea name='ans' rows='10' cols='50'></textarea>\n";
+	echo "<p><input type='submit' value='Submit Answer' /></p>\n";
+
+}elseif($vType=="multiple"){
+
+	echo "<p><img src='". $this->url( array("controller" => "shell", "action" => "imagegen" ) ) ."/?gid=". $mQuestionAttempt->getGeneratedQuestion()->getID() ."' /></p>\n";
+	echo "<p>Select the correct answer below</p>\n";
+
+	//Put the alternate answers and real answer into an array.
+	$vPossibleAnswers = $mQuestionAttempt->getGeneratedQuestion()->getBareAltAnswers();
+	$vPossibleAnswers[] = $mQuestionAttempt->getGeneratedQuestion()->getCorrect_answer();
+
+	shuffle($vPossibleAnswers);
+
+	//Store this data in the session. Don't mark it as correct or anything, just associate numbers with answers
+	$_SESSION['mc_data'] = array();
+	$vCounter = 1;
+	foreach($vPossibleAnswers as $vPA){
+		$_SESSION['mc_data'][$vCounter] = $vPA;
+		echo "<div class='mc'><input type='radio' name='altans' value='$vCounter'> " . $vPA . "</div>\n";
+		$vCounter++;
+	}
+
+	echo "<p style='margin-top:20px'><input type='submit' value='Submit Answer' /></p>\n";
+
+		}elseif($vType=="fill-in"){
+		echo "<hr/>\n";
+		echo "<pre>\n";
+	$vQuestionData = str_replace("<", "&lt;", $mQuestionAttempt->getGeneratedQuestion()->getQuestion_data());
+	$vQuestionData = str_replace(">", "&gt;", $vQuestionData);
+			//Make sure all the textareas come up nicely
+
+	$vQuestionData = str_replace("`textarea", "</pre><textarea", $vQuestionData);
+			$vQuestionData = str_replace("`/textarea`", "</textarea><pre>", $vQuestionData);
+					$vQuestionData = str_replace("`</textarea>", "></textarea>", $vQuestionData);
+
+
+							echo $vQuestionData;
+			echo "</pre>\n";
+
+			echo "<p>Sometimes it's easier to copy and paste these sorts of problems into a C++ IDE and compile and test them there.<br/>\n";
+			echo "When you've filled in the missing parts of the code, the quiz system will compile your answer and check it</p>";
+
+			echo "<input type='submit' value='Submit answer' />";
+		}
