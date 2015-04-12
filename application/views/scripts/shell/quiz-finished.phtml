@@ -13,7 +13,13 @@ if(($vTotalScore/$vTotalQuestions)*100 < $vQuiz->getPercentage_pass()){
 }else{
 	echo "<p>You <em>passed</em> this quiz.</p>\n";
 }
+?>
 
-echo "<button onClick='javascript:window.close();'>OK</button>\n";
+<button id="close_btn">OK</button>
 	
-	
+<script>
+	document.getElementById("close_btn").addEventListener('click', function(){
+		var x = opener && opener.location && opener.location.reload && opener.location.reload(); 
+		window.close();
+	});
+</script>	

@@ -1,10 +1,12 @@
-<?php //echo "Test";
-$vType = $this->type;
+<?php
 $mQuestionAttempt = $this->questionAttempt;
-
-echo "<h3>Results</h3>\n";
+$vType = strtolower($mQuestionAttempt->getQuestion_base()->getType());
 $vCorrect = false;
+?>
 
+<h3>Results</h3>
+
+<?php 
 if($vType=="output"){
 	
 	//Mark the textinput called ans

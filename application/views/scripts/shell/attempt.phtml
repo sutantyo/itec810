@@ -18,10 +18,12 @@
  **/
 
 	// For compatibility and migration to Zend
-	$vQuiz = $this->quiz;
-	$mQuestionAttempt = $this->question_attempt;
 	$mFinished = $this->finished;
 	$mMarking = $this->marking;
+	
+	$mQuestionAttempt = $this->question_attempt;
+	
+	$vQuiz = $this->quiz;
 	$mQuizAttempt = $this->mQuizAttempt;
 	$vTotalQuestions = $this->vTotalQuestions;
 ?>
@@ -32,14 +34,9 @@
 
 <?php
 
-	//Look at the quiz type - that determines what sort of display we have
-	if(isset($mQuestionAttempt) && $mQuestionAttempt!=null){
-	    $vType = strtolower($mQuestionAttempt->getQuestion_base()->getType());
-	}
-	
 	if($mMarking){
 	    // MARKING
-	    echo $this->partial('shell/marking.phtml', array('type'=>$vType, 'questionAttempt'=>$mQuestionAttempt));
+	    echo $this->partial('shell/marking.phtml', array('questionAttempt'=>$mQuestionAttempt));
 		}
 	elseif($mFinished){
 	    // QUIZ IS FINISHED
@@ -47,7 +44,7 @@
 		}
 	else{
 	    // QUESTION DISPLAY
-	    echo $this->partial('shell/question.phtml', array('type'=>$vType, 'questionAttempt'=>$mQuestionAttempt));
+	    echo $this->partial('shell/question-display.phtml', array('questionAttempt'=>$mQuestionAttempt));
 		}
 	?>
 </form>
