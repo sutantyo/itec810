@@ -67,29 +67,30 @@ class ShellController extends Zend_Controller_Action{
 		if( is_null($quiz_id) ){
 			throw new Exception("No quiz was passed. Cannot continue.");
 		}
-		$vQuiz = Model_Quiz_Quiz::fromID($quiz_id);
-		if($vQuiz==null){
+		$quiz = Model_Quiz_Quiz::fromID($quiz_id);
+		if($quiz==null){
 			throw new Exception("Quiz ID passed was invalid. Cannot continue.");
 		}
 	
 		$mFinished = false;
 		$mMarking = false;
+		$now = strtotime("now");
 	
 		//Permissions
-		if($auth_model->userInGroup($username, $vQuiz->getPermissions_group()) && $vQuiz->getOpen_date()<=strtotime("now")){	
+		if($auth_model->userInGroup($username, $quiz->getPermissions_group()) && $quiz->getOpen_date()<=$now){	
 		
 			//Have we run out of attempts?
-			$vAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $vQuiz);
-			if(sizeof($vAttempts) >= $vQuiz->getMax_attempts()){
+			$vAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $quiz);
+			if(sizeof($vAttempts) >= $quiz->getMax_attempts()){
 			
 				//It is possible that we're on our last attempt, and that it's "in progress"...check
-				$bInProgress = false;
+				$isInProgress = false;
 				foreach($vAttempts as $vAttempt){
 					if($vAttempt->getDate_finished()==null){
-						$bInProgress=true;
+						$isInProgress=true;
 					}
 				}
-				if(!$bInProgress){
+				if(!$isInProgress){
 					throw new Exception("You've exceeded your maximum attempts for this quiz. Cannot continue");
 				}
 			}		
@@ -99,7 +100,7 @@ class ShellController extends Zend_Controller_Action{
 				throw new Exception("Insufficient Permissions to take this quiz / Quiz not open yet");
 			}
 				
-			$vAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $vQuiz);
+			$vAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $quiz);
 		}
 
 
@@ -116,12 +117,12 @@ class ShellController extends Zend_Controller_Action{
 
 
 		if($mQuizAttempt==null){
-			$mQuizAttempt = Model_Quiz_QuizAttempt::fromScratch(strtotime("now"), $vQuiz, $username);
+			$mQuizAttempt = Model_Quiz_QuizAttempt::fromScratch($now, $quiz, $username);
 		}
 
 
 		/* Calculate the total questions needed for this quiz */
-		$vTCs = $vQuiz->getTestedConcepts();
+		$vTCs = $quiz->getTestedConcepts();
 		$vTotalQuestions = 0;
 		foreach($vTCs as $vTC){
 			$vTotalQuestions = $vTotalQuestions + $vTC->getNumber_tested();
@@ -155,7 +156,7 @@ class ShellController extends Zend_Controller_Action{
 			if($mQuizAttempt->getQuestionAttemptCount() >= $vTotalQuestions){
 		
 				//Close this attempt and display a result later on down the page
-				$mQuizAttempt->setDate_finished(strtotime("now"));
+				$mQuizAttempt->setDate_finished($now);
 		
 				//Calculate and store the final score
 				$mQuizAttempt->setTotal_score($mQuizAttempt->getTotal_score());
@@ -188,14 +189,14 @@ class ShellController extends Zend_Controller_Action{
 		
 		
 					/* Make a QuestionAttempt */
-					$mQuestionAttempt = Model_Quiz_QuestionAttempt::fromScratch($vQuestionBase, strtotime("now"), strtotime("now"), $mQuizAttempt, $vGen);
+					$mQuestionAttempt = Model_Quiz_QuestionAttempt::fromScratch($vQuestionBase, $now, $now, $mQuizAttempt, $vGen);
 			
 				}//End-if_finished_quizAttempt
 			}
 	
 	
 			// Pass all relevant information to the view
-			$this->view->quiz = $vQuiz;
+			$this->view->quiz = $quiz;
 			$this->view->question_attempt = $mQuestionAttempt;
 			$this->view->finished = $mFinished;
 			$this->view->marking = $mMarking;
