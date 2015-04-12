@@ -84,7 +84,7 @@ class QuizSessionTest extends ControllerTestCase{
         $this->assertXpathCount('//input[@name="marking"][@value=1]', 1);
         $this->assertXpathCount('//textarea[@name="ans"]', 1); //answer box
         
-        $attempt_id = $this->db->fetchOne("SELECT attempt_id FROM question_attempt ORDER BY attempt_id DESC LIMIT 1");
+        $attempt_id = $this->getCreatedQuestionAttemptId();
         
         //4. Send answer. Result is displayed
         My_Logger::log(__METHOD__ . " >>>>> 4. Send answer. Result is displayed");
@@ -116,6 +116,10 @@ class QuizSessionTest extends ControllerTestCase{
         $this->assertXpathCount('//button[@id="close_btn"]', 1); //close
         
         
+    }
+    
+    function getCreatedQuestionAttemptId(){
+        return $this->db->fetchOne("SELECT attempt_id FROM question_attempt ORDER BY attempt_id DESC LIMIT 1");
     }
     
     function testNoId(){
@@ -188,8 +192,86 @@ class QuizSessionTest extends ControllerTestCase{
     	$this->assertRows(1, 'quiz_attempt');
     }
     
+    function testExceededAttempts(){
+    	$this->clearAll();
+    	$this->clearTemp();
+    
+    	$importer = $this->createXmlImporter($this->path);
+    	$importer->processFiles();
+    
+    	//Create the quiz
+    	$qz = $this->createQuiz('Quiz with 1 concept', $this->permissions_group, false, false, 1);
+    
+    	$this->addTestedConcept($qz, 'T1', 1); //only one question
+    
+    	//Login
+    	$this->login('hugo');
+    
+    	$quiz_id = $qz->getID();
+    
+    	$url = 'shell/attempt?quiz=' . $quiz_id;
+    
+    	$taker = new QuizTaker($this, $url, $quiz_id);
+    	
+    	$taker->startQuiz();
+    	$this->assertRows(1, 'quiz_attempt');
+    	
+    	$attempt_id = $this->getCreatedQuestionAttemptId();
+    	$taker->sendAnswer('xx');
+    	$this->assertRows(1, 'question_attempt', "initial_result='0' AND attempt_id='$attempt_id' AND time_finished IS NULL");
+    	
+    	//return; //If I go to the site, and give a wrong answer, the question_attempt is labeled as finished, but I can just leave the quiz
+    	//Funny enough, the quiz is listed as available, but when I start it again, then the controller checks again and does the update
+    	//on the quiz_attempt row. Maybe we should force this somehow? 
+    	
+    	$taker->clickContinue();
+    	$taker->sendAnswer('yy');
+    	$this->assertRows(1, 'question_attempt', "initial_result='0' AND attempt_id='$attempt_id' AND secondary_result='0' AND time_finished IS NOT NULL");
+    	
+    	$taker->clickContinue(); //Final screen is rendered
+    	
+    	//if I try to start again, no new quiz_attempt is created
+    	$this->assertRows(1, 'quiz_attempt');
+    
+    }
     
     
+}
+
+class QuizTaker{
+    public $url;
+    public $sys;
+    public $quiz_id;
     
+    function __construct($sys, $url, $quiz_id){
+        $this->sys = $sys;
+        $this->url = $url;
+        $this->quiz_id = $quiz_id;
+    }
     
+    function startQuiz(){
+        My_Logger::log(__METHOD__ . " >>>>> 1. Start test at url: " . $this->url);
+        $this->sys->resetRequest()->resetResponse();
+        $this->sys->dispatch($this->url);
+    }
+    
+    function sendAnswer($answer){
+        My_Logger::log(__METHOD__ . " >>>>> 2. Send correct answer");
+        $this->sys->resetRequest()->resetResponse();
+        $this->sys->setPost(array(
+        		'quiz' => $this->quiz_id,
+        		'marking'=> '1',
+        		'ans' => $answer
+        ));
+        $this->sys->dispatch($this->url);
+    }
+    
+    function clickContinue(){
+        My_Logger::log(__METHOD__ . " >>>>> 3. Send Continue, new quesion is displayed");
+        $this->sys->resetRequest()->resetResponse();
+        $this->sys->setPost(array(
+        		'quiz' => $this->quiz_id,
+        ));
+        $this->sys->dispatch($this->url);
+    }
 }
