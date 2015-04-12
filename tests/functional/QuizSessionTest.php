@@ -12,6 +12,7 @@ class QuizSessionTest extends ControllerTestCase{
     function setUp(){
     	parent::setUp();
     	$this->path = APPLICATION_PATH . "/../tests/fixtures/quiz1";
+    	$this->getFrontController()->setParam('xml_path', $this->path); //Override for our tests
     }
     
     function testSession(){
@@ -26,13 +27,7 @@ class QuizSessionTest extends ControllerTestCase{
         
         $this->addTestedConcept($qz, 'T1', 1);
         $this->addTestedConcept($qz, 'T2', 1);
-        
-        
-        $this->getFrontController()->setParam('xml_path', $this->path); //Override for our tests
 
-        //return;
-        
-        
         //Login
         $this->getRequest()->setMethod('POST')
             ->setParams(array('rqz-username'=>'hugo',
@@ -123,8 +118,78 @@ class QuizSessionTest extends ControllerTestCase{
         
     }
     
-    function setPost($data){
-        $this->getRequest()->setMethod('POST')->setPost($data);
+    function testNoId(){
+        $this->clearAll();
+        $this->clearTemp();
+        
+        $importer = $this->createXmlImporter($this->path);
+        $importer->processFiles();
+        
+        //Create the quiz
+        $qz = $this->createQuiz('Quiz with 1 concept', $this->permissions_group);
+        
+        $this->addTestedConcept($qz, 'T1', 1); //only one question
+        
+        //Login
+        $this->login('hugo');
+        
+        $quiz_id = $qz->getID();
+        
+        $url = 'shell/attempt'; //no id
+        
+        // 1. Start quiz
+        My_Logger::log(__METHOD__ . " >>>>> 1. Start test at url: $url");
+        $this->resetRequest()->resetResponse();
+        $this->dispatch($url);
+        
+        
+        $this->assertRows(0, 'quiz_attempt');
+        $this->assertRows(0, 'generated_questions');
+        $this->assertRows(0, 'question_attempt');
+        //verify question view
+        /*$this->assertXpathCount('//input[@name="quiz"][@value='. $quiz_id.']', 1);
+        $this->assertXpathCount('//input[@name="marking"][@value=1]', 1);
+        $this->assertXpathCount('//textarea[@name="ans"]', 1);
+        
+        $attempt_id = $this->db->fetchOne("SELECT attempt_id FROM question_attempt");*/
     }
+    
+    function testNotOpen(){
+    	$this->clearAll();
+    	$this->clearTemp();
+    
+    	$importer = $this->createXmlImporter($this->path);
+    	$importer->processFiles();
+    
+    	//Create the quiz
+    	$qz = $this->createQuiz('Quiz with 1 concept', $this->permissions_group, $this->dateAt('+5 day'));
+    
+    	$this->addTestedConcept($qz, 'T1', 1); //only one question
+    
+    	//Login
+    	$this->login('hugo');
+    
+    	$quiz_id = $qz->getID();
+    
+    	$url = 'shell/attempt?quiz=' . $quiz_id;
+    
+    	// 1. Start quiz
+    	My_Logger::log(__METHOD__ . " >>>>> 1. Start test at url: $url");
+    	$this->resetRequest()->resetResponse();
+    	$this->dispatch($url);
+    	$this->assertRows(0, 'quiz_attempt');
+
+    	//However admin should be fine
+    	$this->logout();
+    	$this->login('admin');
+    	My_Logger::log(__METHOD__ . " >>>>> 1. Start test at url: $url");
+    	$this->resetRequest()->resetResponse();
+    	$this->dispatch($url);
+    	$this->assertRows(1, 'quiz_attempt');
+    }
+    
+    
+    
+    
     
 }
