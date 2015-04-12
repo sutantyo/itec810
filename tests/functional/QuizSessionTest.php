@@ -71,13 +71,11 @@ class QuizSessionTest extends ControllerTestCase{
         $this->dispatch($url);
         
         $this->assertRows(1, 'question_attempt', "initial_result=1 AND attempt_id=$attempt_id");
-        //return;
-        
         $this->assertXpathCount('//input[@name="quiz"][@value='. $quiz_id.']', 1);
-        $this->assertNotXpath('//textarea'); //question result view
+        $this->assertNotXpath('//textarea'); //result view. no answer box
         
-        //3. Continue, new quesion
-        My_Logger::log(__METHOD__ . " >>>>> 3. Continue, new quesion");
+        //3. Send Continue, new quesion is displayed
+        My_Logger::log(__METHOD__ . " >>>>> 3. Send Continue, new quesion is displayed");
         $this->resetRequest()->resetResponse();
         $this->setPost(array(
         		'quiz' => $quiz_id,
@@ -89,10 +87,38 @@ class QuizSessionTest extends ControllerTestCase{
         //verify question view
         $this->assertXpathCount('//input[@name="quiz"][@value='. $quiz_id.']', 1);
         $this->assertXpathCount('//input[@name="marking"][@value=1]', 1);
-        $this->assertXpathCount('//textarea[@name="ans"]', 1);
+        $this->assertXpathCount('//textarea[@name="ans"]', 1); //answer box
         
-        //Send answer
+        $attempt_id = $this->db->fetchOne("SELECT attempt_id FROM question_attempt ORDER BY attempt_id DESC LIMIT 1");
         
+        //4. Send answer. Result is displayed
+        My_Logger::log(__METHOD__ . " >>>>> 4. Send answer. Result is displayed");
+        $this->resetRequest()->resetResponse();
+        $this->setPost(array(
+        		'quiz' => $quiz_id,
+        		'marking'=> '1',
+        		'ans' => 'bar'
+        ));
+        $this->dispatch($url);
+        
+        $this->assertRows(1, 'question_attempt', "initial_result=1 AND attempt_id=$attempt_id");
+        $this->assertXpathCount('//input[@name="quiz"][@value='. $quiz_id.']', 1);
+        $this->assertNotXpath('//textarea'); //result view. no answer box
+        
+        
+        //5. Finally view quiz result screen
+        My_Logger::log(__METHOD__ . " >>>>> 5. Finally view quiz result screen");
+        $this->resetRequest()->resetResponse();
+        $this->setPost(array(
+        		'quiz' => $quiz_id,
+        ));
+        $this->dispatch($url);
+        $this->assertRows(1, 'quiz_attempt WHERE date_finished IS NOT NULL AND total_score=2');
+        $this->assertRows(2, 'generated_questions');
+        $this->assertRows(2, 'question_attempt');
+        //verify question view
+        $this->assertXpathCount('//input[@name="quiz"][@value='. $quiz_id.']', 1); //useless?
+        $this->assertXpathCount('//button[@id="close_btn"]', 1); //close
         
         
     }

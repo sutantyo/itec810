@@ -131,4 +131,8 @@ class ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
         }
     }
     
+    function setPost($data){
+    	$this->getRequest()->setMethod('POST')->setPost($data);
+    }
+    
 }
