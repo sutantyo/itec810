@@ -59,17 +59,10 @@ class ShellController extends Zend_Controller_Action {
 		$auth_model = Model_Auth_General::getAuthModel();
 		
 		/* Before we do anything, test to make sure we've passed a VALID QUIZ which WE ARE ENTITLED to sit. */
-		$quiz_id = $this->_getParam("quiz");
-		if (is_null($quiz_id)) {
-			throw new Exception("No quiz was passed. Cannot continue.");
-		}
-		$quiz = Model_Quiz_Quiz::fromID($quiz_id);
-		if ($quiz == null) {
-			throw new Exception("Quiz ID passed was invalid. Cannot continue.");
-		}
+		$quiz = $this->findQuiz($this->_getParam("quiz"));
 		
-		$mFinished = false;
-		$mMarking = false;
+		$finished = false;
+		$marking = false;
 		$now = strtotime("now");
 		
 		// Permissions
@@ -77,12 +70,12 @@ class ShellController extends Zend_Controller_Action {
 		if ($auth_model->userInGroup($username, $quiz->getPermissions_group()) && $is_open ) {
 			
 			// Have we run out of attempts?
-			$vAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $quiz);
-			if (sizeof($vAttempts) >= $quiz->getMax_attempts()) {
+			$quizAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $quiz);
+			if (sizeof($quizAttempts) >= $quiz->getMax_attempts()) {
 				
 				// It is possible that we're on our last attempt, and that it's "in progress"...check
 				$isInProgress = false;
-				foreach ( $vAttempts as $vAttempt ) {
+				foreach ( $quizAttempts as $vAttempt ) {
 					if ($vAttempt->getDate_finished() == null) {
 						$isInProgress = true;
 					}
@@ -94,26 +87,25 @@ class ShellController extends Zend_Controller_Action {
 		}
 		else {
 			if (!$this->view->is_admin) {
-			    if(!$is_open) My_Logger::log("Not oppened");
 				throw new Exception("Insufficient Permissions to take this quiz / Quiz not open yet");
 			}
 			
-			$vAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $quiz);
+			$quizAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $quiz);
 		}
 		
 		/* Ok. We're allowed to TAKE the quiz. Are we resuming, or starting a new one? */
-		$mQuizAttempt = null;
-		if (is_array($vAttempts)) {
-			foreach ( $vAttempts as $vAttempt ) {
+		$quizAttempt = null;
+		if (is_array($quizAttempts)) {
+			foreach ( $quizAttempts as $vAttempt ) {
 				if ($vAttempt->getDate_finished() == null) {
-					$mQuizAttempt = $vAttempt;
+					$quizAttempt = $vAttempt;
 					break;
 				}
 			} // End Foreach
 		} // End If
 		
-		if ($mQuizAttempt == null) {
-			$mQuizAttempt = Model_Quiz_QuizAttempt::fromScratch($now, $quiz, $username);
+		if ($quizAttempt == null) {
+			$quizAttempt = Model_Quiz_QuizAttempt::fromScratch($now, $quiz, $username);
 		}
 		
 		
@@ -126,79 +118,94 @@ class ShellController extends Zend_Controller_Action {
 		}
 		
 		/* We have our quizAttempt ready to go. Now we look to see if we're resuming a question or not */
-		$mQuestionAttempt = $mQuizAttempt->getLastIncompleteQuestion();
-		if (is_object($mQuestionAttempt) && !$mQuestionAttempt->isValid()) {
-			$mQuestionAttempt->destroy(); // Remove the Question attempt (Database was reinitialised or something)
-			$mQuestionAttempt = null;
+		$questionAttempt = $quizAttempt->getLastIncompleteQuestion();
+		if (is_object($questionAttempt) && !$questionAttempt->isValid()) {
+			$questionAttempt->destroy(); // Remove the Question attempt (Database was reinitialised or something)
+			$questionAttempt = null;
 		}
 		
-		if ($mQuestionAttempt != null) {
+		if ($questionAttempt != null) {
 			
 			/* Are we getting an ANSWER for this question? */
 			//if (array_key_exists("marking", $_POST) && $_POST['marking'] == "1") {
 			if(1 == $this->getRequest()->getPost('marking')){
 				/* Mark it */
-				$mMarking = true;
+				$marking = true;
 				
 			}
 			
-			My_Logger::log("Marking is $mMarking");
+			My_Logger::log("Marking is $marking");
 			/* If we reach here, the page has probably been refreshed. We just re-display the last question */
 		}
 		else {
-			
 			/* Have we finished this quiz? */
-			
-			if ($mQuizAttempt->getQuestionAttemptCount() >= $total_questions) {
+			if ($quizAttempt->getQuestionAttemptCount() >= $total_questions) {
 				
 				// Close this attempt and display a result later on down the page
-				$mQuizAttempt->setDate_finished($now);
+				$quizAttempt->setDate_finished($now);
 				
 				// Calculate and store the final score
-				$mQuizAttempt->setTotal_score($mQuizAttempt->getTotal_score());
-				$mFinished = true;
+				$quizAttempt->setTotal_score($quizAttempt->getTotal_score());
+				$finished = true;
 			}
 			else {
-				
-				/* QuizAttempt isn't finished... Fetch a questionBase */
-				$vQuestionBase = Model_Shell_QuestionChooser::select_next_question($mQuizAttempt, true);
-				
-				$path = $this->getFrontController()->getParam('xml_path'); // This way we can set it externally, otherwise, called code will just use the configuration value
-				
-				/* Make a GeneratedQuestion */
-				$vCounter = 0; // Make sure we don't get any fluke no-text answers
-				while ( $vCounter < 3 ) {
-					
-					Model_Shell_Debug::getInstance()->log("vQuestionBase: " . isset($vQuestionBase));
-					Model_Shell_Debug::getInstance()->log("Generating... from " . $vQuestionBase->getXml());
-					
-					$vGen = Model_Quiz_GeneratedQuestion::fromQuestionBase($vQuestionBase, $path);
-					
-					if ($vGen->getCorrect_answer() != "" && $vGen->getCorrect_answer() != "\r\n") {
-						break;
-					}
-					else {
-						$vGen->remove();
-					}
-					$vCounter++;
-				}
-				
-				if ($vGen->getCorrect_answer() == "" || $vGen->getCorrect_answer() == "\r\n") {
-					throw new Exception("Error. While generating a question for you, blank answers appeared > 3 times. This should never happen. Either try to refresh this page, or consult your lecturer...");
-				}
-				
 				/* Make a QuestionAttempt */
-				$mQuestionAttempt = Model_Quiz_QuestionAttempt::fromScratch($vQuestionBase, $now, $now, $mQuizAttempt, $vGen);
-			} // End-if_finished_quizAttempt
+				$questionAttempt = $this->makeQuestionAttempt($quizAttempt, $now);
+			}
+			
 		}
 		
 		// Pass all relevant information to the view
 		$this->view->quiz = $quiz;
-		$this->view->question_attempt = $mQuestionAttempt;
-		$this->view->finished = $mFinished;
-		$this->view->marking = $mMarking;
-		$this->view->mQuizAttempt = $mQuizAttempt;
+		$this->view->question_attempt = $questionAttempt;
+		$this->view->finished = $finished;
+		$this->view->marking = $marking;
+		$this->view->mQuizAttempt = $quizAttempt;
 		$this->view->vTotalQuestions = $total_questions;
+	}
+	
+	protected function findQuiz($quiz_id){
+	    if (is_null($quiz_id)) {
+	    	throw new Exception("No quiz was passed. Cannot continue.");
+	    }
+	    
+	    $quiz = Model_Quiz_Quiz::fromID($quiz_id);
+	    if ($quiz == null) {
+	    	throw new Exception("Quiz ID passed was invalid. Cannot continue.");
+	    }
+	    
+	    return $quiz;
+	}
+	
+	protected function makeQuestionAttempt($quizAttempt, $now){
+	    $questionBase = Model_Shell_QuestionChooser::select_next_question($quizAttempt, true);
+	    
+	    $path = $this->getFrontController()->getParam('xml_path'); // This way we can set it externally from our tests. If not set, called code will just use the configuration value
+	    
+	    /* Make a GeneratedQuestion */
+	    $cnt = 0; // Make sure we don't get any fluke no-text answers
+	    while ( $cnt < 3 ) {
+	    		
+	    	Model_Shell_Debug::getInstance()->log("vQuestionBase: " . isset($questionBase));
+	    	Model_Shell_Debug::getInstance()->log("Generating... from " . $questionBase->getXml());
+	    		
+	    	$vGen = Model_Quiz_GeneratedQuestion::fromQuestionBase($questionBase, $path);
+	    		
+	    	if ($vGen->getCorrect_answer() != "" && $vGen->getCorrect_answer() != "\r\n") {
+	    		break;
+	    	}
+	    	else {
+	    		$vGen->remove();
+	    	}
+	    	$cnt++;
+	    }
+	    
+	    if ($vGen->getCorrect_answer() == "" || $vGen->getCorrect_answer() == "\r\n") {
+	    	throw new Exception("Error. While generating a question for you, blank answers appeared > 3 times. This should never happen. Either try to refresh this page, or consult your lecturer...");
+	    }
+	    
+	    /* Make a QuestionAttempt */
+	    return Model_Quiz_QuestionAttempt::fromScratch($questionBase, $now, $now, $quizAttempt, $vGen);
 	}
 
 	public function imagegenAction() {
