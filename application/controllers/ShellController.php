@@ -72,15 +72,10 @@ class ShellController extends Zend_Controller_Action {
 			// Have we run out of attempts?
 			$quizAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $quiz);
 			if (sizeof($quizAttempts) >= $quiz->getMax_attempts()) {
-				
+			    
 				// It is possible that we're on our last attempt, and that it's "in progress"...check
-				$isInProgress = false;
-				foreach ( $quizAttempts as $vAttempt ) {
-					if ($vAttempt->getDate_finished() == null) {
-						$isInProgress = true;
-					}
-				}
-				if (!$isInProgress) {
+				$quizAttempt = $this->findQuizAttemptInProgress($quizAttempts);
+				if (!$quizAttempt) {
 					throw new Exception("You've exceeded your maximum attempts for this quiz. Cannot continue");
 				}
 			}
@@ -94,28 +89,14 @@ class ShellController extends Zend_Controller_Action {
 		}
 		
 		/* Ok. We're allowed to TAKE the quiz. Are we resuming, or starting a new one? */
-		$quizAttempt = null;
-		if (is_array($quizAttempts)) {
-			foreach ( $quizAttempts as $vAttempt ) {
-				if ($vAttempt->getDate_finished() == null) {
-					$quizAttempt = $vAttempt;
-					break;
-				}
-			} // End Foreach
-		} // End If
+		$quizAttempt = $this->findQuizAttemptInProgress($quizAttempts);
 		
 		if ($quizAttempt == null) {
 			$quizAttempt = Model_Quiz_QuizAttempt::fromScratch($now, $quiz, $username);
 		}
 		
 		
-		
-		/* Calculate the total questions needed for this quiz */
-		$vTCs = $quiz->getTestedConcepts();
-		$total_questions = 0;
-		foreach ( $vTCs as $vTC ) {
-			$total_questions = $total_questions + $vTC->getNumber_tested();
-		}
+		$total_questions = $quiz->getTotalQuestions();
 		
 		/* We have our quizAttempt ready to go. Now we look to see if we're resuming a question or not */
 		$questionAttempt = $quizAttempt->getLastIncompleteQuestion();
@@ -175,6 +156,16 @@ class ShellController extends Zend_Controller_Action {
 	    }
 	    
 	    return $quiz;
+	}
+	
+	protected function findQuizAttemptInProgress($quizAttempts){
+	    if (is_array($quizAttempts)) {
+	    	foreach ( $quizAttempts as $qa ) {
+	    		if ($qa->getDate_finished() == null) {
+	    			return $qa;
+	    		}
+	    	}
+	    }
 	}
 	
 	protected function makeQuestionAttempt($quizAttempt, $now){
