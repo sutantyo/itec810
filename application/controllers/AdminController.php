@@ -58,7 +58,7 @@ class AdminController extends Zend_Controller_Action {
 		
 		
 		if( !$this->view->is_admin ) {
-			throw new Ecxeption("Unauthorised.", 3005);
+			throw new Exception("Unauthorised.", 3005);
 		}
 
     }
@@ -365,8 +365,6 @@ class AdminController extends Zend_Controller_Action {
 	 * In doing so, all pre-generated questions will be removed.
 	 */
 	public function rebuildxmlAction() {
-	    //$path = APPLICATION_PATH . '/../xml/questions';
-	    //$path = APPLICATION_PATH . '/../tests/fixtures';
 	    $config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
 	    $path = $config->xml->import_path;
 	    
@@ -415,6 +413,69 @@ class AdminController extends Zend_Controller_Action {
 		$this->view->counter = $vCounter;
 		
 	}
+	
+	// ****************************** Sequence, CRUD in same controller for now
+	
+	//Sequences
+	public function sequencesAction() {
+		$this->view->rows = Model_Quiz_Sequence::getAll();
+	}
+	
+	public function addeditsequenceAction() {
+	
+		// The Form
+		$form = new Form_SequenceForm();
+		$this->view->form = $form;
+	
+	
+		// Editing? Or new Quiz?
+		$id = $this->_getParam("id");
+		if( !is_null( $id ) ) {
+			$editing = Model_Quiz_Quiz::fromID( $id );
+			$this->view->editing = $editing;
+				
+			// Populate Form
+			$el = new Zend_Form_Element_Hidden('id');
+			$el->setValue( $editing->getID() );
+			$form->addElement($el);
+				
+			$form->getElement("name")->setValue($editing->getName());
+			$form->getElement("permissions_group")->setValue($editing->getPermissions_group());
+		}
+	
+	
+		// Submitting?
+		if( $this->getRequest()->isPost() ) {
+				
+			//if (!$form->isValid($this->getRequest()->getPost())) {
+			if ($form->isValid($this->getRequest()->getPost())) {
+				/*$this->view->form = $form;
+				return;
+			}else{*/
+				$obj = new Model_Quiz_Sequence();
+				$obj->fromData($form->getValues());
+				$obj->save();
+				/*
+				if( is_null($id) ) {
+					// New Quiz
+					$vQuiz = Model_Quiz_Quiz::fromScratch($formData['name']
+							,$formData['permissions']
+							,$formData['opendate'],$formData['closedate']
+							,$formData['attempts'],$formData['percentage']);
+				}else{
+					// Editing Quiz
+					$editing->setQuiz_name($formData['name']);
+					$editing->setPermissions_group($formData['permissions']);
+					$editing->setOpen_date(strtotime($formData['opendate']));
+					$editing->setClose_date(strtotime($formData['closedate']));
+					$editing->setMax_attempts($formData['attempts']);
+					$editing->setPercentage_pass($formData['percentage']);
+				}
+				*/
+				$this->_helper->redirector("sequences", "admin");
+			}
+		}
+	}
+	
 
 }
-?>

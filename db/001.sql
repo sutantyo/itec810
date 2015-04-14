@@ -1,8 +1,10 @@
 CREATE TABLE `sequence` ( 
 `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY ,  
+`name` VARCHAR(64) NOT NULL,
 `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ,  
 `permissions_group` VARCHAR(250) NOT NULL 
 ) ENGINE = InnoDB;
+
 
 CREATE TABLE sequence_quiz` (
 `sequence_id` INT(11) NOT NULL ,  

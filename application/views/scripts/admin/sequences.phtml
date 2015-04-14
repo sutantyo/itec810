@@ -1,0 +1,35 @@
+<?php $rows = $this->rows; ?>
+
+<h2>List of Sequences</h2>
+
+<?php if (empty($rows)):?>
+<p>There are no records </p>
+<?php else: ?>
+<p>Click on the corresponding <img src='<?php echo $this->baseUrl; ?>/images/edit_small.png' /> to edit a sequence.<p/>
+<p>Click on the corresponding <img src='<?php echo $this->baseUrl; ?>/images/delete_small.png' /> to delete a sequence.<p/>
+<p>Click on the sequence <em>name</em> to view/edit the quizzes it contains.</p>
+<table>
+	<tr>
+		<th>Sequence Name</th>
+		<th>Sequence Group</th>
+		<?php /*<th>Opens on</th>
+		<th>Closes On</th> */?>
+		<th>Actions</th>
+	</tr>
+<?php
+	
+	foreach ($rows as $row){
+		echo "\t<tr>\n";
+		echo "\t\t<td><a class='thickbox' href='". $this->url(array("controller"=>"admin", "action"=>"showconcepts")) ."?id=".$row['id']."'>".$row['name']."</a></td>\n";
+		echo "\t\t<td>".$row['permissions_group']."</td>\n";
+		echo "\t\t<td>
+				<a href='". $this->url(array("controller" => "admin", "action" => "addeditsequence"))  . "?id=".$row['id']."'><img src='". $this->baseUrl ."/images/edit_small.png'/></a> 
+				<a href='". $this->url(array("controller" => "admin", "action" => "deletesequence")) ."?id=".$row['id']."' onclick='var answer=confirm(\"Are you sure you want to delete this quiz? All associated results will also be deleted.\"); if(!answer){ return false; }'><img src='". $this->baseUrl ."/images/delete_small.png'/></a></td>\n";
+		echo "\t</tr>\n";
+	}
+?>	
+</table>
+<?php endif; ?>
+
+<img src="<?php echo $this->baseUrl; ?>/images/add_16.png" /> 
+<a href="<?php echo $this->url(array("controller" => "admin", "action" => "addeditsequence")) ?>">Add new Sequence</a>
