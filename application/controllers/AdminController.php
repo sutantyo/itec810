@@ -426,22 +426,24 @@ class AdminController extends Zend_Controller_Action {
 		// The Form
 		$form = new Form_SequenceForm();
 		$this->view->form = $form;
-	
-	
-		// Editing? Or new Quiz?
+		
+		// Editing? Or new?
 		$id = $this->_getParam("id");
-		if( !is_null( $id ) ) {
-			$editing = Model_Quiz_Quiz::fromID( $id );
-			$this->view->editing = $editing;
+		if ( !is_null( $id ) ) {
+			$obj = Model_Quiz_Sequence::load( $id );
+			$this->view->editing = true;
 				
 			// Populate Form
 			$el = new Zend_Form_Element_Hidden('id');
-			$el->setValue( $editing->getID() );
+			$el->setValue( $obj->id );
 			$form->addElement($el);
 				
-			$form->getElement("name")->setValue($editing->getName());
-			$form->getElement("permissions_group")->setValue($editing->getPermissions_group());
+			$form->getElement("name")->setValue($obj->name);
+			$form->getElement("permissions_group")->setValue($obj->permissions_group);
 		}
+	
+	
+		
 	
 	
 		// Submitting?
@@ -475,6 +477,7 @@ class AdminController extends Zend_Controller_Action {
 				$this->_helper->redirector("sequences", "admin");
 			}
 		}
+
 	}
 	
 

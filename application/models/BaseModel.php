@@ -8,15 +8,14 @@ abstract class Model_BaseModel {
 	protected $id;
 	protected $columnList;
 	
-	abstract public function getTable();
+	//abstract public function getTable();
 	
 	public function fromData($param) {
 		/*if (!is_array($param))
 			return;*/
 		foreach ($param as $key => $value) {
-			//if (array_key_exists($key, get_object_vars($this)))
-				if(in_array($key, $this->columnList))
-					$this->$key = $value;
+			if(in_array($key, $this->columnList))
+				$this->$key = $value;
 		}
 	}
 	
@@ -32,6 +31,7 @@ abstract class Model_BaseModel {
 	
 	
 	public function __set($name, $value) {
+		//My_Logger::log(__METHOD__ .": name:$name, value: $value");
 		$mutator = 'set' . ucfirst($name);
 		if (method_exists($this, $mutator) && is_callable(array($this, $mutator)))
 			return $this->$mutator($value);
@@ -41,6 +41,7 @@ abstract class Model_BaseModel {
 	}
 	
 	public function __get($name) {
+		//My_Logger::log(__METHOD__ .": $name");
 		$accessor = 'get' . ucfirst($name);
 		if (method_exists($this, $accessor) && is_callable(array($this, $accessor)))
 			return $this->$accessor();
@@ -67,16 +68,7 @@ abstract class Model_BaseModel {
 	public function insert() {
 		$db = Zend_Registry::get('db');
 		try {
-			/*$isAutoId = true;
-			if (!empty($this->id))
-				$isAutoId = false;
-			$this->valid();*/
-			$db->insert($this->getTable(), $this->getInsertArray() );
-			/*if (!$inserted){
-				throw new \Exception(\Database::error());
-			}
-			if ($isAutoId)
-				$this->id = \Database::getLastId();*/
+			$db->insert(static::getTable(), $this->getInsertArray() );
 			$this->id = $db->lastInsertId();
 			return $this->id;
 		} catch (Exception $e) {
@@ -90,12 +82,12 @@ abstract class Model_BaseModel {
 	}
 	
 	public function update() {
+		$db = Zend_Registry::get('db');
 		try {
-			$this->valid();
-			\Database::update($this->getTable(), $this->getUpdateArray(), array('id' => $this->id));
-		} catch (Exception $exc) {
+			$db->update(static::getTable(), $this->getUpdateArray(), array('id=?' => $this->id));
+		} catch (Exception $e) {
 			//echo $exc->getMessage();
-			throw $exc;
+			throw $e;
 		}
 	}
 	
