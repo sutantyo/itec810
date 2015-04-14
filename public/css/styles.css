@@ -1296,6 +1296,11 @@ color:#9F141A;
 	padding: .7em .7em .1em .7em;	
 }
 
+#column-2 ul.errors, #column-3 ul.errors{
+	color: red;
+	margin-right: 0;
+	padding:0; 
+}
 
 }
 
