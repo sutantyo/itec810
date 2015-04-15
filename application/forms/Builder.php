@@ -29,6 +29,22 @@ class Form_Builder {
 		return $name;
 	}
 	
+	static function hidden_tag($name, $value='', $options = array()){
+		$options = array_merge(array('type'=>'hidden'), $options);
+		return self::input_tag($name, $value, $options);
+	}
+	
+	static function input_tag($name, $value='', $options=array()){
+		$id = self::id_for($name);
+		$attr = self::createHtmlAttributes( array_merge( array('name' => $name, 'id'=> $id
+				, 'type' => 'text' //we can override this with 'password'
+				, 'value' => $value
+		),
+				$options)); //allows to override 'name' and 'id' with options
+	
+		return '<input '. $attr .' >';
+	}
+	
 	static function select_tag( $name, $options_tags=null, $options=array(),$is_multiple=false ){
 		$attr = self::createHtmlAttributes($options);
 		$id = self::id_for($name);

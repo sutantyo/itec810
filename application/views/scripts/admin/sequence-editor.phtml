@@ -1,7 +1,9 @@
 <?php $seq = $this->seq;?>
 <h2>Add quizzes to Sequence: <?php echo $seq->name ?></h2>
 
-<input type="hidden" id="base_url" value="<?php echo $this->baseUrl(); ?>">
+<?php echo Form_Builder::hidden_tag('base_url', $this->baseUrl());?>
+
+<?php echo Form_Builder::hidden_tag('id', $seq->id);?>
 <table class="editor_table">
 <tr>
 	<td class="col1"><h3>Available Quizzes</h3></td>
@@ -35,5 +37,6 @@
 	</td>
 </tr>
 </table>
+
 <button id="save_btn">Save</button>
 <script src="<?php echo $this->baseUrl(); ?>/js/sequence-editor.js" type="text/javascript"></script>

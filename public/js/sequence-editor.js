@@ -29,7 +29,16 @@ $(function(){
     var base_url = $('#base_url').val();
     
     $('#save_btn').click(function(){
-    	$.post(base_url + '/admin/process-sequence-editor', {}, function(res){
+    	
+    	var items = [];
+    	$('#current option').each(function(){items.push($(this).val())})
+    	
+    	var data = {id: $('#id').val(),
+			    		items: items
+			    	};
+    	
+    	//log(data); return;
+    	$.post(base_url + '/admin/process-sequence-editor', data, function(res){
     		log(res);
     	}, 'json');
     });
