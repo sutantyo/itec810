@@ -26,9 +26,14 @@ $(function(){
         }
     });
     
+    $('button').click(function(){
+    		$('#status').hide();$('#error').hide();		
+    });
+    
     var base_url = $('#base_url').val();
     
     $('#save_btn').click(function(){
+    	$('#loader').show();
     	
     	var items = [];
     	$('#current option').each(function(){items.push($(this).val())})
@@ -40,9 +45,22 @@ $(function(){
     	//log(data); return;
     	$.post(base_url + '/admin/process-sequence-editor', data, function(res){
     		log(res);
-    	}, 'json');
+    		if(res && res.result=='ok'){
+    			$('#status').html(res.msg).show();
+    		}else{
+    			var error = res.msg || 'Server Error. Please contact support.';
+    			$('#error').html(error).show();
+    		}
+    			
+    	}, 'json')
+    	.always(function(){
+    		$('#loader').hide();	
+    	})
+    	;
     });
 	
+    $('#loader').hide();
+    
 	function log(msg){
 		console && console.log && console.log(msg);
 	}

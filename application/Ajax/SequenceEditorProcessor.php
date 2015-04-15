@@ -10,7 +10,7 @@ class Ajax_SequenceEditorProcessor {
 	function process($data){
 		try {
 			$this->doProcess($data);
-			$res = array('result'=>'ok');
+			$res = array('result'=>'ok', 'msg'=> 'All changes saved.');
 		} catch (Exception $e) {
 			$res = array('result'=>'error', 'message'=>$e->getMessage());
 		}
@@ -32,7 +32,7 @@ class Ajax_SequenceEditorProcessor {
 			//remove previous
 			$db->delete('sequence_quiz', array('sequence_id=?'=> $seq->id));
 			
-			$items = $data['items'];
+			$items = $this->get($data['items'], array());
 			$cnt = 1;
 			foreach($items as $quiz_id){
 				$db->insert('sequence_quiz', array(
@@ -50,6 +50,10 @@ class Ajax_SequenceEditorProcessor {
 		
 		
 		
+	}
+	
+	function get(&$var, $default=null) {
+	    return isset($var) ? $var : $default;
 	}
 	
 	//function getParam

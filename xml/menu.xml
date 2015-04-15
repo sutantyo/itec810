@@ -29,6 +29,11 @@
             <permission>admin</permission>
         </item>
         <item>
+            <name>Manage Sequences</name>
+            <url>admin/sequences</url>
+            <permission>admin</permission>
+        </item>
+        <item>
             <name>Quiz Results</name>
             <url>admin/resultsoverview</url>
             <permission>admin</permission>

@@ -1335,12 +1335,22 @@ color:#9F141A;
 	text-align: center;
 }
 
+
+
 .editor_table .control_buttons button{
 	width: 100px;
 }
 
 .editor_table .position_buttons{
 	padding-left:10px;
+}
+
+.editor_table .position_buttons button{
+	width: 60px;
+}
+
+.editor_table select{
+	height:200px;
 }
 
 .seq-items{

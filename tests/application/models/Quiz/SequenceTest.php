@@ -77,6 +77,30 @@ class SequenceTest extends ControllerTestCase
     	
     }
     
+    function testLongSequence(){
+    	$this->clearAll();
+    	$this->clearTemp();
+    	
+    	$importer = $this->createXmlImporter($this->path);
+    	$importer->processFiles();
+    	
+    	
+
+    	$n = 8; $items = array();
+    	for($i = 1; $i<= 8; $i++){
+    		$quiz = $this->createQuiz('Quiz '.$i, $this->permissions_group);
+    		$this->addTestedConcept($quiz, 'T1', 1);
+    		$items[] = $quiz->getID();
+    	}
+    	
+    	$seq = $this->createSequence('Test Sequence', $this->permissions_group);
+    	$data = array('id'=>$seq->id,
+    			'items' => $items
+    	);
+    	$ajax = new Ajax_SequenceEditorProcessor();
+    	$res = $ajax->process($data);
+    }
+    
     function testDelete(){
     	//todo deletion only works if no quizzes
     	//quizzes should be left intact, just delete the sequence_quiz columns
