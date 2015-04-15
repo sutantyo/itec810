@@ -1302,6 +1302,51 @@ color:#9F141A;
 	padding:0; 
 }
 
+/* Sequence editor */
+.editor_table{
+	table-layout: fixed;
+}
+
+.editor_table td.col1{
+	width: 160px;
+}
+
+.editor_table td.col2{
+	width: 140px;
+}
+
+.editor_table td.col3{
+	width: 160px;
+}
+
+.editor_table td{
+	padding: 0;
+}
+
+.editor_table tr{
+	border: none;
+}
+
+.editor_table h3{
+	font-size:14px;
+}
+
+.editor_table .control_buttons{
+	text-align: center;
+}
+
+.editor_table .control_buttons button{
+	width: 100px;
+}
+
+.editor_table .position_buttons{
+	padding-left:10px;
+}
+
+.seq-items{
+	width: 100%;
+}
+
 }
 
 @media print {

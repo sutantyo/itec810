@@ -462,13 +462,21 @@ class AdminController extends Zend_Controller_Action {
 	function addQuizzesToSequenceAction(){
 		$seq = Model_Quiz_Sequence::load( $this->_getParam("id") );
 		if(!$seq) throw new Exception("Invalid sequence.");
-		$this->view->seq = $seq;
+		
 		
 		$available = array();
 		foreach ($seq->getAvailableQuizzes() as $row){
 			$available[$row['id']] = $row['name'];
 		}
+		
+		$current = array();
+		foreach ($seq->getQuizzes() as $row){
+			$current[$row['id']] = $row['name'];
+		}
+		
+		$this->view->seq = $seq;
 		$this->view->available = $available;
+		$this->view->current = $current;
 		
 		$this->render('sequence-editor');
 	}

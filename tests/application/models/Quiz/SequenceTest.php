@@ -37,7 +37,7 @@ class SequenceTest extends ControllerTestCase
     	//should fail
     	$this->assertFalse($seq->addQuiz($quizA));
     	
-    	//Add a new onw
+    	//Add a new one
     	$this->assertTrue($seq->addQuiz($quizB));
     	$this->assertEquals(0, count($seq->getAvailableQuizzes()));
     	$this->assertEquals(2, count($seq->getQuizzes()));

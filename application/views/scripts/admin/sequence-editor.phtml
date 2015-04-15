@@ -4,19 +4,35 @@
 
 <table class="editor_table">
 <tr>
+	<td class="col1"><h3>Available Quizzes</h3></td>
+	<td class="col2"></td>
+	<td class="col3"><h3>Quizzes in Sequence</h3></td>
+	<td class="col4"></td>
+</tr>
+<tr>
 	<td>
-		<h3>Available Quizzes</h3>
 		<?php echo Form_Builder::select_tag('available', 
 				Form_Builder::options_for_select($this->available)
-				, array('multiple'=> 'multiple')
+				, array('multiple'=> 'multiple', 'class'=>'seq-items')
 		);?>
 	</td>
 	
-	<td></td>
+	<td class="control_buttons">
+	<button>Add &gt;&gt;</button><br/>
+	<button>Remove &lt;&lt;</button>
+	</td>
 	
-	<td><h3>Quizzes in Sequence</h3></td>
+	<td>
+		<?php echo Form_Builder::select_tag('current', 
+				Form_Builder::options_for_select($this->current)
+				, array('multiple'=> 'multiple', 'class'=>'seq-items')
+		);?>
+	</td>
 	
-	<td></td>
+	<td align="left" class="position_buttons">
+	<button>Up</button><br/>
+	<button>Down</button>
+	</td>
 </tr>
 </table>
 <button id="save_btn">Save</button>
