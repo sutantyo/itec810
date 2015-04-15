@@ -1,0 +1,22 @@
+<?php $seq = $this->seq;?>
+<h2>Add quizzes to Sequence: <?php echo $seq->name ?></h2>
+
+
+<table class="editor_table">
+<tr>
+	<td>
+		<h3>Available Quizzes</h3>
+		<?php echo Form_Builder::select_tag('available', 
+				Form_Builder::options_for_select($this->available)
+				, array('multiple'=> 'multiple')
+		);?>
+	</td>
+	
+	<td></td>
+	
+	<td><h3>Quizzes in Sequence</h3></td>
+	
+	<td></td>
+</tr>
+</table>
+<button id="save_btn">Save</button>

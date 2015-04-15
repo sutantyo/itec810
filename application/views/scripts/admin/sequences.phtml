@@ -20,7 +20,7 @@
 	
 	foreach ($rows as $row){
 		echo "\t<tr>\n";
-		echo "\t\t<td><a class='thickbox' href='". $this->url(array("controller"=>"admin", "action"=>"showconcepts")) ."?id=".$row['id']."'>".$row['name']."</a></td>\n";
+		echo "\t\t<td><a class='thickbox' href='". $this->url(array("controller"=>"admin", "action"=>"add-quizzes-to-sequence")) ."?id=".$row['id']."'>".$row['name']."</a></td>\n";
 		echo "\t\t<td>".$row['permissions_group']."</td>\n";
 		echo "\t\t<td>
 				<a href='". $this->url(array("controller" => "admin", "action" => "addeditsequence"))  . "?id=".$row['id']."'><img src='". $this->baseUrl ."/images/edit_small.png'/></a> 

@@ -71,11 +71,16 @@ class ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
             //on error, sets question_attempt.secondary_result to 0 and question_attempt.time_finished to current time
             //if continue, generated a new question
             //apparently repeats until the number of questions equals  concepts_tested.nb_question
+            
+        	520 => 'sequence',
+        	'sq' => 'sequence_quiz',
         );
         
         foreach ($tables as $inc => $table){
             $this->db->query("TRUNCATE TABLE $table;");
-            $this->db->query("ALTER TABLE $table AUTO_INCREMENT = $inc;");
+            
+            if(is_numeric($inc))
+            	$this->db->query("ALTER TABLE $table AUTO_INCREMENT = $inc;");
         }
         
     }
@@ -109,6 +114,14 @@ class ControllerTestCase extends Zend_Test_PHPUnit_ControllerTestCase
             $nb_questions, 
             $vConcept, 
             $quiz_ob);
+    }
+    
+    function createSequence($name, $permissions){
+    	$seq = new Model_Quiz_Sequence();
+    	$seq->name = $name;
+    	$seq->permissions_group = $permissions;
+    	$seq->save();
+    	return $seq;
     }
     
     function countFiles($directory, $type=false){

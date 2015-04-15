@@ -431,6 +431,9 @@ class AdminController extends Zend_Controller_Action {
 		$id = $this->_getParam("id");
 		if ( !is_null( $id ) ) {
 			$obj = Model_Quiz_Sequence::load( $id );
+			if (!$obj){
+				throw new Exception("Object does not exist");
+			}
 			$this->view->editing = true;
 				
 			// Populate Form
@@ -442,42 +445,32 @@ class AdminController extends Zend_Controller_Action {
 			$form->getElement("permissions_group")->setValue($obj->permissions_group);
 		}
 	
-	
-		
-	
-	
 		// Submitting?
 		if( $this->getRequest()->isPost() ) {
 				
 			//if (!$form->isValid($this->getRequest()->getPost())) {
 			if ($form->isValid($this->getRequest()->getPost())) {
-				/*$this->view->form = $form;
-				return;
-			}else{*/
 				$obj = new Model_Quiz_Sequence();
 				$obj->fromData($form->getValues());
 				$obj->save();
-				/*
-				if( is_null($id) ) {
-					// New Quiz
-					$vQuiz = Model_Quiz_Quiz::fromScratch($formData['name']
-							,$formData['permissions']
-							,$formData['opendate'],$formData['closedate']
-							,$formData['attempts'],$formData['percentage']);
-				}else{
-					// Editing Quiz
-					$editing->setQuiz_name($formData['name']);
-					$editing->setPermissions_group($formData['permissions']);
-					$editing->setOpen_date(strtotime($formData['opendate']));
-					$editing->setClose_date(strtotime($formData['closedate']));
-					$editing->setMax_attempts($formData['attempts']);
-					$editing->setPercentage_pass($formData['percentage']);
-				}
-				*/
 				$this->_helper->redirector("sequences", "admin");
 			}
 		}
 
+	}
+	
+	function addQuizzesToSequenceAction(){
+		$seq = Model_Quiz_Sequence::load( $this->_getParam("id") );
+		if(!$seq) throw new Exception("Invalid sequence.");
+		$this->view->seq = $seq;
+		
+		$available = array();
+		foreach ($seq->getAvailableQuizzes() as $row){
+			$available[$row['id']] = $row['name'];
+		}
+		$this->view->available = $available;
+		
+		$this->render('sequence-editor');
 	}
 	
 
