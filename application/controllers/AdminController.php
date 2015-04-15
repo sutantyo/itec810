@@ -483,8 +483,8 @@ class AdminController extends Zend_Controller_Action {
 	
 	
 	function processSequenceEditorAction(){
-		My_Logger::log(print_r($this->getRequest()->getPost(), true));
-		$data = array('status'=>'ok');
+		$ajax = new Ajax_SequenceEditorProcessor();
+		$data = $ajax->process($this->getRequest()->getPost());
 		$this->_helper->json($data);
 	}
 	

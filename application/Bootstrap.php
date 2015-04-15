@@ -16,48 +16,41 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
+class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
-
-
-class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
-{
-
-    protected function _initRequest()
-	{
+	protected function _initRequest() {
 		// Get our General Configuration (I'm sure there's a better way to do this, but for now we'll use it)
-		include_once( APPLICATION_PATH . '/configs/general.php' );
+		include_once (APPLICATION_PATH . '/configs/general.php');
 		
 		require_once 'Zend/Loader/PluginLoader.php';
 		
 		ini_set('display_errors', 1);
-		
-		
 	}
 
-
-	protected function _initAutoload()
-	{
-		$moduleLoader = new Zend_Application_Module_Autoloader(array(
-			'namespace' => '', 
-			'basePath'  => APPLICATION_PATH));
-
-			//Load Config
-			$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
-
-			//init database        
-			$params = $config->resources->db->params->toArray();
-			$db = Zend_Db::factory($config->resources->db->adapter, $params);
-			Zend_Registry::set('db', $db);
-
-			// Make sure that the appropriate configurations are set
-			$this->checkConfig();
-			
-			Zend_Loader::loadClass('My_Logger', APPLICATION_PATH . '/../library'); //Hmmmmm
-			   
-			return $moduleLoader;
-		}
-
-
+	protected function _initAutoload() {
+		$moduleLoader = new Zend_Application_Module_Autoloader(array (
+				'namespace' => '',
+				'basePath' => APPLICATION_PATH 
+		));
+		
+		// Load Config
+		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
+		
+		// init database
+		$params = $config->resources->db->params->toArray();
+		$db = Zend_Db::factory($config->resources->db->adapter, $params);
+		Zend_Registry::set('db', $db);
+		
+		// Make sure that the appropriate configurations are set
+		$this->checkConfig();
+		
+		Zend_Loader::loadClass('My_Logger', APPLICATION_PATH . '/../library'); // Hmmmmm
+		
+		$loader = Zend_Loader_Autoloader::getInstance();
+		$loader->registerNamespace('Ajax_');
+		
+		return $moduleLoader;
+	}
 
 	/**
 	 * Checks that the environment in which this is running is adequate.
@@ -67,35 +60,44 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 * @author Ben Evans
 	 */
 	private function checkConfig() {
-		$defined_variables = array(
-			"QUIZ_SYSTEM_NAME"		=>	"The Quiz System Name",
-			"COMPILER_TYPE"			=>	"The Quiz System's Compiler Type",
-			"COMPILER_PATH"			=>	"The Quiz System's Compiler Path",
-			"AUTH_METHOD"			=>	"Authentication Method",
-			"QUIZ_ADMINISTRATORS"	=>	"Quiz Administrator Group",
-			"MAX_HALLOFFAME"		=>	"Maximum amount of Hall of Fame Scores",
-			"DEFAULT_DATE_FORMAT"	=>	"Default Date Format",
+		$defined_variables = array (
+				"QUIZ_SYSTEM_NAME" => "The Quiz System Name",
+				"COMPILER_TYPE" => "The Quiz System's Compiler Type",
+				"COMPILER_PATH" => "The Quiz System's Compiler Path",
+				"AUTH_METHOD" => "Authentication Method",
+				"QUIZ_ADMINISTRATORS" => "Quiz Administrator Group",
+				"MAX_HALLOFFAME" => "Maximum amount of Hall of Fame Scores",
+				"DEFAULT_DATE_FORMAT" => "Default Date Format" 
 		);
-	
-		foreach($defined_variables as $key=>$dv) {
-			if( !defined($key) ) {
-				die("Configuration Error. Required Parameter " . $key . "(". $dv .") is not defined.");
+		
+		foreach ( $defined_variables as $key => $dv ) {
+			if (!defined($key)) {
+				die("Configuration Error. Required Parameter " . $key . "(" . $dv . ") is not defined.");
 			}
 		}
-	
 	}
-
-
+/*
+	protected function _initAutoloader() {
+		$loader = function ($className) {
+			$className = str_replace('\\', '_', $className);
+			Zend_Loader_Autoloader::autoload($className);
+		};
+		
+		$autoloader = Zend_Loader_Autoloader::getInstance();
+		$autoloader->pushAutoloader($loader, 'Application\\');
+	}*/
 }
 
 /**
  * Developer only class, allows use fine grained logging
+ * 
  * @author Ivan Rodriguez
- *
+ *        
  */
-class Zend_Db_Adapter_Ex_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql{
-	function query($sql, $bind = array()){
-	    My_Logger::log('QUERY: ' .$sql);
-		return parent::query($sql, $bind);	    
-	}    
+class Zend_Db_Adapter_Ex_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql {
+
+	function query($sql, $bind = array()) {
+		My_Logger::log('QUERY: ' . $sql);
+		return parent::query($sql, $bind);
+	}
 }

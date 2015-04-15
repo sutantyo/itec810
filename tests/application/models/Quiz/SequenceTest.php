@@ -41,6 +41,40 @@ class SequenceTest extends ControllerTestCase
     	$this->assertTrue($seq->addQuiz($quizB));
     	$this->assertEquals(0, count($seq->getAvailableQuizzes()));
     	$this->assertEquals(2, count($seq->getQuizzes()));
+
+    	//reset
+    	$this->db->query("TRUNCATE TABLE sequence_quiz");
+    	$this->assertEquals(2, count($seq->getAvailableQuizzes()));
+    	$this->assertEquals(0, count($seq->getQuizzes()));
+    	
+    	//add multiple
+    	$data = array (
+		  'id' => $seq->id,
+		  'items' => array (
+		    0 => '31',
+		    1 => '32',
+		  ),
+		);
+    	
+    	$ajax = new Ajax_SequenceEditorProcessor();
+    	$res = $ajax->process($data);
+    	$this->assertEquals('ok', $res['result']);
+    	$this->assertEquals(0, count($seq->getAvailableQuizzes()));
+    	$this->assertEquals(2, count($seq->getQuizzes()));
+    	
+    	
+    	//add none
+    	$data = array (
+    			'id' => '520',
+    	);
+    	
+    	$ajax = new Ajax_SequenceEditorProcessor();
+    	$res = $ajax->process($data);
+    	$this->assertEquals('ok', $res['result']);
+    	$this->assertEquals(2, count($seq->getAvailableQuizzes()));
+    	$this->assertEquals(0, count($seq->getQuizzes()));
+    	
+    	
     }
     
     function testDelete(){
