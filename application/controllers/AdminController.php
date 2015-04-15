@@ -481,5 +481,11 @@ class AdminController extends Zend_Controller_Action {
 		$this->render('sequence-editor');
 	}
 	
+	
+	function processSequenceEditorAction(){
+		$data = array('status'=>'ok');
+		$this->_helper->json($data);
+	}
+	
 
 }

@@ -25,6 +25,14 @@ $(function(){
                 $op.last().next().after($op);
         }
     });
+    
+    var base_url = $('#base_url').val();
+    
+    $('#save_btn').click(function(){
+    	$.post(base_url + '/admin/process-sequence-editor', {}, function(res){
+    		log(res);
+    	}, 'json');
+    });
 	
 	function log(msg){
 		console && console.log && console.log(msg);
