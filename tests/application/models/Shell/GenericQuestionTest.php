@@ -233,7 +233,7 @@ class GenericQuestionTest extends ControllerTestCase{
         $this->clearTemp();
         
         $filename = 'compiler_error.xml';
-        $filepath = $this->config->xml->import_path . "/" . $filename;
+        $filepath = $this->path . "/" . $filename;
         $xml = simplexml_load_file($filepath);
         $concept = (string)$xml->concepts->concept; //from source
         
