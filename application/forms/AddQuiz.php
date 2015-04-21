@@ -56,6 +56,7 @@ class Form_AddQuiz extends Zend_Form
 			->addFilter('StripTags')
 			->addFilter('StringTrim')
 			->setAttrib('placeholder', 'eg. ' . date("Y-m-d") )
+			->setAttrib('class', 'datepicker' )
 			->addValidator('date');
 	
 		$close_date = new Zend_Form_Element_Text('closedate');
@@ -63,8 +64,11 @@ class Form_AddQuiz extends Zend_Form
 			->setRequired(true)
 			->addFilter('StripTags')
 			->addFilter('StringTrim')
+			->setAttrib('class', 'datepicker' )
 			->setAttrib('placeholder', 'eg. ' . date("Y-m-d", strtotime("today +1 week")) )
-			->addValidator('date');
+			->addValidator('date')
+			
+        ;
 		
 
 		$attempts = new Zend_Form_Element_Text('attempts');
