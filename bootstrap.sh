@@ -12,9 +12,11 @@ sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_aga
 sudo apt-get -y install mysql-server-5.5 php5 php5-mysql apache2 
 sudo apt-get -y install php5-gd php-apc php5-curl php5-mcrypt php5-xdebug php5-ldap
 sudo apt-get -y install vim
-sudo rm -rf /var/www
-sudo ln -fs /vagrant /var/www
-sudo /etc/init.d/apache2 start
+if [ -d /vagrant ]; then #Assume it is a vagrant vm
+  sudo rm -rf /var/www
+  sudo ln -fs /vagrant /var/www
+  sudo /etc/init.d/apache2 start
+fi
 
 
 #Create a database
@@ -26,15 +28,6 @@ mysql -uroot -p"secret" quiz_db < /var/www/db/schema.sql
 
 
 # install phpmyadmin
-#mkdir /vagrant/phpmyadmin/ 2> /dev/null
-#wget -O /vagrant/phpmyadmin/index.html http://www.phpmyadmin.net/
-#awk 'BEGIN{ RS="<a *href *= *\""} NR>2 {sub(/".*/,"");print; }' /vvagrant/phpmyadmin/index.html >> /vagrant/phpmyadmin/url-list.txt
-#grep "http://sourceforge.net/projects/phpmyadmin/files/phpMyAdmin/" /vagrant/phpmyadmin/url-list.txt > /vagrant/phpmyadmin/phpmyadmin.url
-#sed -i 's/.zip/.tar.bz2/' /vagrant/phpmyadmin/phpmyadmin.url
-#wget -O /vagrant/phpmyadmin/phpMyAdmin.tar.bz2 `cat /vagrant/phpmyadmin/phpmyadmin.url`
-#mkdir /vagrant/myadm.localhost
-#tar jxvf /vagrant/phpmyadmin/phpMyAdmin.tar.bz2 -C /vagrant/myadm.localhost --strip 1
-#rm -rf /vagrant/phpmyadmin 2> /dev/null
 sudo apt-get install debconf-utils
 echo "phpmyadmin phpmyadmin/dbconfig-install boolean true" | sudo debconf-set-selections
 echo "phpmyadmin phpmyadmin/app-password-confirm password $DBPASSWD" | sudo debconf-set-selections
