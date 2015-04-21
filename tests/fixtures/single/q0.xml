@@ -10,7 +10,7 @@
 	<problem>
 		class ExampleProgram {											//HIDE
 			public static void main(String[] args){				//HIDE
-				System.out.print("Hello World!");
+				System.out.print("foo");
 			}//HIDE
 		}//HIDE
 	</problem>
