@@ -24,7 +24,7 @@ class Model_Shell_Compiler{
 	
 	public static function compileAndReturn($vFilePrefix, $mSource){
 		$mTempFolder = Model_Shell_Compiler::os_slash(APPLICATION_PATH . "/../tmp");
-		
+		//return false;
 		if( strtolower(COMPILER_TYPE) == "c++" ) {
 			return Model_Shell_Compiler::cpp_compile_and_return( $mTempFolder, $vFilePrefix, $mSource );
 		}elseif( strtolower(COMPILER_TYPE) == "java" ) {
@@ -168,7 +168,9 @@ class Model_Shell_Compiler{
 		// Java sometimes generates more than one class... so we put the compiled things in a directory
 		mkdir($mTempFolder . "\\" . $vFilePrefix);
 		$error_file = $mTempFolder . '\\' . $vFilePrefix . '.error.txt';
-		$toExec = "\"" . JAVAC_PATH . "\" \"" . $mTempFolder . "\\" . $vFilePrefix . ".java\" -d \"" . $mTempFolder . "\\" . $vFilePrefix . "\"" 
+		$toExec = "\"" . JAVAC_PATH . "\" "
+				. ' -g:none '
+				. " \"" . $mTempFolder . "\\" . $vFilePrefix . ".java\" -d \"" . $mTempFolder . "\\" . $vFilePrefix . "\"" 
 			. ' 2> "' . $error_file . '"' // capture any errors
 		    ;
 		    
