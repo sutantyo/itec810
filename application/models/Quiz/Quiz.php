@@ -161,9 +161,16 @@ class Model_Quiz_Quiz
 	public static function getAll($vOrder=false){
 		$db = Zend_Registry::get("db");
 		$vReturn = array();
-		$sql = "SELECT * FROM quiz";
+		//$sql = "SELECT * FROM quiz";
+		$sql = "SELECT
+quiz.*, position
+FROM
+quiz
+LEFT JOIN sequence_quiz ON quiz.quiz_id = sequence_quiz.quiz_id
+ORDER BY
+sequence_quiz.position ASC";
 		if($vOrder){
-			$sql.=" ORDER BY close_date";
+			$sql.=", quiz.close_date ASC";
 		}
 		//echo "SQL: $sql<br/>";
 		$result = $db->query($sql);

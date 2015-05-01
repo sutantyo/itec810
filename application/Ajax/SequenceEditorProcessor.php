@@ -8,6 +8,7 @@ class Ajax_SequenceEditorProcessor {
 	
 	
 	function process($data){
+		My_Logger::log(__METHOD__ . ': ' . var_export($data, true));
 		try {
 			$this->doProcess($data);
 			$res = array('result'=>'ok', 'msg'=> 'All changes saved.');
@@ -19,7 +20,6 @@ class Ajax_SequenceEditorProcessor {
 	}
 	
 	protected function doProcess($data){
-		My_Logger::log(__METHOD__ . ': ' . var_export($data, true));
 		$seq = Model_Quiz_Sequence::load($data['id']);
 		if(!$seq){
 			throw new Exception('Invalid sequence');

@@ -84,21 +84,50 @@ class SequenceTest extends ControllerTestCase
     	$importer = $this->createXmlImporter($this->path);
     	$importer->processFiles();
     	
+    	$this->assertRows(0, 'sequence_quiz');
     	
 
     	$n = 8; $items = array();
-    	for($i = 1; $i<= 8; $i++){
+    	for($i = 1; $i<= $n; $i++){
     		$quiz = $this->createQuiz('Quiz '.$i, $this->permissions_group);
     		$this->addTestedConcept($quiz, 'T1', 1);
     		$items[] = $quiz->getID();
     	}
     	
+    	//return;
+    	
+    	//Create the sequence
     	$seq = $this->createSequence('Test Sequence', $this->permissions_group);
     	$data = array('id'=>$seq->id,
     			'items' => $items
     	);
+    	//Add all items to the sequence
     	$ajax = new Ajax_SequenceEditorProcessor();
     	$res = $ajax->process($data);
+    	
+    	$this->assertRows($n, 'sequence_quiz');
+    	
+    	//scramble sequence - ids hardcoded for now
+    	$data['items'] =  
+		  array (
+		    0 => '36',
+		    1 => '34',
+		    2 => '37',
+		    3 => '31',
+		    4 => '35',
+		    5 => '38',
+		    6 => '32',
+		    7 => '33',
+		  );
+		  
+		  
+		  $ajax = new Ajax_SequenceEditorProcessor();
+		  $res = $ajax->process($data);
+
+		  //the items should be in the correct order
+		  //TODO done visually for now
+		  //$this->login('hugo');
+    	
     }
     
     function testDelete(){
