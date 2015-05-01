@@ -67,7 +67,7 @@ class ShellController extends Zend_Controller_Action {
 		
 		// Permissions
 		$is_open = $quiz->getOpen_date() <= $now;
-		if ($auth_model->userInGroup($username, $quiz->getPermissions_group()) && $is_open ) {
+		if ($auth_model->userInGroup($username, $quiz->getPermissions_group()) && $is_open && !$quiz->hasPendingPrerequisite($username) ) {
 			
 			// Have we run out of attempts?
 			$quizAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $quiz);
@@ -82,7 +82,7 @@ class ShellController extends Zend_Controller_Action {
 		}
 		else {
 			if (!$this->view->is_admin) {
-				throw new Exception("Insufficient Permissions to take this quiz / Quiz not open yet");
+				throw new Exception("Insufficient Permissions to take this quiz / Quiz not open yet / Prerequisites incomplete.");
 			}
 			
 			$quizAttempts = Model_Quiz_QuizAttempt::getAllFromUser($username, $quiz);
