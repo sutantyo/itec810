@@ -91,6 +91,7 @@ class Model_Quiz_QuizAttempt
 				, array($vSam, $id)
 				);
 		$row = $result->fetch();
+		if(!$row) return null;
 		return Model_Quiz_QuizAttempt::fromID($row['quiz_attempt_id']);
 	}
 	
