@@ -16,17 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
-?><p>If you believe you should have more quizzes accessible to you, please contact your unit convener.</p>
-<?php 
-	$vAvailable = $this->available;
 
-	/*	Any Quizzes available? */
-	if(sizeof($vAvailable)==0){
-		echo "<p>There are no quizzes available at this time</p>";
-	}else{
-		echo "<table>\n";
-		echo "<tr><th>Quiz Title</th><th>To be completed by</th><th>Status</th><th>Best Mark</th><th>Actions</th></tr>\n";
+$vAvailable = $this->available;
+
+?>
+
+<p>If you believe you should have more quizzes accessible to you, please contact your unit convener.</p>
+
+<?php if (sizeof($vAvailable)==0):?>
+
+	<p>There are no quizzes available at this time</p>
 	
+<?php else: ?>	
+	
+		<table>
+		<tr><th>Quiz Title</th><th>To be completed by</th><th>Status</th><th>Best Mark</th><th>Actions</th></tr>
+	<?php
 		foreach($vAvailable as $vQuiz){
 			echo "\t<tr>\n";
 		
@@ -35,37 +40,21 @@
 
 			/*	So find out what status the quiz is in - Completed(1), Not completed(2) or In progress(3) (Optionally Late) */
 			
-			$vQuizAttempt = Model_Quiz_QuizAttempt::fromQuizAndUser($vQuiz, $this->username);
-
-			if($vQuizAttempt != null){
-			
-				/*	So we might have started or finished the quiz */
-				if($vQuizAttempt->getDate_finished()==null){
-					$vQuizStatus = 3;
-					if($vQuiz->getClose_date() < strtotime("now")){
-						echo "\t\t<td>In Progress (Late)</td>\n";
-					}
-					else{	
-						echo "\t\t<td>In Progress</td>\n";
-					}
-				
-				}else{
-					$vQuizStatus = 1;
-					echo "\t\t<td>Completed</td>\n";
-				}
-			}else{
-				//No existing quiz attempt
-				$vQuizStatus = 2;
-				if($vQuiz->getClose_date() < strtotime("now"))
-					echo "\t\t<td>Not Completed (Late)</td>\n";
-				else	
-					echo "\t\t<td>Not Completed</td>\n";
+			if ($vQuiz->hasPendingPrerequisite($this->username)){
+				$vQuizStatus = Model_Quiz_Quiz::PREREQUISITE_PENDING;
+				echo "\t\t<td>Prerequisite pending</td>\n";
 			}
+			else {
+				$vQuizStatus = handleCurrentPosition($vQuiz, $this->username);				
+			}
+			
+			
+			
 		
 		
 		
 			/*	Marks (If completed) */
-			if($vQuizStatus==1){
+			if($vQuizStatus==Model_Quiz_Quiz::QUIZ_COMPLETED){
 				$vHighest = Model_Quiz_QuizAttempt::getHighestMarkQuiz($this->username, $vQuiz);
 				echo "\t\t<td>".$vHighest->getTotal_score();
 				//Did they pass/fail?
@@ -82,10 +71,12 @@
 		
 
 			/*	Possible Actions */
-			
-			if($vQuizStatus == Model_Quiz_Quiz::QUIZ_AVAILABLE){
+			if ($vQuizStatus == Model_Quiz_Quiz::PREREQUISITE_PENDING){
+				echo "\t\t<td>N/A</td>\n";
+			}
+			else if ($vQuizStatus == Model_Quiz_Quiz::QUIZ_AVAILABLE){
 				echo "\t\t<td><a href='". $this->baseUrl() ."/shell/attempt?quiz=".$vQuiz->getID()."' target='blank'>Start Quiz</a></td>\n";
-			}elseif($vQuizStatus==3){
+			}else if ( $vQuizStatus == Model_Quiz_Quiz::QUIZ_INPROGRESS){
 				echo "\t\t<td><a href='". $this->baseUrl() ."/shell/attempt?quiz=".$vQuiz->getID()."' target='blank'>Continue Quiz</a></td>\n";
 			}else{
 				
@@ -105,9 +96,39 @@
 			echo "\t</tr>\n";
 		}
 		echo "</table>\n";
-	}
+		?>		
+<?php endif; ?>
 	
+<?php 
 
+function handleCurrentPosition($vQuiz, $username){
+	$vQuizAttempt = Model_Quiz_QuizAttempt::fromQuizAndUser($vQuiz, $username);
+	if($vQuizAttempt != null){
 
+		/*	So we might have started or finished the quiz */
+		if ($vQuizAttempt->getDate_finished()==null){
+			$vQuizStatus = Model_Quiz_Quiz::QUIZ_INPROGRESS;
+			if($vQuiz->getClose_date() < strtotime("now")){
+				echo "\t\t<td>In Progress (Late)</td>\n";
+			}
+			else{
+				echo "\t\t<td>In Progress</td>\n";
+			}
 
-?>
+		}else{
+			$vQuizStatus = Model_Quiz_Quiz::QUIZ_COMPLETED;
+			echo "\t\t<td>Completed</td>\n";
+		}
+	}else{
+		//No existing quiz attempt
+		$vQuizStatus = Model_Quiz_Quiz::QUIZ_AVAILABLE;
+		$status_msg = 'Not Completed';
+		if ($vQuiz->getClose_date() < strtotime("now"))
+			$status_msg .= " (Late)";
+
+		echo "\t\t<td>$status_msg</td>\n";
+	}
+	return $vQuizStatus;
+}
+
+?>	

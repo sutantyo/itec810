@@ -41,6 +41,7 @@ class Model_Quiz_Quiz
 	const QUIZ_COMPLETED = 1;
 	const QUIZ_AVAILABLE = 2;
 	const QUIZ_INPROGRESS = 3;
+	const PREREQUISITE_PENDING = 4;
 	
 	
 	
@@ -229,8 +230,49 @@ sequence_quiz.position ASC";
 		return $vReturn;
 	}
 	
+	function hasPendingPrerequisite($username){
+		$prereq = $this->getPrerequisite();
+		if(!$prereq) return false;
+		
+		//is the prerequisite not completed?
+		$attempt = Model_Quiz_QuizAttempt::fromQuizAndUser($prereq, $username);
+		if(!$attempt) return true; //prerequisite has not even been attempted
+
+		if($attempt->getDate_finished()){
+			return false;
+		}
+		
+		return true;
+/*		
+		if ($attempt->getDate_finished()==null){
+			$vQuizStatus = Model_Quiz_Quiz::QUIZ_INPROGRESS;
+			if($vQuiz->getClose_date() < strtotime("now")){
+				echo "\t\t<td>In Progress (Late)</td>\n";
+			}
+			else{
+				echo "\t\t<td>In Progress</td>\n";
+			}
+	
+		}else{
+			$vQuizStatus = Model_Quiz_Quiz::QUIZ_COMPLETED;
+			echo "\t\t<td>Completed</td>\n";
+		}
+*/
+	}
+	
+	function getPrerequisite(){
+		$db = Zend_Registry::get("db");
+		$sql = "SELECT
+			res.quiz_id, res.position
+			FROM
+			sequence_quiz s, sequence_quiz res
+			WHERE res.position < s.position
+			AND res.sequence_id = s.sequence_id
+			AND s.quiz_id = ?
+			ORDER BY res.position DESC
+			LIMIT 1";
+		return $db->fetchOne($sql, array($this->quiz_id));
+	}
 
 
-} // class Model_Quiz_Quiz : end
-
-?>
+}

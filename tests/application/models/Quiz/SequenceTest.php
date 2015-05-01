@@ -77,6 +77,16 @@ class SequenceTest extends ControllerTestCase
     	
     }
     
+    function createQuizzes($n){
+    	$items = array();
+    	for($i = 1; $i<= $n; $i++){
+    		$quiz = $this->createQuiz('Quiz '.$i, $this->permissions_group);
+    		$this->addTestedConcept($quiz, 'T1', 1);
+    		$items[] = $quiz->getID();
+    	}
+    	return $items;
+    }
+    
     function testLongSequence(){
     	$this->clearAll();
     	$this->clearTemp();
@@ -87,13 +97,8 @@ class SequenceTest extends ControllerTestCase
     	$this->assertRows(0, 'sequence_quiz');
     	
 
-    	$n = 8; $items = array();
-    	for($i = 1; $i<= $n; $i++){
-    		$quiz = $this->createQuiz('Quiz '.$i, $this->permissions_group);
-    		$this->addTestedConcept($quiz, 'T1', 1);
-    		$items[] = $quiz->getID();
-    	}
-    	
+    	$n = 8; 
+    	$items = $this->createQuizzes($n);
     	//return;
     	
     	//Create the sequence
@@ -133,6 +138,41 @@ class SequenceTest extends ControllerTestCase
     function testDelete(){
     	//todo deletion only works if no quizzes
     	//quizzes should be left intact, just delete the sequence_quiz columns
+    }
+    
+    function test_size_2_sequence(){
+    	$this->clearAll();
+    	$this->clearTemp();
+    	 
+    	$importer = $this->createXmlImporter($this->path);
+    	$importer->processFiles();
+    	 
+    	$this->assertRows(0, 'sequence_quiz');
+    	 
+    	
+    	$n = 2;
+    	$items = $this->createQuizzes($n);
+    	//return;
+    	 
+    	//Create the sequence
+    	$seq = $this->createSequence("Sequence of size $n", $this->permissions_group);
+    	$data = array('id'=>$seq->id,
+    			'items' => $items
+    	);
+    	$ajax = new Ajax_SequenceEditorProcessor();
+    	$res = $ajax->process($data);
+    	/*
+    	$this->login('hugo');
+    	
+    	$this->dispatch('/auth/login');
+    	$this->assert*/
+    	
+    	//On student view I expect
+    	//Quiz 1  is available
+    	
+    	//Quiz 2 is blocked
+    	
+    	
     }
     
     

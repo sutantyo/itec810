@@ -81,9 +81,16 @@ class Model_Quiz_QuizAttempt
 	
 	
 	public static function fromQuizAndUser($vQuiz, $vSam){
+		$id = is_numeric($vQuiz)? $vQuiz: $vQuiz->getID();
 		$db = Zend_Registry::get("db");
-		$result = $db->query("SELECT * FROM quiz_attempt WHERE ad_user_cachesamaccountname=".$db->quote($vSam)." AND quizquiz_id=".$db->quote($vQuiz->getID()));
-		$row =$result->fetch();
+		$result = $db->query("SELECT * 
+				FROM quiz_attempt 
+				WHERE ad_user_cachesamaccountname=? 
+				AND quizquiz_id=?
+				"
+				, array($vSam, $id)
+				);
+		$row = $result->fetch();
 		return Model_Quiz_QuizAttempt::fromID($row['quiz_attempt_id']);
 	}
 	
