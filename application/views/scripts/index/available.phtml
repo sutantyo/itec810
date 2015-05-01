@@ -72,7 +72,7 @@ $vAvailable = $this->available;
 
 			/*	Possible Actions */
 			if ($vQuizStatus == Model_Quiz_Quiz::PREREQUISITE_PENDING){
-				echo "\t\t<td>N/A</td>\n";
+				echo "\t\t<td class='pending'>N/A</td>\n";
 			}
 			else if ($vQuizStatus == Model_Quiz_Quiz::QUIZ_AVAILABLE){
 				echo "\t\t<td><a href='". $this->baseUrl() ."/shell/attempt?quiz=".$vQuiz->getID()."' target='blank'>Start Quiz</a></td>\n";
