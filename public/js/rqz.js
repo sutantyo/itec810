@@ -9,4 +9,4 @@ function showExplanation(identifier) {
 $(function(){
 	//gray out pending rows from quiz listing
 	$('td.pending').parent('tr').css('color', 'gray');
-})
+});

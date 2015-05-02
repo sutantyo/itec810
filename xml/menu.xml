@@ -58,6 +58,11 @@
             <url>index/testquestiongeneration</url>
             <permission>admin</permission>
         </item>
+        <item>
+            <name>Question Template Editor</name>
+            <url>question-template-editor/editor</url>
+            <permission>admin</permission>
+        </item>
       
     </block>
    
