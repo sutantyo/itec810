@@ -142,11 +142,11 @@
 <script id="s_row" type="x-tmpl-mustache">
 		<tr data-id="{{name}}">
 	  		<td valign="top">
-	  		<?php echo Form_Builder::input_tag('s[][name]', '{{name}}', array('class'=>'s_name'))?><br/>
+	  		<?php echo Form_Builder::input_tag('s[{{pos}}][name]', '{{name}}', array('class'=>'s_name'))?><br/>
 	  		<button class="s_insert">Insert</button>
 	  		</td>
 	  		<td>
-	  		<textarea rows="2" name="s[][value]" class="s_value" placeholder="Enter value or PHP code">{{value}}</textarea>
+	  		<textarea rows="2" name="s[{{pos}}][value]" class="s_value" placeholder="Enter value or PHP code">{{value}}</textarea>
 	  		</td>
 	  	</tr>
 </script>

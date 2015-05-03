@@ -53,10 +53,15 @@ class Ajax_TemplateEditorProcessor {
 		$xml->addCData('problem', $this->get($data['problem']));
 		
 		$sc = $xml->addChild('substitutions');
-		foreach(range(1, 2) as $i){
-			$s = $sc->addCData('substitution', 'return "s'.$i.'";');
-			$s->addAttribute('val', 's'.$i);
+		$subs = $this->get($data['s']);
+		if ($subs){
+			foreach ($subs as $sd){
+				if(empty($sd['name']) || empty($sd['value'])) continue;
+				$s = $sc->addCData('substitution', $sd['value']);
+				$s->addAttribute('val', $sd['name']);
+			}
 		}
+		
 		
 		
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);

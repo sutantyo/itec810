@@ -87,12 +87,11 @@ $(function(){
 			}
 		);
 		
-		//$('table.substitutions').append(Mustache.render($('#s_row').html(), {name: 's'+n, value:''}))
-		
 	});
 	
 	function addSubstitutionField(name){
-		$('table.substitutions').append(Mustache.render($('#s_row').html(), {name: name, value:''}))
+		var pos = countSubs() + 1;
+		$('table.substitutions').append(Mustache.render($('#s_row').html(), {name: name, value:'', pos: pos}))
 	}
 	
 	function replaceSelection(replace){
