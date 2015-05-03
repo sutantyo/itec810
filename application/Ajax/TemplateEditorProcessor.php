@@ -48,9 +48,16 @@ class Ajax_TemplateEditorProcessor {
 		$xml->addChild('difficulty', $this->get($data['difficulty']));
 		$xml->addChild('instructions', $this->get($data['instructions']));
 		
-		//$xml->addChild('problem', $this->get($data['problem']));
-		$xml->problem = null;
-		$xml->problem->addCData($this->get($data['problem']));
+		//$xml->problem = null;
+		//$xml->problem->addCData($this->get($data['problem']));
+		$xml->addCData('problem', $this->get($data['problem']));
+		
+		$sc = $xml->addChild('substitutions');
+		foreach(range(1, 2) as $i){
+			$s = $sc->addCData('substitution', 'return "s'.$i.'";');
+			$s->addAttribute('val', 's'.$i);
+		}
+		
 		
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
 		$path = $config->xml->import_path;
@@ -73,9 +80,20 @@ class Ajax_TemplateEditorProcessor {
 }
 
 class SimpleXMLExtended extends SimpleXMLElement {
-	public function addCData($cdata_text) {
-		$node = dom_import_simplexml($this);
+	//public function addCData($cdata_text) {
+	public function addCData($name, $value = NULL) {
+		
+		/*$node = dom_import_simplexml($this);
 		$no   = $node->ownerDocument;
-		$node->appendChild($no->createCDATASection($cdata_text));
+		$node->appendChild($no->createCDATASection($cdata_text));*/
+		$new_child = $this->addChild($name);
+		
+		if ($new_child !== NULL) {
+			$node = dom_import_simplexml($new_child);
+			$no   = $node->ownerDocument;
+			$node->appendChild($no->createCDATASection($value));
+		}
+		
+		return $new_child;
 	}
 }
