@@ -53,4 +53,54 @@ $(function(){
 		//$('#dialog-message').remove();
 	}
 	
+	//substitution
+	$('body').on('click', 'button.s_insert', function(e){
+		var id = $(this).closest('tr').find('input.s_name').val();
+		//console.log('inserting ' + id);
+		insertSubstution(id);
+		e.preventDefault();
+	});
+	
+	function insertSubstution(id){
+		id = '`' + id + '`';
+		replaceSelection(id);
+	}
+	
+	$('button.s_new').click(function(e){
+		e.preventDefault();
+		var n = countSubs() + 1;
+		var name = 's' + n;
+		
+		$(Mustache.render($('#s_new_tpl').html(), {name: name})).dialog({
+			modal:true,
+			buttons: {
+				Create: function(){
+					var name = $(this).find("#s_name_new").val();
+					//var name = $('.ui-dialog #s_name_new').val();
+					console.log(name);
+					addSubstitutionField(name);
+					if (!editor.selection.getRange().isEmpty())	
+						insertSubstution(name);
+					$(this).dialog('close');
+					}
+				}
+			}
+		);
+		
+		//$('table.substitutions').append(Mustache.render($('#s_row').html(), {name: 's'+n, value:''}))
+		
+	});
+	
+	function addSubstitutionField(name){
+		$('table.substitutions').append(Mustache.render($('#s_row').html(), {name: name, value:''}))
+	}
+	
+	function replaceSelection(replace){
+		editor.session.replace(editor.selection.getRange(), replace);
+	}
+	
+	function countSubs(){
+		return $('table.substitutions tr').length;
+	}
+	
 });

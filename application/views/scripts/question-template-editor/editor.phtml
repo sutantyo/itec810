@@ -9,6 +9,8 @@
 	
 	<link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/js/ui/jquery-ui.css">
 	<script src="<?php echo $this->baseUrl(); ?>/js/ui/jquery-ui.min.js"></script>
+	
+	<script src="<?php echo $this->baseUrl(); ?>/js/mustache.js"></script>
 	 
 	<style type="text/css" media="screen">
     #editor {
@@ -104,14 +106,26 @@
 	    <textarea class="form-control" rows="3" name="instructions"></textarea>
 	  </div>
 	  
-	  <div class="form-group">
-	    <label for=problem>Problem</label>
-	    <pre id="problem" style="position: relative; width:600px; height:500px">
-	    </pre>
-	  </div>
+	  <table>
+	  	<tr>
+	  	<td>
 	  
+		  <div class="form-group">
+		    <label for=problem>Problem</label>
+		    <pre id="problem" style="position: relative; width:600px; height:500px">
+		    </pre>
+		  </div>
 	  
+	  </td>
+	  <td valign="top">
+	  	  <br>	
+		  <!-- Substitutions -->
+		  <p><b>Substitutions</b><button class="s_new">Add new</button></p>
+		  <table class="substitutions"></table>
 	  
+	  </td>
+	  </tr>
+	  </table>
 
 	  <button type="submit" class="btn btn-default">Save</button>
 	</form>
@@ -124,5 +138,24 @@
 	
 	<script src="<?php echo $this->baseUrl(); ?>/js/ace/ace.js"></script>
 	<script src="<?php echo $this->baseUrl(); ?>/js/editor.js"></script>
+	
+<script id="s_row" type="x-tmpl-mustache">
+		<tr data-id="{{name}}">
+	  		<td valign="top">
+	  		<?php echo Form_Builder::input_tag('s[][name]', '{{name}}', array('class'=>'s_name'))?><br/>
+	  		<button class="s_insert">Insert</button>
+	  		</td>
+	  		<td>
+	  		<textarea rows="2" name="s[][value]" class="s_value" placeholder="Enter value or PHP code">{{value}}</textarea>
+	  		</td>
+	  	</tr>
+</script>
+	  		
+<script id="s_new_tpl" type="x-tmpl-mustache">
+	<div title="New Substitution">
+	Name: <?php echo Form_Builder::input_tag('s_name_new', '{{name}}'); ?>
+	</div>
+</script>
+
 </body>
 </html>
