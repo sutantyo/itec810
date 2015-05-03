@@ -51,22 +51,12 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 		}
     }
     
-
-
-	/**
-	 * This is the default page that people see
-	 * Generally speaking, it shows the welcome page, and some sidebard
-	 *
-	 * @return void
-	 * @author Ben Evans
-	 */
     public function indexAction(){
-        
-		$this->view->title = "Welcome to the Randomised Quiz System (RQS)";
-		$this->view->headTitle("Welcome");
-		
-    }
 
+    	$this->view->title = "Welcome to the Randomised Quiz System (RQS)";
+    	$this->view->headTitle("Welcome");
+    	
+    	}
 	
 	/**
 	 * The main editor
@@ -123,28 +113,19 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 		Model_Shell_Debug::getInstance()->saveToDisk();
 	}
 	
-	
-	
-	
-	
-	
-
-
-}// End Class
-
-function sort_by_score(&$a, &$b){
-	if($a->getTotal_score()>$b->getTotal_score())
-		return -1;
-	elseif($a->getTotal_score()==$b->getTotal_score()){
-		//Take into account the time taken
-		//a less time (better) -> -1
-		if(($a->getDate_finished()-$a->getDate_started()) <  ($b->getDate_finished()-$b->getDate_started()) )
-			return -1;
-		else
-			return 1;
+	function ajaxAction(){
+		$ajax = new Ajax_TemplateEditorProcessor();
+		$res = $ajax->process($this->getRequest()->getPost());
+		$this->_helper->json($res);
 	}
-	else
-		return 1;
+	
+	
+	
+	
+	
+	
+
+
 }
 
 

@@ -1,58 +1,21 @@
-<?php
-/**
- *  Randomised Programming Quiz System - A quiz system that develops random programming questions from defined templates
- *  Copyright (C) 2010-2012 Ben Evans <ben@nebev.net>
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- **/
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>Question Template Editor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/assets/css/bootstrap.min.css">
-	<link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/assets/js/highlight/styles/idea.css">
-	
 	<script src="<?php echo $this->baseUrl(); ?>/js/jquery-1.11.2.min.js"></script>
-	<script src="<?php echo $this->baseUrl(); ?>/assets/js/highlight/highlight.pack.js"></script>
 	
+	<link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/js/ui/jquery-ui.css">
+	<script src="<?php echo $this->baseUrl(); ?>/js/ui/jquery-ui.min.js"></script>
+	 
 	<style type="text/css" media="screen">
     #editor {
         height: 525px;
-    	/*white-space: pre-wrap;*/
     	word-break: break-all;
-    	/*word-wrap: break-word;*/
     }
   </style>
-	
-	
-	
-	<!-- 
-	<link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/js/cm/lib/codemirror.css">
-	<script src="<?php echo $this->baseUrl(); ?>/js/cm/lib/codemirror-compressed.js"></script>
-	<script>
-		$(function() {
-		  var problem = document.getElementById('problem');
-			window.editor = CodeMirror.fromTextArea(problem, {
-					mode: 'java',
-					
-				});
-			  
-		});
-	</script>
-	-->
 	
   </head>
 
@@ -68,6 +31,8 @@
           </div>
        	</div>
     </div>
+    
+    <?php echo Form_Builder::hidden_tag('base_url', $this->baseUrl()); ?>
 
 
 	<!-- The Selection Form -->
@@ -93,7 +58,13 @@
 	
 	
 	<div id="editor">
-	<form>
+	<form id="editor-form">
+	
+	<div class="form-group">
+	    <label for="filename">Filename</label>
+	    <?php echo Form_Builder::input_tag('filename', '', array('class'=>'form-control'))?>
+	  </div>
+	
 	  <div class="form-group">
 	    <label for="type">Type</label>
 	    <?php echo Form_Builder::select_tag('type', 
@@ -118,7 +89,7 @@
 	  
 	  <div class="form-group">
 	    <label for="difficulty">Difficulty</label>
-	    <?php echo Form_Builder::select_tag('"difficulty"', 
+	    <?php echo Form_Builder::select_tag("difficulty", 
 	    		Form_Builder::options_for_select(array(
 	    				'1' => '1',
 	    				'2' => '2',
@@ -135,36 +106,14 @@
 	  
 	  <div class="form-group">
 	    <label for=problem>Problem</label>
-	    <?php /*
-	    <textarea class="form-control" rows="12" name="problem" id="problem"></textarea>
-	    */ ?>
-	    <pre id="problem" style="position: relative; height:500px">
-	    
-	    
-	    ad
-	    
-	    
-	    asd
-	    
-	    
-	    
-	    asdf
-	    
-	    
-	    
-	    asdf
-	    
-	    
-	    asdf
-	    
-	    
+	    <pre id="problem" style="position: relative; width:600px; height:500px">
 	    </pre>
 	  </div>
 	  
 	  
 	  
 
-	  <button type="submit" class="btn btn-default">Submit</button>
+	  <button type="submit" class="btn btn-default">Save</button>
 	</form>
 	</div>
 	
@@ -172,12 +121,8 @@
 
 	</div><!-- End Container -->
 	
-	<script src="<?php echo $this->baseUrl(); ?>/js/ace/ace.js"></script>
-	<script>
-    var editor = ace.edit("problem");
-    editor.setTheme("ace/theme/twilight");
-    editor.getSession().setMode("ace/mode/java");
-	</script>
 	
+	<script src="<?php echo $this->baseUrl(); ?>/js/ace/ace.js"></script>
+	<script src="<?php echo $this->baseUrl(); ?>/js/editor.js"></script>
 </body>
 </html>
