@@ -78,6 +78,10 @@ class Mock_adLDAP_User{
     'luis' => array(
         array('givenname' => array('Luis'), 'sn' => array('Rico'))
     ),
+    		
+    		'ivan' => array(
+    				array('givenname' => array('Ivan'), 'sn' => array('Rodriguez'))
+    		),
     
     );
 }
@@ -85,6 +89,6 @@ class Mock_adLDAP_User{
 class Mock_adLDAP_Group{
     public function members($group, $recursive = NULL){
         //return ['hugo', 'paco', 'luis'];
-        return array('hugo', 'paco', 'luis');
+        return array('hugo', 'paco', 'luis', 'ivan');
     }
 }
