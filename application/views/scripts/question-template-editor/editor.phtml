@@ -17,6 +17,23 @@
         height: 525px;
     	word-break: break-all;
     }
+    
+    /* Bootstrap override */
+    .form-control {
+    	font-size: 12px;
+    	padding: 0px 2px;
+    	height:30px;
+    }
+    
+    .page-header{
+    	margin:0;
+    	padding: 0;
+    }
+    
+    .page-header h1{
+    	font-size: 16px;
+    }
+    
   </style>
 	
   </head>
@@ -38,6 +55,7 @@
 
 
 	<!-- The Selection Form -->
+	<!-- 
 	<div class="row">
     	<div class="col-lg-12">
 			<h3>Select an XML File to Test</h3>
@@ -56,13 +74,15 @@
           </div>
        	</div>
     </div>
-	
+	-->
 	
 	
 	<div id="editor">
-	<form id="editor-form">
+	<form id="editor-form" class="form-inline">
 	
-	<div class="form-group">
+	
+	
+	  <div class="form-group">
 	    <label for="filename">Filename</label>
 	    <?php echo Form_Builder::input_tag('filename', '', array('class'=>'form-control'))?>
 	  </div>
@@ -112,7 +132,7 @@
 	  
 		  <div class="form-group">
 		    <label for=problem>Problem</label>
-		    <pre id="problem" style="position: relative; width:600px; height:500px">
+		    <pre id="problem" style="position: relative; width:600px; height:500px"><!-- This is the main question container -->
 		    </pre>
 		  </div>
 	  
