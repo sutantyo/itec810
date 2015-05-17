@@ -112,6 +112,8 @@ class SequenceTest extends ControllerTestCase
     	
     	$this->assertRows($n, 'sequence_quiz');
     	
+    	//return;
+    	
     	//scramble sequence - ids hardcoded for now
     	$data['items'] =  
 		  array (

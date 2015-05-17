@@ -314,7 +314,9 @@ class GenericQuestionTest extends ControllerTestCase{
     
     
     	//Here comes the compilation. After this single call, all the artifacts are produced
+    	//ini_set("display_errors", 0);
     	$this->assertEquals(trim((string)$xml->instructions), $mQuestion->getInstructions());
+    	//ini_set("display_errors", 0);
     	
     }
     
