@@ -128,22 +128,31 @@
 	  
 	  <table>
 	  	<tr>
-	  	<td>
+	  		<td width="83%">
+	        <?php echo Form_Builder::select_tag('fontsize', Form_Builder::options_for_select($this->fontSizes, "12px")); ?>
+        	</td>
+        	<td></td>
+	  	</tr>
 	  
-		  <div class="form-group">
-		    <label for=problem>Problem</label>
-		    <pre id="problem" style="position: relative; width:600px; height:500px"><!-- This is the main question container -->
-		    </pre>
-		  </div>
-	  
-	  </td>
-	  <td valign="top">
-	  	  <br>	
-		  <!-- Substitutions -->
-		  <p><b>Substitutions</b><button class="s_new">Add new</button></p>
-		  <table class="substitutions"></table>
-	  
-	  </td>
+	  	<tr>
+		  	<td>
+		  
+		  	
+	        
+			  <div class="form-group">
+			    <label for=problem>Problem</label>
+			    <pre id="problem" style="position: relative; width:800px; height:500px"><!-- This is the main question container -->
+			    </pre>
+			  </div>
+		  
+		  </td>
+		  <td valign="top">
+		  	  <br>	
+			  <!-- Substitutions -->
+			  <p><b>Substitutions</b><button class="s_new">Add new</button></p>
+			  <table class="substitutions"></table>
+		  
+		  </td>
 	  </tr>
 	  </table>
 

@@ -2,6 +2,8 @@ var editor = ace.edit("problem");
 editor.setTheme("ace/theme/twilight");
 editor.getSession().setMode("ace/mode/java");
 
+//editor.setFontSize(18);
+
 $(function(){
 	
 	$('#editor-form').on('submit',function(evt){
@@ -101,5 +103,18 @@ $(function(){
 	function countSubs(){
 		return $('table.substitutions tr').length;
 	}
+	
+	
+	//Controls
+	$('#fontsize').change(function(e){
+		var size = $(e.target).val();
+		editor.setFontSize(size);
+		localStorage.setItem('fontSize', size);
+	})
+	
+	$('#fontsize').val(localStorage.getItem('fontSize') || '12px');
+	editor.setFontSize( $('#fontsize').val() );
+	
+	
 	
 });

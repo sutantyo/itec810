@@ -109,8 +109,19 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 			
 		}
 		
+		$this->view->fontSizes =  $this->getFontSizeOptions();
+		
 		//added by Ivan. Force for now, comment out in release 
 		Model_Shell_Debug::getInstance()->saveToDisk();
+	}
+	
+	protected function getFontSizeOptions(){
+		$values = array(10, 11, 12, 14, 16, 18, 20, 24);
+		$res = array();
+		foreach ( $values as $size){
+			$res[$size . "px"] = $size . 'px';
+		}
+		return $res;
 	}
 	
 	function ajaxAction(){
