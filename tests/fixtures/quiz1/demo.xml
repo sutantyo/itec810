@@ -9,4 +9,10 @@
     }
     
 }//HIDE
-}//HIDE]]></problem><substitutions><substitution val="var1"><![CDATA[randset(array('foo', 'bar'))]]></substitution><substitution val="numbers"><![CDATA[rand(2,10)]]]></substitution><substitution val="ids"><![CDATA[randset(array('foo', 'bar', 'code'))]]></substitution><substitution val="op"><![CDATA[randset(array('+', '-', '*'))]]></substitution></substitutions></question>
+}//HIDE]]></problem>
+<substitutions><substitution val="var1"><![CDATA[randset(array('foo', 'bar'))]]></substitution>
+<substitution val="numbers"><![CDATA[rand(2,10)]]></substitution>
+<substitution val="ids"><![CDATA[randset(array('foo', 'bar', 'code'))]]></substitution>
+<substitution val="op"><![CDATA[randset(array('+', '-', '*'))]]></substitution>
+</substitutions>
+</question>
