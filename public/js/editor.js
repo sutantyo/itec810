@@ -141,5 +141,11 @@ $(function(){
 	
 	loadSubstitutions();
 	
+	//populate filename
+	if (''!=$('#q').val()){
+		$('#filename').val( $('#q option:selected').text()  )	
+	}
+	
+	
 	
 });
