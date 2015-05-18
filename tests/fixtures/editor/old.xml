@@ -1,0 +1,25 @@
+<question type="output">
+	<estimated_time>100</estimated_time>
+<concepts>
+<concept>Concept_0</concept>
+</concepts>
+	<difficulty>1</difficulty>
+	<instructions>
+		What is printed on the screen?
+	</instructions>
+	<problem>
+		class ExampleProgram {											//HIDE
+			public static void main(String[] args){				//HIDE
+				System.out.print("foo");
+			}//HIDE
+		}//HIDE
+	</problem>
+	
+<substitutions>
+  		<substitution val="s1">return rand(1,5);</substitution>
+  		<substitution val="s2">return rand(6,9);</substitution> 
+</substitutions>	
+
+</question>
+
+

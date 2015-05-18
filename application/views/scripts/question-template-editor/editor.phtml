@@ -75,7 +75,16 @@
        	</div>
     </div>
 	-->
-	
+	<form action="" method="GET" class="form-inline">
+		<div class="form-group">
+		<label for="q">Existing files</label>
+		<?php echo Form_Builder::select_tag('q', Form_Builder::options_for_select($this->available_files, $this->selected_xml), array('class'=>'form-control'));?>
+		</div>
+		<div class="form-group">
+		<input type="submit" value="Open" class="btn"/>
+		</div>
+	</form>
+
 	
 	<div id="editor">
 	<form id="editor-form" class="form-inline">
@@ -186,6 +195,8 @@
 	Name: <?php echo Form_Builder::input_tag('s_name_new', '{{name}}'); ?>
 	</div>
 </script>
-
+<script>
+	var subs = <?php echo $this->substitutions;  ?>
+</script>
 </body>
 </html>

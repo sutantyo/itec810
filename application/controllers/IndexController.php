@@ -249,7 +249,7 @@ class IndexController extends Zend_Controller_Action {
 		
 
 		// See what Question we're looking at...
-		$selected_xml = $this->_getParam("q");
+		$this->view->selected_xml = $selected_xml = $this->_getParam("q");
 		if( isset($selected_xml) && !is_null($selected_xml) ) {
 			
 			// Get the Question XML
@@ -264,8 +264,6 @@ class IndexController extends Zend_Controller_Action {
 			$temp = new Model_Quiz_GeneratedQuestion();
 			
 		}
-		
-		$this->view->selected_xml = $selected_xml;
 		
 		//added by Ivan. Force for now, comment out in release 
 		Model_Shell_Debug::getInstance()->saveToDisk();

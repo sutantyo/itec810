@@ -73,43 +73,19 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 		/* Get the appropriate files and show them in a nice little combobox */
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
 		$xml_path = $config->xml->import_path;
+		$this->view->available_files = array(""=>'Select ...') +  $this->getAvailableFiles($xml_path);
+		$this->view->selected_xml = $selected_xml = $this->_getParam("q");
+		if ( $selected_xml ) {
+			$question = Model_Shell_QuestionTemplate::load($xml_path . "/" . $selected_xml .".xml");
+		}else{
+			$question = new Model_Shell_QuestionTemplate();
+		}
 		
-		$available_selects = array();
-		/*if ($handle = opendir($xml_path)) {
-		    while (false !== ($file = readdir($handle))) {
-		        if(strtolower(substr($file,-3))=="xml"){
-					$entity = "<option value='".substr($file,0,-4)."'";
-						if((array_key_exists("q", $_GET)) && substr($file,0,-4) == $_GET['q']){
-							$entity .= " selected='yes' ";
-						}
-					$entity .= ">$file</option>\n";
-					$available_selects[] = $entity;
-				}
-				
-		    }
-			closedir($handle);
-		}
-*/
-		$this->view->available_selects = $available_selects;
+		$this->view->question = $question;
 
-		// See what Question we're looking at...
-		$selected_xml = $this->_getParam("q");
-		if( isset($selected_xml) && !is_null($selected_xml) ) {
-			
-			// Get the Question XML
-			try{
-				$mQuestion = new Model_Shell_GenericQuestion($xml_path . "/" . $selected_xml .".xml");
-				$this->view->question = $mQuestion;
-			} catch (Exception $e) {
-				//throw $e;
-			}
-			
-			// Just make a new random question, so we get access to functions like Randset
-			$temp = new Model_Quiz_GeneratedQuestion();
-			
-		}
 		
 		$this->view->fontSizes =  $this->getFontSizeOptions();
+		$this->view->substitutions = json_encode($question->getSubstitutions());
 		
 		//added by Ivan. Force for now, comment out in release 
 		Model_Shell_Debug::getInstance()->saveToDisk();
@@ -128,6 +104,21 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 		$ajax = new Ajax_TemplateEditorProcessor();
 		$res = $ajax->process($this->getRequest()->getPost());
 		$this->_helper->json($res);
+	}
+	
+	protected function getAvailableFiles($xml_path){
+		/* Get the appropriate files and show them in a nice little combobox */
+		$res = array();
+		if ($handle = opendir($xml_path)) {
+			while (false !== ($file = readdir($handle))) {
+				if(strtolower(substr($file,-3))=="xml"){
+					$res[substr($file,0,-4)] = $file;
+				}
+	
+			}
+			closedir($handle);
+		}
+		return $res;
 	}
 	
 	

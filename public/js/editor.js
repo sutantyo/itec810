@@ -83,7 +83,7 @@ $(function(){
 					var name = $(this).find("#s_name_new").val();
 					//var name = $('.ui-dialog #s_name_new').val();
 					console.log(name);
-					addSubstitutionField(name);
+					addSubstitutionField(name, '');
 					if (!editor.selection.getRange().isEmpty())	
 						insertSubstution(name);
 					$(this).dialog('close');
@@ -94,9 +94,13 @@ $(function(){
 		
 	});
 	
-	function addSubstitutionField(name){
+	function addSubstitutionField(name, value){
 		var pos = countSubs() + 1;
-		$('table.substitutions').append(Mustache.render($('#s_row').html(), {name: name, value:'', pos: pos}))
+		$('table.substitutions').append(renderSubstitution(name, value, pos))
+	}
+	
+	function renderSubstitution(name, value, pos){
+		return Mustache.render($('#s_row').html(), {name: name, value:value, pos: pos});
 	}
 	
 	function replaceSelection(replace){
@@ -126,6 +130,16 @@ $(function(){
 	$('#theme').val(localStorage.getItem('theme') || THEME);
 	editor.setTheme( $('#theme').val() );
 	
+	function loadSubstitutions(){
+		//try{
+			for (var i in subs){
+				var s = subs[i];
+				addSubstitutionField(s.name, s.value);
+			}
+		//}catch(e){}
+	}
+	
+	loadSubstitutions();
 	
 	
 });
