@@ -54,13 +54,9 @@
         	<div class="well">
 
 				<form action="" method="GET">
-					<select name="q">	
-				<?php
-						foreach( $this->available_selects as $ae ) {
-							echo $ae;
-						}
-				?>
-					</select>
+					<?php 
+					echo Form_Builder::select_tag('q', Form_Builder::options_for_select($this->available_files, $this->selected_xml));
+					?>
 					<input type="submit" value="Change" />
 				</form>
           </div>

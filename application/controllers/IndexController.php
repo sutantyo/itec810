@@ -242,29 +242,11 @@ class IndexController extends Zend_Controller_Action {
 		
 		$this->_helper->layout->disableLayout();
 		
-		
-		/* Get the appropriate files and show them in a nice little combobox */
 		//$xml_path = APPLICATION_PATH . '/../xml/questions';
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
 		$xml_path = $config->xml->import_path;
+		$this->view->available_files = $this->getAvailableFiles($xml_path);
 		
-		$available_selects = array();
-		if ($handle = opendir($xml_path)) {
-		    while (false !== ($file = readdir($handle))) {
-		        if(strtolower(substr($file,-3))=="xml"){
-					$entity = "<option value='".substr($file,0,-4)."'";
-						if((array_key_exists("q", $_GET)) && substr($file,0,-4) == $_GET['q']){
-							$entity .= " selected='yes' ";
-						}
-					$entity .= ">$file</option>\n";
-					$available_selects[] = $entity;
-				}
-				
-		    }
-			closedir($handle);
-		}
-
-		$this->view->available_selects = $available_selects;
 
 		// See what Question we're looking at...
 		$selected_xml = $this->_getParam("q");
@@ -283,8 +265,25 @@ class IndexController extends Zend_Controller_Action {
 			
 		}
 		
+		$this->view->selected_xml = $selected_xml;
+		
 		//added by Ivan. Force for now, comment out in release 
 		Model_Shell_Debug::getInstance()->saveToDisk();
+	}
+	
+	protected function getAvailableFiles($xml_path){
+		/* Get the appropriate files and show them in a nice little combobox */
+		$res = array();
+		if ($handle = opendir($xml_path)) {
+			while (false !== ($file = readdir($handle))) {
+				if(strtolower(substr($file,-3))=="xml"){
+					$res[substr($file,0,-4)] = $file;
+				}
+		
+			}
+			closedir($handle);
+		}
+		return $res;
 	}
 	
 	
