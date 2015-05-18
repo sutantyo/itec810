@@ -1,10 +1,13 @@
 var editor = ace.edit("problem");
-editor.setTheme("ace/theme/twilight");
+//editor.setTheme();
 editor.getSession().setMode("ace/mode/java");
 
 //editor.setFontSize(18);
 
 $(function(){
+	
+	var THEME = "ace/theme/twilight";
+	
 	
 	$('#editor-form').on('submit',function(evt){
 		var data = $(evt.target).serializeArray();
@@ -107,13 +110,21 @@ $(function(){
 	
 	//Controls
 	$('#fontsize').change(function(e){
-		var size = $(e.target).val();
-		editor.setFontSize(size);
-		localStorage.setItem('fontSize', size);
-	})
-	
+		var val = $(e.target).val();
+		editor.setFontSize(val);
+		localStorage.setItem('fontSize', val);
+	});
 	$('#fontsize').val(localStorage.getItem('fontSize') || '12px');
 	editor.setFontSize( $('#fontsize').val() );
+	
+	//Theme
+	$('#theme').change(function(e){
+		var val = $(e.target).val();
+		editor.setTheme(val);
+		localStorage.setItem('theme', val);
+	});
+	$('#theme').val(localStorage.getItem('theme') || THEME);
+	editor.setTheme( $('#theme').val() );
 	
 	
 	

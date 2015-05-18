@@ -130,6 +130,7 @@
 	  	<tr>
 	  		<td width="83%">
 	        <?php echo Form_Builder::select_tag('fontsize', Form_Builder::options_for_select($this->fontSizes, "12px")); ?>
+	        <?php echo $this->partial('question-template-editor/themes.phtml')?>
         	</td>
         	<td></td>
 	  	</tr>
