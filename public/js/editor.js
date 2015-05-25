@@ -141,6 +141,32 @@ $(function(){
 		editor.findAll(id_for(id));
 	});
 	
+	/*
+	$(document).on('keydown', 'input.s_name', function(e){
+		var el = $(e.target);
+		el.data('old', el.val());
+	});
+	
+	$(document).on('keyup', 'input.s_name', function(e){
+		var el = $(e.target);
+		var old = el.data('old');
+		var next = el.val();
+		console.log(old+ " -> "+ next  );
+		editor.replaceAll(id_for(old), id_for(next));
+	});
+	*/
+	
+	$('button.test').click(function(){
+		var url = '/index/testquestiongeneration?q=';
+		var file = $('#filename').val();
+		if (!file.trim()){
+			alert("Save first");
+			return;
+		}
+		
+		window.open(url + file.replace('.xml', ''), '_blank');
+		
+	});
 	
 	
 	//Controls
