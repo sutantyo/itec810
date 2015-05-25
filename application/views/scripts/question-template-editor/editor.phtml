@@ -34,6 +34,14 @@
     	font-size: 16px;
     }
     
+    .substitutions button{
+    	font-size:12px;
+    }
+    
+    .substitutions tr{
+    	margin: 10px;
+    }
+    
   </style>
 	
   </head>
@@ -169,7 +177,7 @@
 	  </tr>
 	  </table>
 
-	  <button type="submit" class="btn btn-default">Save</button>
+	  <button type="submit" class="btn btn-default save">Save</button>
 	</form>
 	</div>
 	
@@ -186,6 +194,7 @@
 	  		<td valign="top">
 	  		<?php echo Form_Builder::input_tag('s[{{pos}}][name]', '{{name}}', array('class'=>'s_name'))?><br/>
 	  		<button class="s_insert">Insert</button>
+			<button class="s_delete">Delete</button>
 	  		</td>
 	  		<td>
 	  		<textarea rows="2" name="s[{{pos}}][value]" class="s_value" placeholder="Enter value or PHP code">{{value}}</textarea>

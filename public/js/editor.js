@@ -10,15 +10,19 @@ $(function(){
 	
 	
 	$('#editor-form').on('submit',function(evt){
-		var data = $(evt.target).serializeArray();
+		evt.preventDefault();
+	});
+	
+	//Explicit save
+	$('.save').click(function(){
+		var data = $('#editor-form').serializeArray();
 		
 		//retrieve the code
 		data.push({name:'problem', value: editor.getValue() });
 		
 		saveTemplate(data);
-		
-		evt.preventDefault();
 	});
+	
 	
 	function saveTemplate(data){
 		log(data);
@@ -58,7 +62,7 @@ $(function(){
 		//$('#dialog-message').remove();
 	}
 	
-	//substitution
+	//Add substitution placeholder into the editor
 	$('body').on('click', 'button.s_insert', function(e){
 		var id = $(this).closest('tr').find('input.s_name').val();
 		//console.log('inserting ' + id);
@@ -67,10 +71,14 @@ $(function(){
 	});
 	
 	function insertSubstution(id){
-		id = '`' + id + '`';
-		replaceSelection(id);
+		replaceSelection(id_for(id));
 	}
 	
+	function id_for(id){
+		return '`' + id + '`';
+	}
+	
+	//Create new substitution
 	$('button.s_new').click(function(e){
 		e.preventDefault();
 		var n = countSubs() + 1;
@@ -110,6 +118,29 @@ $(function(){
 	function countSubs(){
 		return $('table.substitutions tr').length;
 	}
+	
+	// Remove substitution
+	$('body').on('click', 'button.s_delete', function(e){
+		var id = $(this).closest('tr').find('input.s_name').val();
+		
+		if (editor.findAll(id_for(id)) > 0   ){
+			if ( !confirm('Substitution exist in editor. Delete anyway?') ){
+				return;
+			}
+		}
+		
+		$(this).closest('tr').remove();
+		
+		e.preventDefault();
+	});
+	
+	
+	//Highlight placeholder
+	$('body').on('focus', 'input.s_name', function(e){
+		var id = $(this).closest('tr').find('input.s_name').val();
+		editor.findAll(id_for(id));
+	});
+	
 	
 	
 	//Controls
