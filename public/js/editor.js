@@ -38,7 +38,7 @@ $(function(){
 			showResult('Error', (res && res.msg) || 'Internal Server Error' ); 
 		}
 		else{
-			showResult(res.result, res.msg);	
+			showResult(res.title || res.result, res.msg);	
 		}
 		
 	}
@@ -156,8 +156,10 @@ $(function(){
 	});
 	*/
 	
-	$('button.test').click(function(){
-		var url = '/index/testquestiongeneration?q=';
+	//Opens a new window to test the complilation of the current template
+	$('button.test').click(function(e){
+		e.preventDefault();
+		var url = $('#base_url').val() + '/index/testquestiongeneration?q=';
 		var file = $('#filename').val();
 		if (!file.trim()){
 			alert("Save first");
@@ -167,6 +169,27 @@ $(function(){
 		window.open(url + file.replace('.xml', ''), '_blank');
 		
 	});
+	
+	$('button.quality').click(function(e){
+		e.preventDefault();
+		var url = $('#base_url').val() + '/question-template-editor/ajax';
+		var file = $('#filename').val().replace('.xml', '').trim();
+		if (!file){
+			alert("Save first");
+			return;
+		}
+		
+		data = {file: file,
+				method: 'qualityTest',
+			}
+		
+		$.post(url, data, function(res){
+			handleRes(res);
+		}, 'json');
+		
+	});
+	
+	
 	
 	
 	//Controls

@@ -24,6 +24,9 @@ class Ajax_TemplateEditorProcessor {
 			case 'saveTemplate':
 				$res = $this->saveTemplate($data);
 				break;
+			case 'qualityTest':
+				$res = $this->qualityTest($data);
+				break;
 			default:
 				throw new Exception("Invalid method {$method}");
 		}
@@ -74,6 +77,46 @@ class Ajax_TemplateEditorProcessor {
 		$xml->saveXML( $full_filename );
 		
 		return array('result'=>'success', 'msg'=>"File '$filename' saved correctly");
+	}
+	
+	function qualityTest($data){
+		//Will try to generate n questions, and show a ratio of success/total compilations
+		$total = 10;
+		$success=$errors=0;
+		
+		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
+		$xml_path = $config->xml->import_path;
+		
+		$selected_xml = $this->get($data['file']);
+		
+		if(empty($selected_xml)){
+			throw new Exception("Please save file first.");
+		}
+		
+		$full_filename = $xml_path . "/" . $selected_xml .".xml";
+		
+		My_Logger::log( __METHOD__ . " full_filename: ". $full_filename);
+		if (!file_exists($full_filename)){
+			
+			throw new Exception("File does not exist.");
+		}
+		
+		for($i=1; $i<=$total; $i++){
+			try{
+				$mQuestion = new Model_Shell_GenericQuestion($full_filename);
+				$mQuestion->getProblemNoHiddenLines();
+				$mQuestion->getCorrectOutput();
+			} catch (Exception $e) {
+				//throw $e;
+				$errors++;
+			}
+			
+			$success++;
+		}
+		
+		
+		
+		return array('result'=>'success', 'title'=>'Compilation results' , 'msg'=> 'Success Ratio:' . ( $success/$total * 100  )  . '%'  );
 	}
 	
 	
