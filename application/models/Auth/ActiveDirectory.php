@@ -69,7 +69,8 @@ class Model_Auth_ActiveDirectory extends Model_Auth_General{
 		
 		
 		//return new adLDAP($options);
-		return new Model_Mock_adLDAP($options);
+		//return new Model_Mock_adLDAP($options);
+		return new $ldap_config['provider']($options);
 	}
 
 
