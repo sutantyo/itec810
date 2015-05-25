@@ -81,7 +81,7 @@ class Ajax_TemplateEditorProcessor {
 	
 	function qualityTest($data){
 		//Will try to generate n questions, and show a ratio of success/total compilations
-		$total = 10;
+		$total = 3;
 		$success=$errors=0;
 		
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
@@ -106,17 +106,16 @@ class Ajax_TemplateEditorProcessor {
 				$mQuestion = new Model_Shell_GenericQuestion($full_filename);
 				$mQuestion->getProblemNoHiddenLines();
 				$mQuestion->getCorrectOutput();
+				$success++;
 			} catch (Exception $e) {
 				//throw $e;
 				$errors++;
 			}
-			
-			$success++;
 		}
 		
-		
-		
-		return array('result'=>'success', 'title'=>'Compilation results' , 'msg'=> 'Success Ratio:' . ( $success/$total * 100  )  . '%'  );
+		My_Logger::log("total: $total, error: $errors, success: $success");
+		$ratio = round($success/$total * 100, 2);
+		return array('result'=>'success', 'title'=>'Compilation results' , 'msg'=> 'Success Ratio:' . $ratio  . '%'  );
 	}
 	
 	

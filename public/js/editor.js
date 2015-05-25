@@ -27,8 +27,10 @@ $(function(){
 	function saveTemplate(data){
 		log(data);
 		data.push({name:'method', value:'saveTemplate'});
-		var url = $('#base_url').val() + '/question-template-editor/ajax';
+		var url = baseUrl() + '/question-template-editor/ajax';
+		var d = placeLoader();
 		$.post(url, data, function(res){
+			d.dialog('destroy');
 			handleRes(res);
 		}, 'json');
 	}
@@ -57,6 +59,18 @@ $(function(){
 		                $(this).dialog('close');
 		            }
 		        }
+			}		
+		);
+		//$('#dialog-message').remove();
+	}
+	
+	function placeLoader(title, msg){
+		title = title || 'Please wait ...';
+		msg = '<img src="' + baseUrl() + '/images/loader.gif" >';
+		return $('<div title="' + title + '"><p>' + msg +'</p></div>')
+			.dialog(
+			{
+				modal: true
 			}		
 		);
 		//$('#dialog-message').remove();
@@ -159,7 +173,7 @@ $(function(){
 	//Opens a new window to test the complilation of the current template
 	$('button.test').click(function(e){
 		e.preventDefault();
-		var url = $('#base_url').val() + '/index/testquestiongeneration?q=';
+		var url = baseUrl() + '/index/testquestiongeneration?q=';
 		var file = $('#filename').val();
 		if (!file.trim()){
 			alert("Save first");
@@ -172,7 +186,7 @@ $(function(){
 	
 	$('button.quality').click(function(e){
 		e.preventDefault();
-		var url = $('#base_url').val() + '/question-template-editor/ajax';
+		var url = baseUrl() + '/question-template-editor/ajax';
 		var file = $('#filename').val().replace('.xml', '').trim();
 		if (!file){
 			alert("Save first");
@@ -183,13 +197,18 @@ $(function(){
 				method: 'qualityTest',
 			}
 		
+		var d = placeLoader();
+		
 		$.post(url, data, function(res){
+			d.dialog("destroy");
 			handleRes(res);
 		}, 'json');
 		
 	});
 	
-	
+	function baseUrl(){
+		return $('#base_url').val();
+	}
 	
 	
 	//Controls
