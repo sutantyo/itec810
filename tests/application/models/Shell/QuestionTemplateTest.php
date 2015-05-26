@@ -1,6 +1,6 @@
 <?php
 
-class GenericQuestionTest extends ControllerTestCase{
+class QuestionTemplateTest extends ControllerTestCase{
     
     protected $path;
     
