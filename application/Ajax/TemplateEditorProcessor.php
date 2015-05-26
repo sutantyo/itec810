@@ -42,6 +42,14 @@ class Ajax_TemplateEditorProcessor {
 			throw new Exception('Missing Filename');
 		}
 		
+		foreach ($expected as $field){
+			if (empty($this->get($data[$field]))){
+				throw new Exception('Missing field: ' . $field);
+			}
+		}
+		
+		
+		
 		//build xml
 		$xml = new SimpleXMLExtended('<question/>');
 		$xml->addAttribute('type', $this->get($data['type']));
@@ -81,7 +89,7 @@ class Ajax_TemplateEditorProcessor {
 	
 	function qualityTest($data){
 		//Will try to generate n questions, and show a ratio of success/total compilations
-		$total = 3;
+		$total = 10;
 		$success=$errors=0;
 		
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
