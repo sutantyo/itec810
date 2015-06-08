@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<question type="output"><estimated_time/><concepts><concept>C1</concept></concepts><difficulty>1</difficulty><instructions>solve this</instructions><problem><![CDATA[class ExampleProgram {					//HIDE
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>C1</concept></concepts><difficulty>1</difficulty><instructions>solve this</instructions><problem><![CDATA[class ExampleProgram {					//HIDE
 	public static void main(String[] args){				//HIDE
         int `va1s1` = `numbers`;
         int `va1s2` = 2 `op` 3;
@@ -10,4 +10,4 @@
         }
     
     }//HIDE
-}//HIDE`va1s1`]]></problem><substitutions><substitution val="va1s1"><![CDATA[randset(array('foo', 'bar'))]]></substitution><substitution val="numbers"><![CDATA[rand(2,10)]]></substitution><substitution val="va1s2"><![CDATA[randset(array('foo', 'bar', 'code'))]]></substitution><substitution val="op"><![CDATA[randset(array('+', '-', '*'))]]></substitution></substitutions></question>
+}//HIDE]]></problem><substitutions><substitution val="va1s1"><![CDATA[randset(array('foo', 'bar'))]]></substitution><substitution val="numbers"><![CDATA[rand(2,10)]]></substitution><substitution val="va1s2"><![CDATA[randset(array('x', 'y', 'code'))]]></substitution><substitution val="op"><![CDATA[randset(array('+', '-', '*'))]]></substitution></substitutions></question>

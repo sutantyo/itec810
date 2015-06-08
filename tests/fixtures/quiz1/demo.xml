@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
-<question type="output"><estimated_time/><concepts><concept>_AL00</concept></concepts><difficulty>2</difficulty><instructions>What is printed on the screen?</instructions><problem><![CDATA[class ExampleProgram {					//HIDE
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>_AL00</concept></concepts><difficulty>2</difficulty><instructions>What is printed on the screen?</instructions><problem><![CDATA[class ExampleProgram {					//HIDE
 	public static void main(String[] args){				//HIDE
     int `var1` = `numbers`;
-    if( `var1` < 0){
+    double `var2` = `value`;
+    if( `var1` < 0 `op` `var2`  > 0 ){
         System.out.println("`var1` is < 10");
     }else{
         System.out.println("`var1` is > 10");
     }
     
 }//HIDE
-}//HIDE]]></problem><substitutions><substitution val="var1"><![CDATA[randset(array('foo', 'bar'))]]></substitution><substitution val="numbers"><![CDATA[rand(2,10)]]></substitution><substitution val="ids"><![CDATA[randset(array('foo', 'bar', 'code'))]]></substitution><substitution val="op"><![CDATA[randset(array('+', '-', '*'))]]></substitution></substitutions></question>
+}//HIDE]]></problem><substitutions><substitution val="var1"><![CDATA[randset(array('foo', 'bar'))]]></substitution><substitution val="numbers"><![CDATA[rand(2,10)]]></substitution><substitution val="ids"><![CDATA[randset(array('foo', 'bar', 'code'))]]></substitution><substitution val="op"><![CDATA[randset(array('+', '-', '*'))]]></substitution><substitution val="var2"><![CDATA[randset(array('foo', 'bar'))]]></substitution><substitution val="value"><![CDATA[rand(-100,100)/100.]]></substitution><substitution val="op"><![CDATA[randset(array('||', '&&'))]]></substitution></substitutions></question>
