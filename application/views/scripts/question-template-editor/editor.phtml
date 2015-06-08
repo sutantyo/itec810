@@ -126,7 +126,9 @@
 	  
 	  <div class="form-group">
 	    <label for="time">Estimated Time</label>
-	    <?php echo Form_Builder::input_tag('time', '', array('class'=>'form-control'))?>
+	    <?php echo Form_Builder::input_tag('time'
+	    		, $this->question->getEstimatedTime()
+	    		, array('class'=>'form-control'))?>
 	  </div>
 	  
 	  <div class="form-group">
