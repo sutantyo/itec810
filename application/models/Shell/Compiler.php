@@ -23,7 +23,7 @@ class Model_Shell_Compiler{
 	const NIX_OSES = "linux,darwin,unix,bsd";
 	
 	public static function compileAndReturn($vFilePrefix, $mSource){
-		return self::callCompileService($mSource);
+		//return self::callCompileService($mSource);
 		
 		$mTempFolder = Model_Shell_Compiler::os_slash(APPLICATION_PATH . "/../tmp");
 		//return false;
@@ -37,21 +37,30 @@ class Model_Shell_Compiler{
 	
 	
 	static function callCompileService($sourceCode){
-		My_Logger::log(__METHOD__ . " " . $sourceCode);
-		$url = "http://localhost:8086/CompilerService/services/CompilerService?wsdl";
-		$client = new Zend_Soap_Client($url
-				, array('encoding' => 'UTF-8'
-		    )
-		);
+		try {
+			My_Logger::log(__METHOD__ . " " . $sourceCode);
+			$url = "http://localhost:8086/CompilerService/services/CompilerService?wsdl";
+			$client = new Zend_Soap_Client($url
+					, array('encoding' => 'UTF-8'
+					)
+			);
+			
+			$arg = new stdClass();
+			$arg->sourceCode = "public " . $sourceCode;
+			//$arg->b = 11;
+			
+			$res = $client->compile($arg);
+			My_Logger::log(__METHOD__ . " " . print_r($res, true));
+			//print_r($res);
+			return $res->return;
+		} catch (Exception $e) {
+			$msg = $e->getMessage();
+			My_Logger::log(__METHOD__ . " service returned error: " . $msg);
+			$cex = new CompilerException("Compiler service found errors: ");
+			$cex->compiler_output = $msg;
+			throw $cex;
+		}
 		
-		$arg = new stdClass();
-		$arg->sourceCode = "public " . $sourceCode;
-		//$arg->b = 11;
-		
-		$res = $client->compile($arg);
-		My_Logger::log(__METHOD__ . " " . print_r($res, true));
-		//print_r($res);
-		return $res->return;
 	}
 	
 	
@@ -418,7 +427,7 @@ class Model_Shell_Compiler{
 }
 
 class CompilerException extends Exception{
-    public  $error_file;
+    public  $error_file = false;
     public  $compiler_output;
 
 	function __construct($message="",$code=0, $previous=null){
