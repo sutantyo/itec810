@@ -68,6 +68,7 @@ class GenericQuestionTest extends ControllerTestCase{
     
     //To run a single test do
     //     phpunit --filter testStatic  application\models\Shell\GenericQuestionTest.php
+    //     and fixture files in tests/fixtures
     function testStaticValue(){
         $this->clearAll();
         $this->clearTemp();
@@ -262,11 +263,15 @@ class GenericQuestionTest extends ControllerTestCase{
         //Forces compilation.
         try {
             $mQuestion->getInstructions();
+        	//$mQuestion->getProblem();
         } catch (Exception $e) {
             
             //read error file
-            $str = file_get_contents($e->error_file);
-            $this->assertContains('error:', $str); //verify that error file was generated and contains an error string
+            if ($e instanceof CompilerException && $e->error_file){
+            	$str = file_get_contents($e->error_file);
+            	$this->assertContains('error:', $str); //verify that error file was generated and contains an error string
+            }
+            
             
             throw $e;
         }
