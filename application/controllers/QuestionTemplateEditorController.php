@@ -26,16 +26,16 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 	 */
     public function init(){
         $this->_auth = Zend_Auth::getInstance();
-		
+
 		if( $this->_auth->hasIdentity() ) {
 			$identity = Zend_Auth::getInstance()->getIdentity();
 			if( !isset($identity->username) ) {
 				// Don't know how you got here... But you're not authenticated
 				$this->_helper->redirector("login", "auth");	//Must Log in before accessing anything
 			}
-		
+
 			$this->view->username = $identity->username;
-		
+
 			// Determine what sidebars this person has access to
 			// (Determined at this point by defined groups)
 			$auth_model = Model_Auth_General::getAuthModel();
@@ -44,20 +44,20 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 			}else{
 				$this->view->is_admin = false;
 			}
-		
-		
+
+
 		}else{
 			$this->_helper->redirector("login", "auth");	//Must Log in before accessing anything
 		}
     }
-    
+
     public function indexAction(){
 
     	$this->view->title = "Welcome to the Randomised Quiz System (RQS)";
     	$this->view->headTitle("Welcome");
-    	
+
     	}
-	
+
 	/**
 	 * The main editor
 	 * @author Ivan Rodriguez
@@ -66,13 +66,15 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 		if( !$this->view->is_admin ) {
 			throw new Exception("Access Denied");
 		}
-		
+
 		$this->_helper->layout->disableLayout();
-		
-		
+
+
 		/* Get the appropriate files and show them in a nice little combobox */
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
 		$xml_path = $config->xml->import_path;
+    My_Logger::log("in QuestionTemplateController::editorAction()");
+    My_Logger::log("the xml path is " . $xml_path);
 		$this->view->available_files = array(""=>'Select ...') +  $this->getAvailableFiles($xml_path);
 		$this->view->selected_xml = $selected_xml = $this->_getParam("q");
 		if ( $selected_xml ) {
@@ -80,17 +82,16 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 		}else{
 			$question = new Model_Shell_QuestionTemplate();
 		}
-		
+
 		$this->view->question = $question;
 
-		
 		$this->view->fontSizes =  $this->getFontSizeOptions();
 		$this->view->substitutions = json_encode($question->getSubstitutions());
-		
-		//added by Ivan. Force for now, comment out in release 
-		Model_Shell_Debug::getInstance()->saveToDisk();
+
+		//added by Ivan. Force for now, comment out in release
+		//Model_Shell_Debug::getInstance()->saveToDisk();
 	}
-	
+
 	protected function getFontSizeOptions(){
 		$values = array(10, 11, 12, 14, 16, 18, 20, 24);
 		$res = array();
@@ -99,13 +100,15 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 		}
 		return $res;
 	}
-	
+
 	function ajaxAction(){
+    My_Logger::log("in QuestionTemplateController::ajaxAction()");
+
 		$ajax = new Ajax_TemplateEditorProcessor();
 		$res = $ajax->process($this->getRequest()->getPost());
 		$this->_helper->json($res);
 	}
-	
+
 	protected function getAvailableFiles($xml_path){
 		/* Get the appropriate files and show them in a nice little combobox */
 		$res = array();
@@ -114,25 +117,18 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 				if(strtolower(substr($file,-3))=="xml"){
 					$res[substr($file,0,-4)] = $file;
 				}
-	
+
 			}
 			closedir($handle);
 		}
 		return $res;
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 
 
 }
-
-
-
-
-
-
-

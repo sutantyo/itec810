@@ -6,58 +6,58 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/assets/css/bootstrap.min.css">
 	<script src="<?php echo $this->baseUrl(); ?>/js/jquery-1.11.2.min.js"></script>
-	
+
 	<link rel="stylesheet" href="<?php echo $this->baseUrl(); ?>/js/ui/jquery-ui.css">
 	<script src="<?php echo $this->baseUrl(); ?>/js/ui/jquery-ui.min.js"></script>
-	
+
 	<script src="<?php echo $this->baseUrl(); ?>/js/mustache.js"></script>
-	 
+
 	<style type="text/css" media="screen">
     #editor {
         height: 525px;
     	word-break: break-all;
     }
-    
+
     /* Bootstrap override */
     .form-control {
     	font-size: 12px;
     	padding: 0px 2px;
     	height:30px;
     }
-    
+
     .page-header{
     	margin:0;
     	padding: 0;
     }
-    
+
     .page-header h1{
     	font-size: 16px;
     }
-    
+
     .substitutions button{
     	font-size:12px;
     }
-    
+
     .substitutions tr{
     	margin: 10px;
     }
-    
+
     .bottom-bar button{
     	margin: 2px;
     }
-    
+
     .bottom-bar{
     	margin-bottom:50px;
     }
-    
+
   </style>
-	
+
   </head>
 
 <body>
-	
+
 	<div class="container">
-	
+
 	<!-- Header -->
 	<div class="row">
     	<div class="col-lg-12">
@@ -66,19 +66,19 @@
           </div>
        	</div>
     </div>
-    
+
     <?php echo Form_Builder::hidden_tag('base_url', $this->baseUrl()); ?>
 
 
 	<!-- The Selection Form -->
-	<!-- 
+	<!--
 	<div class="row">
     	<div class="col-lg-12">
 			<h3>Select an XML File to Test</h3>
         	<div class="well">
 
 				<form action="" method="GET">
-					<select name="q">	
+					<select name="q">
 				<?php
 						foreach( $this->available_selects as $ae ) {
 							echo $ae;
@@ -101,20 +101,18 @@
 		</div>
 	</form>
 
-	
+
 	<div id="editor">
 	<form id="editor-form" class="form-inline">
-	
-	
-	
+
 	  <div class="form-group">
 	    <label for="filename">Filename</label>
 	    <?php echo Form_Builder::input_tag('filename', '', array('class'=>'form-control'))?>
 	  </div>
-	
+
 	  <div class="form-group">
 	    <label for="type">Type</label>
-	    <?php echo Form_Builder::select_tag('type', 
+	    <?php echo Form_Builder::select_tag('type',
 	    		Form_Builder::options_for_select(array(
 	    				'output' => 'Output',
 	    				'fill-in' => 'Fill in',
@@ -123,24 +121,24 @@
 	    		array('class'=>'form-control')
 	    		);?>
 	  </div>
-	  
+
 	  <div class="form-group">
 	    <label for="time">Estimated Time</label>
 	    <?php echo Form_Builder::input_tag('time'
 	    		, $this->question->getEstimatedTime()
 	    		, array('class'=>'form-control'))?>
 	  </div>
-	  
+
 	  <div class="form-group">
 	    <label for="concept">Concept(s)</label>
 	    <?php echo Form_Builder::input_tag('concepts'
 	    		, implode( $this->question->getConcepts(), ',' )
 	    		, array('class'=>'form-control'))?>
 	  </div>
-	  
+
 	  <div class="form-group">
 	    <label for="difficulty">Difficulty</label>
-	    <?php echo Form_Builder::select_tag("difficulty", 
+	    <?php echo Form_Builder::select_tag("difficulty",
 	    		Form_Builder::options_for_select(array(
 	    				'1' => '1',
 	    				'2' => '2',
@@ -151,12 +149,12 @@
 	    		array('class'=>'form-control')
 	    		);?>
 	  </div>
-	  
+
 	  <div class="form-group">
 	    <label for="instructions">Instructions</label>
 	    <textarea class="form-control" rows="3" name="instructions"><?php echo $this->question->getInstructions()?></textarea>
 	  </div>
-	  
+
 	  <table>
 	  	<tr>
 	  		<td width="83%">
@@ -165,17 +163,17 @@
         	</td>
         	<td></td>
 	  	</tr>
-	  
+
 	  	<tr>
 		  	<td>
-		  
-		  	
-	        
+
+
+
 			  <div class="form-group">
 			    <label for=problem>Problem</label>
 			    <pre id="problem" style="position: relative; width:800px; height:500px"><?php echo $this->question->getProblem();?></pre>
 			  </div>
-			  
+
 			  <div class="bottom-bar">
 				  <button class="btn btn-primary save">Save</button>
 				  <button class="btn btn-default quality pull-right">Quality Report</button>
@@ -183,29 +181,29 @@
 		  	  </div>
 		  </td>
 		  <td valign="top">
-		  	  <br>	
+		  	  <br>
 			  <!-- Substitutions -->
 			  <p><b>Substitutions</b><button class="s_new">Add new</button></p>
 			  <table class="substitutions"></table>
-		  
+
 		  </td>
 	  </tr>
 	  </table>
 
-	  
+
 	</form>
 	</div>
-	
+
 	<div class="bottom"></div>
-	
-	
+
+
 
 	</div><!-- End Container -->
-	
-	
+
+
 	<script src="<?php echo $this->baseUrl(); ?>/js/ace/ace.js"></script>
 	<script src="<?php echo $this->baseUrl(); ?>/js/editor.js"></script>
-	
+
 <script id="s_row" type="x-tmpl-mustache">
 		<tr data-id="{{name}}">
 	  		<td valign="top">
@@ -218,7 +216,7 @@
 	  		</td>
 	  	</tr>
 </script>
-	  		
+
 <script id="s_new_tpl" type="x-tmpl-mustache">
 	<div title="New Substitution">
 	Name: <?php echo Form_Builder::input_tag('s_name_new', '{{name}}'); ?>

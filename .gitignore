@@ -10,3 +10,4 @@ application/configs/application.ini
 application/configs/general.php
 library/Zend
 xml/prod
+.DS_Store

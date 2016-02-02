@@ -1,30 +1,30 @@
 <?php
 /**
- * Question Template data transfer object for the editor 
+ * Question Template data transfer object for the editor
  * @author ivan
  *
  */
 class Model_Shell_QuestionTemplate{
-		
+
 		private $file_name;
 		private $file_Contents;
 		private $substitutions = array();
 		private $problem;
 		private $valid=false;
-		
+
 		private $xml=false;
-		
+
 		/**
 		 * Create a new Question from a passed XML File
 		 * @param string $vFileName
 		 * @throws Exception
 		 */
 		public function __construct(){
-			
+
 		}
-		
+
 		static function load($file_name){
-			My_Logger::log(__METHOD__ . " loading:" . $file_name);
+			//My_Logger::log(__METHOD__ . " loading:" . $file_name);
 			$obj = new self();
 			if(!file_exists($file_name))
 				return $obj;
@@ -32,12 +32,12 @@ class Model_Shell_QuestionTemplate{
 			if( !is_array($file_contents) || sizeof($file_contents) == 0 ) {
 				return $obj;
 			}
-			
+
 			$obj->xml = simplexml_load_file($file_name);
-			
-			My_Logger::log(__METHOD__ . " contents:" . print_r($file_contents, true));
-			My_Logger::log(__METHOD__ . " xml:" . print_r($obj->xml, true));
-			
+
+			//My_Logger::log(__METHOD__ . " contents:" . print_r($file_contents, true));
+			//My_Logger::log(__METHOD__ . " xml:" . print_r($obj->xml, true));
+
 			$obj->file_Contents = $file_contents;
 			$obj->file_name = $file_name;
 			$obj->substitutions = array();
@@ -45,15 +45,15 @@ class Model_Shell_QuestionTemplate{
 			//print_r($obj->mFileContents);
 			return $obj;
 		}
-		
+
 		public function isValid(){
 			return $this->valid;
 		}
-		
+
 		private function get(&$var, $default=null) {
 			return isset($var) ? $var : $default;
 		}
-		
+
 		public function getConcepts(){
 			$res = array();
 			foreach( $this->get( $this->file_Contents['question']['concepts'], array() ) as $i){
@@ -67,30 +67,30 @@ class Model_Shell_QuestionTemplate{
 			}
 			return $res;
 		}
-		
+
 		public function getType(){
 			return $this->get($this->file_Contents['question_attr']['type']);
 		}
-		
+
 		public function getEstimatedTime(){
 			return $this->get($this->file_Contents['question']['estimated_time']);
 		}
-		
-		
+
+
 		public function getDifficulty(){
 			return $this->get($this->file_Contents['question']['difficulty']);
 		}
-		
+
 		public function getInstructions(){
 			return $this->get($this->file_Contents['question']['instructions']);
 		}
-		
+
 
 		public function getProblem(){
 			return $this->get($this->file_Contents['question']['problem']);
 
 		}
-		
+
 		public function getSubstitutions(){
 			//Return them in a format suitable for iteration
 			//return $this->substitutions;
@@ -101,15 +101,14 @@ class Model_Shell_QuestionTemplate{
 				$res[] = array(
 						'name'=> (string)$s->attributes()->val, 'value'=> (string)$s
 				);
-			} 
-			My_Logger::log(__METHOD__ . " res: " . print_r($res, true) );
+			}
+			//My_Logger::log(__METHOD__ . " res: " . print_r($res, true) );
 			return $res;
 		}
-		
 
-		
-		
-				
-		
+
+
+
+
+
 	}
-

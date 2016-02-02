@@ -25,9 +25,9 @@
 * FOR MYSQL DB:     quiz_db
 * -------------------------------------------------------
 * Class Description:
-* 
-* 
-* 
+*
+*
+*
 */
 
 
@@ -37,14 +37,14 @@
 
 class Model_Quiz_Quiz
 {
-	
+
 	const QUIZ_COMPLETED = 1;
 	const QUIZ_AVAILABLE = 2;
 	const QUIZ_INPROGRESS = 3;
 	const PREREQUISITE_PENDING = 4;
-	
-	
-	
+
+
+
 	// **********************
 	// ATTRIBUTE DECLARATION (GENERIC)
 	// **********************
@@ -62,7 +62,7 @@ class Model_Quiz_Quiz
 	// **********************
 	// CONSTRUCTORS (GENERIC)
 	// **********************
-	
+
 	public static function fromID($vID){
 		//Start by making sure the appropriate record exists
 		$db = Zend_Registry::get("db");
@@ -71,7 +71,7 @@ class Model_Quiz_Quiz
 		if($row['quiz_id']==null){
 			return null; //No corresponding record found in database
 		}
-		
+
 		//Assuming we have the appropriate records
 		$vReturn = new Model_Quiz_Quiz();
 		$vReturn->quiz_id = $row['quiz_id'];
@@ -84,19 +84,19 @@ class Model_Quiz_Quiz
 
 		return $vReturn;		//Return the result
 	}
-	
+
 
 	public static function fromScratch($quiz_name,$permissions_group,$open_date,$close_date,$max_attempts,$percentage_pass){
 		$db = Zend_Registry::get("db");
 		$sql = "INSERT INTO quiz(quiz_id,quiz_name,permissions_group,open_date,close_date,max_attempts,percentage_pass) VALUES(NULL, ".$db->quote($quiz_name).",".$db->quote($permissions_group).",".$db->quote($open_date).",".$db->quote($close_date).",".$db->quote($max_attempts).",".$db->quote($percentage_pass).")";
 		//echo $sql; die();
 		$db->query($sql);
-		
+
 		//Now find the appropriate entry in the database
 		//	A safe (default) assumption for this is a query that looks for everything you just put in.
-		
-		
-		return Model_Quiz_Quiz::fromID($db->lastInsertId()); 
+
+
+		return Model_Quiz_Quiz::fromID($db->lastInsertId());
 	}
 
 	// **********************
@@ -160,23 +160,21 @@ class Model_Quiz_Quiz
 	// OTHER METHODS (SPEIFIC)
 	// **********************
 	public static function getAll($vOrder=false){
+		My_Logger::log("in getAll");
 		$db = Zend_Registry::get("db");
 		$vReturn = array();
 		//$sql = "SELECT * FROM quiz";
-		$sql = "SELECT
-quiz.*, position
-FROM
-quiz
-LEFT JOIN sequence_quiz ON quiz.quiz_id = sequence_quiz.quiz_id
-ORDER BY
-sequence_quiz.position ASC";
+		$sql = "SELECT quiz.*, position FROM quiz
+			LEFT JOIN sequence_quiz ON quiz.quiz_id = sequence_quiz.quiz_id
+			ORDER BY
+			sequence_quiz.position ASC";
 		if($vOrder){
 			$sql.=", quiz.close_date ASC";
 		}
 		//echo "SQL: $sql<br/>";
 		$result = $db->query($sql);
 		$rows = $result->fetchAll();
-		
+
 		foreach($rows as $row){
 			$vReturn[] = Model_Quiz_Quiz::fromID($row['quiz_id']);
 		}
@@ -195,13 +193,13 @@ sequence_quiz.position ASC";
 		//echo "SQL: $sql";
 		$result = $db->query($sql);
 		$rows = $result->fetchAll();
-		
+
 		foreach($rows as $row){
 			$vReturn[] = Model_Quiz_TestedConcept::fromID($row['ctest_id']);
 		}
 		return $vReturn;
 	}
-	
+
 	public function getTotalQuestions(){
 		$vTotalQuestions = 0;
 		$vTCs = $this->getTestedConcepts();
@@ -210,30 +208,30 @@ sequence_quiz.position ASC";
 		}
 		return $vTotalQuestions;
 	}
-	
-	
+
+
 	public function remove(){
 		//This SHOULD cascade delete in the database...
 		$db = Zend_Registry::get("db");
 		$db->query("DELETE FROM quiz WHERE quiz_id=".$db->quote($this->quiz_id)." LIMIT 1");
 	}
-	
+
 	public function getQuizAttempts(){
 		$db = Zend_Registry::get("db");
 		$vReturn = array();
 		$result = $db->query("SELECT * FROM quiz_attempt WHERE quizquiz_id=".$db->quote($this->quiz_id));
 		$rows = $result->fetchAll();
-		
+
 		foreach($rows as $row){
 			$vReturn[] = Model_Quiz_QuizAttempt::fromID($row['quiz_attempt_id']);
 		}
 		return $vReturn;
 	}
-	
+
 	function hasPendingPrerequisite($username){
 		$prereq = $this->getPrerequisite();
 		if(!$prereq) return false;
-		
+
 		//is the prerequisite not completed?
 		$attempt = Model_Quiz_QuizAttempt::fromQuizAndUser($prereq, $username);
 		if(!$attempt) return true; //prerequisite has not even been attempted
@@ -241,9 +239,9 @@ sequence_quiz.position ASC";
 		if($attempt->getDate_finished()){
 			return false;
 		}
-		
+
 		return true;
-/*		
+/*
 		if ($attempt->getDate_finished()==null){
 			$vQuizStatus = Model_Quiz_Quiz::QUIZ_INPROGRESS;
 			if($vQuiz->getClose_date() < strtotime("now")){
@@ -252,14 +250,14 @@ sequence_quiz.position ASC";
 			else{
 				echo "\t\t<td>In Progress</td>\n";
 			}
-	
+
 		}else{
 			$vQuizStatus = Model_Quiz_Quiz::QUIZ_COMPLETED;
 			echo "\t\t<td>Completed</td>\n";
 		}
 */
 	}
-	
+
 	function getPrerequisite(){
 		$db = Zend_Registry::get("db");
 		$sql = "SELECT

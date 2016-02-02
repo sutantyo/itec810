@@ -26,16 +26,16 @@ class IndexController extends Zend_Controller_Action {
 	 */
     public function init(){
         $this->_auth = Zend_Auth::getInstance();
-		
+
 		if( $this->_auth->hasIdentity() ) {
 			$identity = Zend_Auth::getInstance()->getIdentity();
 			if( !isset($identity->username) ) {
 				// Don't know how you got here... But you're not authenticated
 				$this->_helper->redirector("login", "auth");	//Must Log in before accessing anything
 			}
-		
+
 			$this->view->username = $identity->username;
-		
+
 			// Determine what sidebars this person has access to
 			// (Determined at this point by defined groups)
 			$auth_model = Model_Auth_General::getAuthModel();
@@ -44,13 +44,13 @@ class IndexController extends Zend_Controller_Action {
 			}else{
 				$this->view->is_admin = false;
 			}
-		
-		
+
+
 		}else{
 			$this->_helper->redirector("login", "auth");	//Must Log in before accessing anything
 		}
     }
-    
+
 
 
 	/**
@@ -61,20 +61,20 @@ class IndexController extends Zend_Controller_Action {
 	 * @author Ben Evans
 	 */
     public function indexAction(){
-        
+
 		$this->view->title = "Welcome to the Randomised Quiz System (RQS)";
 		$this->view->headTitle("Welcome");
-		
+
     }
-    
+
     public function envAction(){
-    
+
     	$this->view->title = "Environment Check";
     	$this->view->headTitle("Env");
     	$this->view->env = APPLICATION_ENV; //At the moment this is set on the public/.htaccess file
-    
+
     }
-	
+
 	/**
 	 * Displays basic User information
 	 *
@@ -84,8 +84,8 @@ class IndexController extends Zend_Controller_Action {
 	public function userinfoAction() {
 		$this->view->user_details = Model_Auth_ActiveDirectory::getUserDetails($this->view->username);
 	}
-	
-	
+
+
 	/**
 	 * Shows Available Quizzes for the logged in User
 	 *
@@ -94,13 +94,13 @@ class IndexController extends Zend_Controller_Action {
 	 */
 	public function availableAction() {
 		$this->view->headTitle("Available Quizzes");
-		
+
 		$outstanding = $this->_getParam("outstanding");
 		$vQuizzes = Model_Quiz_Quiz::getAll(true);
 		$vAvailable = array();
 		$auth_model = Model_Auth_General::getAuthModel();
 		$identity = Zend_Auth::getInstance()->getIdentity();
-		
+
 
 		/*	Make sure you have permission	*/
 		foreach($vQuizzes as $vQuiz){
@@ -114,7 +114,7 @@ class IndexController extends Zend_Controller_Action {
 
 		if( isset($outstanding) ){
 			$this->view->title = "Outstanding Quizzes";
-	
+
 			$vOutstanding = array();
 			foreach($vAvailable as $vQuiz){
 				$vQuizAttempt = Model_Quiz_QuizAttempt::fromQuizAndUser($vQuiz, $identity->username);
@@ -127,10 +127,10 @@ class IndexController extends Zend_Controller_Action {
 					}
 				}
 			}
-	
+
 			//Make the new 'available quizzes' the quizzes that aren't complete yet
 			$vAvailable = $vOutstanding;
-	
+
 		}else{
 			$this->view->title = "Available Quizzes";
 		}
@@ -138,8 +138,8 @@ class IndexController extends Zend_Controller_Action {
 		$this->view->available = $vAvailable;
 
 	}
-	
-	
+
+
 	/**
 	 * Shows the Hall of Fame for the Logged in User
 	 *
@@ -151,7 +151,7 @@ class IndexController extends Zend_Controller_Action {
 		$this->view->headTitle("Hall of Fame");
 		$identity = Zend_Auth::getInstance()->getIdentity();
 		$auth_model = Model_Auth_General::getAuthModel();
-		
+
 		//Firstly, we have to get the quizzes that we have access to
 		$vQuizzes = Model_Quiz_Quiz::getAll(true);
 		$vAvailable = array();
@@ -164,16 +164,16 @@ class IndexController extends Zend_Controller_Action {
 				$vAvailable[] = $vQuiz;
 			}
 		}
-		
-		
+
+
 		/*	Any Quizzes available? */
 		$quiz_rows = array();
 		if(sizeof($vAvailable)!=0){
-			
+
 			foreach($vAvailable as $vQuiz){
 				$quiz_row = array();
 				$quiz_row['name'] = $vQuiz->getName();
-				
+
 				$vAttempts = $vQuiz->getQuizAttempts();
 				$vPassed = array();
 				if(sizeof($vAttempts) > 0){
@@ -181,31 +181,31 @@ class IndexController extends Zend_Controller_Action {
 						//Make sure we're only looking at people who've passed
 
 						$vTotalScore = $vAttempt->getTotal_score();
-						//echo "Comparing " . $vTotalScore . "/". $vQuiz->getTotalQuestions() ."  with " . $vQuiz->getPercentage_pass() . "%  (".$vAttempt->getID().")<br/>";  
+						//echo "Comparing " . $vTotalScore . "/". $vQuiz->getTotalQuestions() ."  with " . $vQuiz->getPercentage_pass() . "%  (".$vAttempt->getID().")<br/>";
 						if(($vTotalScore/$vQuiz->getTotalQuestions())*100 >= $vQuiz->getPercentage_pass() && $vAttempt->getDate_finished()!=null){
 							//echo "Added.<br/>";
 							$vPassed[] = $vAttempt;
 						}
 					}
 				}
-	
-	
-				
+
+
+
 				//Did anyone pass?
 				if(sizeof($vPassed)>0){
-			
+
 					//Sort results first
 					usort($vPassed,"sort_by_score");
-		
+
 					//Truncate the array if necessary
 					if(sizeof($vPassed) > MAX_HALLOFFAME){
 						array_splice($vPassed, 0, MAX_HALLOFFAME);
 					}
-			
+
 					// And now record the scores
 					$quiz_row['scores'] = array();
-					
-			
+
+
 					//Now output the scores
 					foreach($vPassed as $vp){
 						$score_row = array(
@@ -213,7 +213,7 @@ class IndexController extends Zend_Controller_Action {
 							"score" => $vp->getTotal_score(),
 							"time"	=> ($vp->getDate_finished() - $vp->getDate_started())
 						);
-	
+
 						$quiz_row['scores'][] = $score_row;
 					}
 				}
@@ -221,14 +221,14 @@ class IndexController extends Zend_Controller_Action {
 				$quiz_rows[] = $quiz_row;
 			}//End_foreach_quiz
 		}
-		
+
 		$this->view->quiz_rows = $quiz_rows;
-		
-		
+
+
 	}
-	
-	
-	
+
+
+
 	/**
 	 * An Administrative function that tests Question Generation
 	 *
@@ -239,19 +239,20 @@ class IndexController extends Zend_Controller_Action {
 		if( !$this->view->is_admin ) {
 			throw new Exception("Access Denied");
 		}
-		
+
 		$this->_helper->layout->disableLayout();
-		
+
 		//$xml_path = APPLICATION_PATH . '/../xml/questions';
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
 		$xml_path = $config->xml->import_path;
+    My_Logger::log($xml_path);
 		$this->view->available_files = $this->getAvailableFiles($xml_path);
-		
+
 
 		// See what Question we're looking at...
 		$this->view->selected_xml = $selected_xml = $this->_getParam("q");
 		if( isset($selected_xml) && !is_null($selected_xml) ) {
-			
+
 			// Get the Question XML
 			try{
 				$mQuestion = new Model_Shell_GenericQuestion($xml_path . "/" . $selected_xml .".xml");
@@ -259,16 +260,16 @@ class IndexController extends Zend_Controller_Action {
 			} catch (Exception $e) {
 				//throw $e;
 			}
-			
+
 			// Just make a new random question, so we get access to functions like Randset
 			$temp = new Model_Quiz_GeneratedQuestion();
-			
+
 		}
-		
-		//added by Ivan. Force for now, comment out in release 
+
+		//added by Ivan. Force for now, comment out in release
 		Model_Shell_Debug::getInstance()->saveToDisk();
 	}
-	
+
 	protected function getAvailableFiles($xml_path){
 		/* Get the appropriate files and show them in a nice little combobox */
 		$res = array();
@@ -277,18 +278,18 @@ class IndexController extends Zend_Controller_Action {
 				if(strtolower(substr($file,-3))=="xml"){
 					$res[substr($file,0,-4)] = $file;
 				}
-		
+
 			}
 			closedir($handle);
 		}
 		return $res;
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 
 
 }// End Class
@@ -307,10 +308,3 @@ function sort_by_score(&$a, &$b){
 	else
 		return 1;
 }
-
-
-
-
-
-
-

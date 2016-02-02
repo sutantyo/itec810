@@ -13,24 +13,24 @@
 </tr>
 <tr>
 	<td>
-		<?php echo Form_Builder::select_tag('available', 
+		<?php echo Form_Builder::select_tag('available',
 				Form_Builder::options_for_select($this->available)
 				, array('multiple'=> 'multiple', 'class'=>'seq-items')
 		);?>
 	</td>
-	
+
 	<td class="control_buttons">
 	<button id="add_btn">Add &gt;&gt;</button><br/>
 	<button id="remove_btn">Remove &lt;&lt;</button>
 	</td>
-	
+
 	<td>
-		<?php echo Form_Builder::select_tag('current', 
+		<?php echo Form_Builder::select_tag('current',
 				Form_Builder::options_for_select($this->current)
 				, array('multiple'=> 'multiple', 'class'=>'seq-items')
 		);?>
 	</td>
-	
+
 	<td align="left" class="position_buttons">
 	<button data-dir="up">Up</button><br/>
 	<button data-dir="down">Down</button>

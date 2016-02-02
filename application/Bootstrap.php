@@ -21,34 +21,34 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 	protected function _initRequest() {
 		// Get our General Configuration (I'm sure there's a better way to do this, but for now we'll use it)
 		include_once (APPLICATION_PATH . '/configs/general.php');
-		
+
 		require_once 'Zend/Loader/PluginLoader.php';
-		
+
 		ini_set('display_errors', 1);
 	}
 
 	protected function _initAutoload() {
 		$moduleLoader = new Zend_Application_Module_Autoloader(array (
 				'namespace' => '',
-				'basePath' => APPLICATION_PATH 
+				'basePath' => APPLICATION_PATH
 		));
-		
+
 		// Load Config
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
-		
+
 		// init database
 		$params = $config->resources->db->params->toArray();
 		$db = Zend_Db::factory($config->resources->db->adapter, $params);
 		Zend_Registry::set('db', $db);
-		
+
 		// Make sure that the appropriate configurations are set
 		$this->checkConfig();
-		
+
 		Zend_Loader::loadClass('My_Logger', APPLICATION_PATH . '/../library'); // Hmmmmm
-		
+
 		$loader = Zend_Loader_Autoloader::getInstance();
 		$loader->registerNamespace('Ajax_');
-		
+
 		return $moduleLoader;
 	}
 
@@ -67,9 +67,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 				"AUTH_METHOD" => "Authentication Method",
 				"QUIZ_ADMINISTRATORS" => "Quiz Administrator Group",
 				"MAX_HALLOFFAME" => "Maximum amount of Hall of Fame Scores",
-				"DEFAULT_DATE_FORMAT" => "Default Date Format" 
+				"DEFAULT_DATE_FORMAT" => "Default Date Format"
 		);
-		
+
 		foreach ( $defined_variables as $key => $dv ) {
 			if (!defined($key)) {
 				die("Configuration Error. Required Parameter " . $key . "(" . $dv . ") is not defined.");
@@ -82,7 +82,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 			$className = str_replace('\\', '_', $className);
 			Zend_Loader_Autoloader::autoload($className);
 		};
-		
+
 		$autoloader = Zend_Loader_Autoloader::getInstance();
 		$autoloader->pushAutoloader($loader, 'Application\\');
 	}*/
@@ -90,9 +90,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
 /**
  * Developer only class, allows use fine grained logging
- * 
+ *
  * @author Ivan Rodriguez
- *        
+ *
  */
 class Zend_Db_Adapter_Ex_Pdo_Mysql extends Zend_Db_Adapter_Pdo_Mysql {
 
