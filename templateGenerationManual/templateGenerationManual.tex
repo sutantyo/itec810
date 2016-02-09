@@ -1,0 +1,115 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[inline]{asymptote}
+\usepackage{pslatex}
+\usepackage{color}  
+\usepackage{graphicx}     
+\usepackage{verbatim}
+\usepackage{xcolor}
+\usepackage{paralist}
+\usepackage{tagging}
+
+\usepackage[colorlinks=true,urlcolor=red]{hyperref}
+\setlength{\topmargin}{-0.5in}                  % topmargin now at 1in
+\setlength{\textheight}{9.5in}                  % body of text = 9.5in
+\setlength{\oddsidemargin}{0in}                 % left margin = 1.0in on odd-numbered pages
+\setlength{\evensidemargin}{0in}                % left margin = 1.0in on even-numbered pages 
+\setlength{\textwidth}{6.5in}                   % width of text line.
+\setlength{\parindent}{0.0in}
+\newcommand{\code}{\texttt}
+\usepackage{listings}
+\lstset{%
+	language=Java,
+	basicstyle=\footnotesize\ttfamily,
+	numbers=left,
+	numberstyle=\tiny,        
+	xleftmargin=17pt,
+        	xrightmargin=5pt,
+	frame=single,
+	breaklines=true,
+	moredelim=**[is][\color{red}]{@}{@}
+}
+
+\lstdefinestyle{buggy}{
+  language=Java,
+  emptylines=1,
+  breaklines=true,
+  basicstyle=\ttfamily\color{black},
+  moredelim=**[is][\color{red}]{@}{@},
+}
+
+\lstdefinestyle{correct}{
+  language=Java,
+  emptylines=1,
+  breaklines=true,
+  basicstyle=\ttfamily\color{black},
+  moredelim=**[is][\color{blue}]{@}{@},
+}
+
+\usepackage{listings}
+\lstset{%
+	language=Java,
+	basicstyle=\footnotesize\ttfamily,
+	numbers=left,
+	numberstyle=\tiny,        
+	xleftmargin=17pt,
+        	xrightmargin=5pt,
+	frame=single,
+	breaklines=true,
+	moredelim=**[is][\color{red}]{@}{@}
+}
+
+\begin{document}
+
+\definecolor{aquamarine}{rgb}{0,0,0.7}
+\definecolor{blue}{rgb}{0,0,0.7}
+\definecolor{red}{rgb}{1,0,0}
+
+
+%\renewcommand{\labelenumi}{\arabic{enumi}.}
+\renewcommand{\labelenumi}{\alph{enumi}.}
+
+\title{Template documentation}
+
+This document describes the components for generating a question template in the randomized quiz generator.
+
+\begin{enumerate}
+\item Any statement of the code that should NOT be displayed can be hidden by putting a \texttt{//HIDE} comment at the end of the statement.
+\item General structure of question is as follows where the questions is \emph{What is the value of result} when the following code is executed,
+
+\begin{lstlisting}[style=buggy]
+class ExampleProgram { //HIDE
+    public static void main(String[] args) { //HIDE
+   @ code visible to the user @
+    System.out.println(result); //HIDE
+}}//HIDE
+	
+\end{lstlisting}
+
+\item $rand(low, high)$: gives a value in the range [low, high]
+\item $randset(array(item1, item2...))$ gives a random item from the set
+\item An existing variable can be accessed is subsequent substitutions by surrounding it with \%. For example, $s1$ can be accessed by including $\%s1\%$.
+\item Selection from existing variables can be done in the following way, in which $s5$ is either $s4 - 1$, or $s4$ or $s4 + 1$ with equal probablities. One can manipulate the probablities, and therefore distribution, using appropriate conditions.
+\begin{lstlisting}
+//Equal chance of any condition happenning
+$decidor=rand(0,2);
+if($decidor==0) {
+    return %s4% + 1; //First result
+}
+elseif($decidor==1) {
+    return %s4%;
+}
+else {
+    return %s4% - 1;
+}
+\end{lstlisting}
+
+\item \texttt{randset} can be used to randomize variables AND operators. Some examples,
+\begin{itemize}
+\item $s1 = randset(array(``true'', ``false''), s3 = randset(array("!!","!","!!!")), val = `s3``s1`$.
+\item $s1 = rand(1, 10), s2 = rand(1, 5)$, \texttt{double val = `s1`.`s2`;}
+\end{itemize}
+\end{enumerate}
+
+
+\end{document}
