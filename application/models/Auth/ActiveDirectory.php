@@ -68,9 +68,9 @@ class Model_Auth_ActiveDirectory extends Model_Auth_General{
 		if( $options['use_tls'] == 0 ) { $options['use_tls'] = false; }else{ $options['use_tls'] = true; }
 		
 		
-		//return new adLDAP($options);
+		return new adLDAP($options);
 		//return new Model_Mock_adLDAP($options);
-		return new $ldap_config['provider']($options);
+		//return new $ldap_config['provider']($options);
 	}
 
 
