@@ -6,8 +6,7 @@ log
 library/My/debuglog.txt
 .htaccess.original
 tmp
-application/configs/application.ini
-application/configs/general.php
+public/index.php
 library/Zend
 xml/prod
 .DS_Store
