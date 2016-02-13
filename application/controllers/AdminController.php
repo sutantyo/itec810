@@ -158,10 +158,33 @@ class AdminController extends Zend_Controller_Action {
 			$vQuiz = Model_Quiz_Quiz::fromID($quiz_id);
 			$vQuiz->remove();
 		}
-
 		// Redirect to the Manage Quiz Pages
 		$this->_helper->redirector("manage", "admin");
 	}
+
+  /**
+    * Delete a sequence
+    *
+    * To delete a sequence, first we go through the table sequence_quiz to remove
+    * all entries of that sequence id, then delete the actual sequence from the
+    * table sequence.
+    *
+    * @return void
+    * @author Daniel Sutantyo
+    */
+  public function deletesequenceAction(){
+    $sequence_id = $this->_getParam("id");
+
+    if( isset($sequence_id) ){
+      $vSequence = Model_Quiz_Sequence::load($sequence_id);
+      if (!$vSequence){
+        throw new Exception("Sequence does not exist");
+      }
+      $vSequence->remove($sequence_id);
+    }
+    // Redirect to the Manage Quiz Pages
+    $this->_helper->redirector("sequences", "admin");
+  }
 
 
 
