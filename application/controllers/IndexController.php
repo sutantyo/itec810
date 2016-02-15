@@ -282,6 +282,7 @@ class IndexController extends Zend_Controller_Action {
 			}
 			closedir($handle);
 		}
+    sort($res);
 		return $res;
 	}
 

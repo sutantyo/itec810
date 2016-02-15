@@ -73,8 +73,8 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 		/* Get the appropriate files and show them in a nice little combobox */
 		$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/application.ini", APPLICATION_ENV);
 		$xml_path = $config->xml->import_path;
-    My_Logger::log("in QuestionTemplateController::editorAction()");
-    My_Logger::log("the xml path is " . $xml_path);
+    //My_Logger::log("in QuestionTemplateController::editorAction()");
+    //My_Logger::log("the xml path is " . $xml_path);
 		$this->view->available_files = array(""=>'Select ...') +  $this->getAvailableFiles($xml_path);
 		$this->view->selected_xml = $selected_xml = $this->_getParam("q");
 		if ( $selected_xml ) {
@@ -102,7 +102,6 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 	}
 
 	function ajaxAction(){
-    My_Logger::log("in QuestionTemplateController::ajaxAction()");
 
 		$ajax = new Ajax_TemplateEditorProcessor();
 		$res = $ajax->process($this->getRequest()->getPost());

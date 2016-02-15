@@ -20,7 +20,18 @@ class Model_Shell_QuestionTemplate{
 		 * @throws Exception
 		 */
 		public function __construct(){
+My_Logger::log(__METHOD__ );
+			$file_contents = array();
+			$text = <<<EOD
+class Example { //HIDE
+  public static void main(String[] args) { //HIDE
+    System.out.println(result);
+  } //HIDE
+} //HIDE
+EOD;
+			$file_contents['question']['problem'] = $text;
 
+			$this->file_Contents = $file_contents;
 		}
 
 		static function load($file_name){
@@ -35,7 +46,7 @@ class Model_Shell_QuestionTemplate{
 
 			$obj->xml = simplexml_load_file($file_name);
 
-			//My_Logger::log(__METHOD__ . " contents:" . print_r($file_contents, true));
+My_Logger::log(__METHOD__ . " contents:" . print_r($file_contents, true));
 			//My_Logger::log(__METHOD__ . " xml:" . print_r($obj->xml, true));
 
 			$obj->file_Contents = $file_contents;
@@ -43,6 +54,9 @@ class Model_Shell_QuestionTemplate{
 			$obj->substitutions = array();
 			$obj->valid = true;
 			//print_r($obj->mFileContents);
+My_Logger::log(__METHOD__ . $obj->file_Contents['question']['problem']);
+$obj->file_Contents['question']['problem'] = "Test";
+
 			return $obj;
 		}
 
