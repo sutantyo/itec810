@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>expressions</concept></concepts><difficulty>1</difficulty><instructions>What is the value of result when the following code is executed?</instructions><problem><![CDATA[class Expressions3 { //HIDE
+    public static void main(String[] args) { //HIDE
+        boolean result = '`s8`' >= '`s3`' && '`s8`' <= '`s4`';
+        System.out.println(result); //HIDE
+    } //HIDE
+} //HIDE]]></problem><substitutions><substitution val="s2"><![CDATA[rand(1,3)]]></substitution><substitution val="s3"><![CDATA[if(%s2%==0) {
+   return 'A';
+}
+elseif(%s2%==1) {
+   return 'a';
+}
+else {
+   return '0';
+}]]></substitution><substitution val="s4"><![CDATA[if(%s2%==0) {
+   return 'Z';
+}
+elseif(%s2%==1) {
+   return 'z';
+}
+else {
+   return '9';
+}]]></substitution><substitution val="s5"><![CDATA[chr(rand(48,57))]]></substitution><substitution val="s6"><![CDATA[chr(rand(65,90))]]></substitution><substitution val="s7"><![CDATA[chr(rand(97,122))]]></substitution><substitution val="s8"><![CDATA[$i=rand(1,3);
+if($i==0) {
+   return %s5%;
+}
+elseif($i==1) {
+    return %s6%;
+}
+else {
+    return %s7%;
+}]]></substitution></substitutions></question>

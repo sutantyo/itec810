@@ -1,14 +1,6 @@
-<question type="output">
-	<estimated_time>80</estimated_time>
-	<concepts>
-		<concept>Conditions</concept>
-	</concepts>
-	<difficulty>1</difficulty>
-	<instructions>
-		What is the value of `result` at the end of this program?
-	</instructions>
-	<problem>
-class ExampleProgram {												//HIDE
+<?xml version="1.0"?>
+<question type="output"><estimated_time>80</estimated_time><concepts><concept>Conditions</concept></concepts><difficulty>1</difficulty><instructions>		What is the value of `result` at the end of this program?&#xD;
+	</instructions><problem><![CDATA[class ExampleProgram {												//HIDE
 	public static void main(String[] args){							//HIDE
 	int result = `s1`, b = `s3`, `s4` = `s2`;
 	if( b*2 == `s4` )
@@ -18,18 +10,9 @@ class ExampleProgram {												//HIDE
 		
 	System.out.println(result);	//HIDE
 }}//HIDE
-	</problem>
-	
-	<substitutions>
-		<substitution val="s2">rand(1,10)*2</substitution>
-		<substitution val="s1">(rand(4,7)*2)</substitution>
-		<substitution val="s3">
-			if(rand(0,1)==1){
+	]]></problem><substitutions><substitution val="s2"><![CDATA[rand(1,10)*2]]></substitution><substitution val="s1"><![CDATA[(rand(4,7)*2)]]></substitution><substitution val="s3"><![CDATA[			if(rand(0,1)==1){
 				return %s2%/2;
 			}else{
 				return %s2%-3;
 			}
-		</substitution>
-		<substitution val="s4">randset(array("c","z","s"))</substitution>
-	</substitutions>
-</question>
+		]]></substitution><substitution val="s4"><![CDATA[randset(array("c","z","s"))]]></substitution></substitutions></question>

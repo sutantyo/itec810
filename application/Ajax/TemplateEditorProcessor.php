@@ -88,6 +88,8 @@ class Ajax_TemplateEditorProcessor {
 		My_Logger::log("Saving to $full_filename");
 
 		$xml->saveXML( $full_filename );
+		chmod($full_filename,0666);
+		
 
 		return array('result'=>'success', 'msg'=>"File '$filename' saved correctly");
 	}

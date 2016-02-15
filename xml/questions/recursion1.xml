@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>80</estimated_time><concepts><concept>recursion</concept></concepts><difficulty>2</difficulty><instructions>What is the value of result when the following code is executed?</instructions><problem><![CDATA[class Hello {//HIDE
+    public static void main(String[] args) {
+        int dummy = `s2`;
+        int result = foo(`s1`);
+        System.out.println(result); //HIDE
+    }
+    
+    public static int foo(int n) {
+        if(n <= 0)
+            return 0;
+        return 1 + foo(n/2);
+    }
+}//HIDE
+]]></problem><substitutions><substitution val="s1"><![CDATA[rand(20,40)]]></substitution><substitution val="s2"><![CDATA[rand(20,40)]]></substitution></substitutions></question>

@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <question type="output"><estimated_time>80</estimated_time><concepts><concept>operationBravo</concept></concepts><difficulty>1</difficulty><instructions>		What is the given output of this program?&#xD;
 	</instructions><problem><![CDATA[class ExampleProgram {												//HIDE
-public static void main(String[] args){							//HIDE
-System.out.println(`s1`.`s4` `s2` `s3`.`s5`);
-}}//HIDE
+    public static void main(String[] args){							//HIDE
+        System.out.println(`s1`.`s4` `s2` `s3`.`s5`);
+    }//HIDE
+}//HIDE
 	]]></problem><substitutions><substitution val="s1"><![CDATA[rand(1,10)]]></substitution><substitution val="s2"><![CDATA[randset(array("+","-","*"))]]></substitution><substitution val="s3"><![CDATA[rand(1,10)]]></substitution><substitution val="s4"><![CDATA[rand(0,9)]]></substitution><substitution val="s5"><![CDATA[rand(1,9)]]></substitution></substitutions></question>
