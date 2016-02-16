@@ -10,3 +10,6 @@ public/index.php
 library/Zend
 xml/prod
 .DS_Store
+*.swp
+*.swo
+*.swn

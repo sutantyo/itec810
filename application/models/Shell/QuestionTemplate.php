@@ -55,8 +55,6 @@ My_Logger::log(__METHOD__ . " contents:" . print_r($file_contents, true));
 			$obj->valid = true;
 			//print_r($obj->mFileContents);
 My_Logger::log(__METHOD__ . $obj->file_Contents['question']['problem']);
-$obj->file_Contents['question']['problem'] = "Test";
-
 			return $obj;
 		}
 
