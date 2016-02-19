@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>conditions</concept></concepts><difficulty>1</difficulty><instructions>What is the value of result when the following code is executed?</instructions><problem><![CDATA[class Conditionals1 { //HIDE
+  public static void main(String[] args) { //HIDE
+    int result = `s1`;
+    if(`s2` `s3` `s4`) {
+        result`s5``s6`;
+    }
+    else {
+        result`s7``s8`;
+    }
+    System.out.println(result);
+  } //HIDE
+} //HIDE]]></problem><substitutions><substitution val="s1"><![CDATA[rand(5, 10)]]></substitution><substitution val="s2"><![CDATA[rand(3, 10)]]></substitution><substitution val="s3"><![CDATA[randset(array("<","<=",">",">="))]]></substitution><substitution val="s4"><![CDATA[rand(3, 10)]]></substitution><substitution val="s5"><![CDATA[randset(array("+=","-="))]]></substitution><substitution val="s6"><![CDATA[rand(1,3)]]></substitution><substitution val="s7"><![CDATA[randset(array("+=","-="))]]></substitution><substitution val="s8"><![CDATA[rand(4,6)]]></substitution></substitutions></question>
