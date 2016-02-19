@@ -26,39 +26,43 @@ $vAvailable = $this->available;
 <?php if (sizeof($vAvailable)==0):?>
 
 	<p>There are no quizzes available at this time</p>
-	
-<?php else: ?>	
-	
+
+<?php else: ?>
+
 		<table>
 		<tr><th>Quiz Title</th><th>To be completed by</th><th>Status</th><th>Best Mark</th><th>Actions</th></tr>
 	<?php
 		foreach($vAvailable as $vQuiz){
 			echo "\t<tr>\n";
-		
+
 			echo "\t\t<td>".$vQuiz->getQuiz_name()."</td>\n";
 			echo "\t\t<td>".date("d/m/Y",$vQuiz->getClose_date())."</td>\n";
 
 			/*	So find out what status the quiz is in - Completed(1), Not completed(2) or In progress(3) (Optionally Late) */
-			
+
+My_Logger::log("The current quiz is " . $vQuiz->getID());
 			if ($vQuiz->hasPendingPrerequisite($this->username)){
 				$vQuizStatus = Model_Quiz_Quiz::PREREQUISITE_PENDING;
 				echo "\t\t<td>Prerequisite pending</td>\n";
 			}
 			else {
-				$vQuizStatus = handleCurrentPosition($vQuiz, $this->username);				
+				$vQuizStatus = handleCurrentPosition($vQuiz, $this->username);
 			}
-			
-			
-			
-		
-		
-		
+
+
+
+
+
+
 			/*	Marks (If completed) */
 			if($vQuizStatus==Model_Quiz_Quiz::QUIZ_COMPLETED){
 				$vHighest = Model_Quiz_QuizAttempt::getHighestMarkQuiz($this->username, $vQuiz);
 				echo "\t\t<td>".$vHighest->getTotal_score();
 				//Did they pass/fail?
-				if(($vHighest->getTotal_score()/$vQuiz->getTotalQuestions())*100 >= $vQuiz->getPercentage_pass()){
+				//Modified by Daniel Sutantyo
+				if($vHighest->hasPassedQuiz()){
+				//if(($vHighest->getTotal_score()/$vQuiz->getTotalQuestions())*100 >= $vQuiz->getPercentage_pass()){
+
 					echo " (<span class='green'>PASS</span>)";
 				}else{
 					echo " (<span class='red'>FAIL</span>)";
@@ -67,8 +71,8 @@ $vAvailable = $this->available;
 			}else{
 				echo "\t\t<td>N/A</td>\n";
 			}
-				
-		
+
+
 
 			/*	Possible Actions */
 			if ($vQuizStatus == Model_Quiz_Quiz::PREREQUISITE_PENDING){
@@ -79,7 +83,7 @@ $vAvailable = $this->available;
 			}else if ( $vQuizStatus == Model_Quiz_Quiz::QUIZ_INPROGRESS){
 				echo "\t\t<td><a href='". $this->baseUrl() ."/shell/attempt?quiz=".$vQuiz->getID()."' target='blank'>Continue Quiz</a></td>\n";
 			}else{
-				
+
 				//Completed. Can we re-attempt?
 				$vAttempts = Model_Quiz_QuizAttempt::getAllFromUser($this->username, $vQuiz);
 				if(sizeof($vAttempts)>=$vQuiz->getMax_attempts()){
@@ -90,16 +94,16 @@ $vAvailable = $this->available;
 						echo "<td>Quiz Closed</td>";
 					else
 						echo "\t\t<td><a href='". $this->baseUrl() ."/shell/attempt?quiz=".$vQuiz->getID()."' target='blank'>Attempt Again</a></td>\n";
-				}			
+				}
 			}
-		
+
 			echo "\t</tr>\n";
 		}
 		echo "</table>\n";
-		?>		
+		?>
 <?php endif; ?>
-	
-<?php 
+
+<?php
 
 function handleCurrentPosition($vQuiz, $username){
 	$vQuizAttempt = Model_Quiz_QuizAttempt::fromQuizAndUser($vQuiz, $username);
@@ -131,4 +135,4 @@ function handleCurrentPosition($vQuiz, $username){
 	return $vQuizStatus;
 }
 
-?>	
+?>

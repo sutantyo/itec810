@@ -232,14 +232,21 @@ class Model_Quiz_Quiz
 		$prereq = $this->getPrerequisite();
 		if(!$prereq) return false;
 
-		//is the prerequisite not completed?
-		$attempt = Model_Quiz_QuizAttempt::fromQuizAndUser($prereq, $username);
-		if(!$attempt) return true; //prerequisite has not even been attempted
+		$prereq_question = Model_Quiz_Quiz::fromID($prereq);
 
-		if($attempt->getDate_finished()){
-			return false;
+		//is the prerequisite not completed?
+
+		//$attempt = Model_Quiz_QuizAttempt::fromQuizAndUser($prereq, $username);
+		$attempt = Model_Quiz_QuizAttempt::getHighestMarkQuiz($username,$prereq_question);
+
+		if(!$attempt){
+			My_Logger::log("attempt not found");
+			return true; //prerequisite has not even been attempted
 		}
 
+		if($attempt->getDate_finished() && $attempt-> hasPassedQuiz()){
+			return false;
+		}
 		return true;
 /*
 		if ($attempt->getDate_finished()==null){

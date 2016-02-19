@@ -75,7 +75,7 @@ Vagrant.configure(2) do |config|
   # SHELL
   config.vm.provision :shell, path: "bootstrap.sh"
   
-  #config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/", rsync__auto: "true"
-  config.vm.synced_folder ".", "/vagrant"
+  #config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/", rsync__auto: "true", extra: "dmode=777, fmode=777"
+  config.vm.synced_folder ".", "/vagrant", mount_options: [ "dmode=777", "fmode=777" ]
   #config.vm.synced_folder "log/mysql", "/var/log/mysql", type: "rsync", rsync__auto: "true" #Only one way host->guest
 end

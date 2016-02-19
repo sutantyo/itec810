@@ -26,9 +26,9 @@
 * FOR MYSQL DB:     quiz_db
 * -------------------------------------------------------
 * Class Description:
-* 
-* 
-* 
+*
+*
+*
 */
 
 
@@ -38,7 +38,7 @@
 
 class Model_Quiz_QuizAttempt
 {
-	
+
 	// **********************
 	// ATTRIBUTE DECLARATION (GENERIC)
 	// **********************
@@ -48,15 +48,15 @@ class Model_Quiz_QuizAttempt
 	var $date_started;   // (normal Attribute)
 	var $date_finished;   // (normal Attribute)
 	var $total_score;   // (normal Attribute)
+
 	var $quizquiz_id;   // (normal Attribute)
 	var $ad_user_cachesamaccountname;   // (normal Attribute)
 	var $last_question;
 
-
 	// **********************
 	// CONSTRUCTORS (GENERIC)
 	// **********************
-	
+
 	public static function fromID($vID){
 		//Start by making sure the appropriate record exists
 		$db = Zend_Registry::get("db");
@@ -65,7 +65,7 @@ class Model_Quiz_QuizAttempt
 		if($row['quiz_attempt_id']==null){
 			return null; //No corresponding record found in database
 		}
-		
+
 		//Assuming we have the appropriate records
 		$vReturn = new Model_Quiz_QuizAttempt();
 		$vReturn->quiz_attempt_id = $row['quiz_attempt_id'];
@@ -78,14 +78,14 @@ class Model_Quiz_QuizAttempt
 
 		return $vReturn;		//Return the result
 	}
-	
-	
+
+
 	public static function fromQuizAndUser($vQuiz, $vSam){
 		$id = is_numeric($vQuiz)? $vQuiz: $vQuiz->getID();
 		$db = Zend_Registry::get("db");
-		$result = $db->query("SELECT * 
-				FROM quiz_attempt 
-				WHERE ad_user_cachesamaccountname=? 
+		$result = $db->query("SELECT *
+				FROM quiz_attempt
+				WHERE ad_user_cachesamaccountname=?
 				AND quizquiz_id=?
 				"
 				, array($vSam, $id)
@@ -94,16 +94,16 @@ class Model_Quiz_QuizAttempt
 		if(!$row) return null;
 		return Model_Quiz_QuizAttempt::fromID($row['quiz_attempt_id']);
 	}
-	
+
 
 	public static function fromScratch($date_started,$quizquiz_id,$ad_user_cachesamaccountname){
 		$db = Zend_Registry::get("db");
 		$sql = "INSERT INTO quiz_attempt(quiz_attempt_id,date_started,quizquiz_id,ad_user_cachesamaccountname) VALUES(NULL, '".date("Y-m-d H:i:s",$date_started)."',".$db->quote($quizquiz_id->getID()).",".$db->quote($ad_user_cachesamaccountname).")";
 		$db->query($sql);
-		
+
 		//Now find the appropriate entry in the database
 		//	A safe (default) assumption for this is a query that looks for everything you just put in.
-		
+
 		$sql = "SELECT quiz_attempt_id FROM quiz_attempt WHERE date_started='".date("Y-m-d H:i:s",$date_started)."' AND quizquiz_id=".$db->quote($quizquiz_id->getID())." AND ad_user_cachesamaccountname=".$db->quote($ad_user_cachesamaccountname);
 		$result = $db->query($sql);
 		$row =$result->fetch();
@@ -124,22 +124,22 @@ class Model_Quiz_QuizAttempt
 	public function getTotal_time(){ return $this->date_finished-$this->date_started; }
 	public function getTotal_score(){
 		$db = Zend_Registry::get("db");
-		
+
 		if($this->total_score!=null)
 			return $this->total_score;
-		
-		//Find out how many you FAILED	
+
+		//Find out how many you FAILED
 		$sql = "SELECT count(*) as count FROM question_attempt WHERE quiz_attemptquiz_attempt_id=".$db->quote($this->quiz_attempt_id)." AND initial_result='0' AND secondary_result='0'";
 		$result=$db->query($sql);
 		$row =$result->fetch();
 		$vFailed = $row['count'];
-		
+
 		//And the total?
 		$sql = "SELECT count(*) as count FROM question_attempt WHERE quiz_attemptquiz_attempt_id=".$db->quote($this->quiz_attempt_id);
 		$result=$db->query($sql);
 		$row =$result->fetch();
 		return ($row['count']-$vFailed);
-		
+
 	}
 	public function getQuiz(){	return Model_Quiz_Quiz::fromID($this->quizquiz_id); }
 	public function getAd_user_cachesamaccountname(){	return $this->ad_user_cachesamaccountname;}
@@ -189,13 +189,13 @@ class Model_Quiz_QuizAttempt
 		//echo "SQL: $sql";
 		$result = $db->query($sql);
 		$rows = $result->fetchAll();
-		
+
 		foreach($rows as $row){
 			$vReturn[] = Model_Quiz_QuizAttempt::fromID($row['quiz_attempt_id']);
 		}
 		return $vReturn;
 	}
-	
+
 	public static function getHighestMarkQuiz($vUser, $vQuiz){
 		$db = Zend_Registry::get("db");
 		$result = $db->query("SELECT * FROM quiz_attempt WHERE ad_user_cachesamaccountname=".$db->quote($vUser)." AND quizquiz_id=".$vQuiz->getID()." ORDER BY total_score DESC");
@@ -211,12 +211,12 @@ class Model_Quiz_QuizAttempt
 
 		if($vConcept!=null)
 			$sql="SELECT qa.attempt_id FROM question_attempt qa, question_concepts qc WHERE qa.quiz_attemptquiz_attempt_id=".$db->quote($this->quiz_attempt_id)." AND qa.question_basequestion_id=qc.question_basequestion_id AND qc.conceptsconcept_name=".$db->quote($vConcept->getID());
-		
+
 		//echo "SQL: $sql<br/>";
-		
+
 		$result = $db->query($sql);
 		$rows = $result->fetchAll();
-		
+
 		foreach($rows as $row){
 			$vReturn[] = Model_Quiz_QuestionAttempt::fromID($row['attempt_id']);
 		}
@@ -230,7 +230,7 @@ class Model_Quiz_QuizAttempt
 		$row =$result->fetch();
 		return $row['difficulty'];
 	}
-	
+
 	public function getAttemptedQuestionBases($vConcept, $vDifficulty){
 		$db = Zend_Registry::get("db");
 		$vReturn = array();
@@ -238,13 +238,13 @@ class Model_Quiz_QuizAttempt
 		//echo $sql;
 		$result = $db->query($sql);
 		$rows = $result->fetchAll();
-		
+
 		foreach($rows as $row){
 			$vReturn[] = Model_Quiz_QuestionBase::fromID($row['question_id']);
 		}
 		return $vReturn;
 	}
-	
+
 	/**
 	 * Gets the last incomplete Question Attempt for this quiz
 	 * @return Model_Quiz_QuestionAttempt|NULL
@@ -256,14 +256,32 @@ class Model_Quiz_QuizAttempt
 		$row = $result->fetch();
 		return Model_Quiz_QuestionAttempt::fromID($row['attempt_id']);
 	}
-	
+
 	public function getQuestionAttemptCount(){
 		$db = Zend_Registry::get("db");
 		$result = $db->query("SELECT COUNT(*) AS count FROM question_attempt WHERE quiz_attemptquiz_attempt_id=".$db->quote($this->quiz_attempt_id));
 		$row =$result->fetch();
 		return $row['count'];
 	}
-	
+
+	/*
+		Check if quiz attempt was succesful, i.e. has passed the quiz
+
+		@author: Daniel Sutantyo
+	*/
+	public function hasPassedQuiz(){
+		//if(($vHighest->getTotal_score()/$vQuiz->getTotalQuestions())*100 >= $vQuiz->getPercentage_pass()){
+
+		if (isset($this->date_finished)){
+			$min_score = $this->getQuiz()->getPercentage_pass();
+			$score = 100 * $this->getTotal_score() / $this->getQuiz()->getTotalQuestions();
+My_Logger::log("Minimum score is " . $min_score);
+My_Logger::log("Score is " . $score);
+			if ($score >= $min_score)
+				return true;
+		}
+		return false;
+	}
 
 } // class Model_Quiz_QuizAttempt : end
 
