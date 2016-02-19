@@ -197,6 +197,7 @@ class Model_Quiz_QuizAttempt
 	}
 
 	public static function getHighestMarkQuiz($vUser, $vQuiz){
+My_Logger::log("In " . __METHOD__ . " quiz id is " .  $vQuiz->getID());
 		$db = Zend_Registry::get("db");
 		$result = $db->query("SELECT * FROM quiz_attempt WHERE ad_user_cachesamaccountname=".$db->quote($vUser)." AND quizquiz_id=".$vQuiz->getID()." ORDER BY total_score DESC");
 		$row =$result->fetch();

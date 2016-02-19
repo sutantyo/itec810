@@ -40,7 +40,6 @@ $vAvailable = $this->available;
 
 			/*	So find out what status the quiz is in - Completed(1), Not completed(2) or In progress(3) (Optionally Late) */
 
-My_Logger::log("The current quiz is " . $vQuiz->getID());
 			if ($vQuiz->hasPendingPrerequisite($this->username)){
 				$vQuizStatus = Model_Quiz_Quiz::PREREQUISITE_PENDING;
 				echo "\t\t<td>Prerequisite pending</td>\n";
@@ -48,10 +47,6 @@ My_Logger::log("The current quiz is " . $vQuiz->getID());
 			else {
 				$vQuizStatus = handleCurrentPosition($vQuiz, $this->username);
 			}
-
-
-
-
 
 
 			/*	Marks (If completed) */
