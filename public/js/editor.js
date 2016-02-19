@@ -253,6 +253,10 @@ $(function(){
 		$('#filename').val( $('#q option:selected').text()  )
 	}
 
+	// Added by Daniel Sutantyo
+	$('.back').click(function(e){
+		window.location.replace("/");
+	});
 
 
 });
