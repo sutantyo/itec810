@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>operations2</concept></concepts><difficulty>1</difficulty><instructions>What is the output of the following program?</instructions><problem><![CDATA[class Operations2 { //HIDE
+    public static void main(String[] args) { //HIDE
+        System.out.println(`s1` % `s2`);
+    } //HIDE
+} //HIDE]]></problem><substitutions><substitution val="s1"><![CDATA[rand(12,30)]]></substitution><substitution val="s2"><![CDATA[rand(3,7)]]></substitution></substitutions></question>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>arrays2</concept></concepts><difficulty>1</difficulty><instructions>What is the value of result when the following code is executed?</instructions><problem><![CDATA[class Arrays2 { //HIDE
+  public static void main(String[] args) { //HIDE
+    int[] a = `s1`;
+    int result = a[`s2`] + a[a.length - 1];
+    System.out.println(result); //HIDE
+  } //HIDE
+} //HIDE]]></problem><substitutions><substitution val="s1"><![CDATA[$a = rand(3, 6);
+$content = "{";
+for ($x = 1; $x <= $a; $x++) {
+   $val = rand(1,6);
+   $content .= $val;
+   if($x < $a) {
+       $content .= ", ";
+   }
+   else {
+       $content .= "}";
+   }
+} 
+
+return $content;]]></substitution><substitution val="s2"><![CDATA[rand(0,2)]]></substitution></substitutions></question>

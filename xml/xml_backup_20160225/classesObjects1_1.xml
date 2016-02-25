@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>classesObjects1_1</concept></concepts><difficulty>1</difficulty><instructions>Assume the existence of class Rectangle with the following definition.&#xD;
+&#xD;
+&lt;pre&gt;&#xD;
+class Rectangle {&#xD;
+    public int length, breadth;&#xD;
+} &#xD;
+&lt;/pre&gt;&#xD;
+&#xD;
+What is the value of result when the following code is executed?</instructions><problem><![CDATA[class Example { 
+    static class Rectangle { //HIDE
+        public int length, breadth; //HIDE
+    } //HIDE
+    public static void main(String[] args) { 
+        Rectangle r = new Rectangle();
+        r.length = `s1`;
+        r.breadth = `s2`;
+        int result = r.length * r.breadth;
+        System.out.println(result); //HIDE
+    } 
+} ]]></problem><substitutions><substitution val="s1"><![CDATA[rand(1,5)]]></substitution><substitution val="s2"><![CDATA[rand(1, 5)]]></substitution></substitutions></question>

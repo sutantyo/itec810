@@ -137,12 +137,14 @@ class ShellController extends Zend_Controller_Action {
 		}
 		
 		// Pass all relevant information to the view
+		$this->view->setEscape('htmlentities');
 		$this->view->quiz = $quiz;
 		$this->view->question_attempt = $questionAttempt;
 		$this->view->finished = $finished;
 		$this->view->marking = $marking;
 		$this->view->mQuizAttempt = $quizAttempt;
 		$this->view->vTotalQuestions = $total_questions;
+		$this->view->setEscape('htmlspecialchars_decode');
 	}
 	
 	protected function findQuiz($quiz_id){

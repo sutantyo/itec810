@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>functions5</concept></concepts><difficulty>1</difficulty><instructions>What is the value of result when the function bar is invoked?</instructions><problem><![CDATA[class Functions5 { //HIDE
+  public static void main(String[] args) { //HIDE
+    Functions5 obj = new Functions5(); //HIDE
+    obj.bar(); //HIDE
+  } //HIDE
+  
+  void bar() {
+    int result = foo(foo(`s1`, `s2`), `s3`);    
+    System.out.println(result); //HIDE
+  }
+  
+  int foo(int a, int b) {
+     if(a < b) {
+         return a+b;
+     }
+     else if(a > b) {
+         return a-b;
+     }
+     else {
+         return b;
+     }
+  }
+} //HIDE]]></problem><substitutions><substitution val="s1"><![CDATA[rand(2, 5) * 2]]></substitution><substitution val="s2"><![CDATA[rand(2, 5) * 2 + 1]]></substitution><substitution val="s3"><![CDATA[rand(2, 5) * 2 + 1]]></substitution></substitutions></question>

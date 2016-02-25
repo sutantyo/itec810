@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>classesObjects1_2</concept></concepts><difficulty>1</difficulty><instructions>Assume the existence of class Rectangle with the following definition.&#xD;
+&lt;pre&gt;&#xD;
+class Rectangle {&#xD;
+      private int length, breadth;&#xD;
+&#xD;
+      public int getLength() {&#xD;
+         return length;&#xD;
+      }&#xD;
+&#xD;
+      public void setLength(int length) {&#xD;
+         this.length = Math.abs(length);&#xD;
+      }&#xD;
+&#xD;
+      public int getBreadth() {&#xD;
+         return breadth;&#xD;
+      }&#xD;
+&#xD;
+      public void setBreadth(int breadth) {&#xD;
+         this.breadth = breadth;&#xD;
+      }&#xD;
+}&#xD;
+&lt;/pre&gt;&#xD;
+&#xD;
+What is the value of result when the following code is executed?</instructions><problem><![CDATA[class Example { 
+    static class Rectangle { //HIDE
+		private int length, breadth;//HIDE
+//HIDE
+		public int getLength() {//HIDE
+			return length;//HIDE
+		}//HIDE
+//HIDE
+		public void setLength(int length) {//HIDE
+			this.length = Math.abs(length);//HIDE
+		}//HIDE
+//HIDE
+		public int getBreadth() {//HIDE
+			return breadth;//HIDE
+		}//HIDE
+//HIDE
+		public void setBreadth(int breadth) {//HIDE
+			this.breadth = breadth;//HIDE
+		}//HIDE
+    }//HIDE
+    public static void main(String[] args) { 
+        Rectangle r = new Rectangle();
+        r.setLength(`s1`);
+        int result = r.getLength();
+        System.out.println(result); //HIDE
+    } 
+} ]]></problem><substitutions><substitution val="s1"><![CDATA[rand(-10, -2)]]></substitution><substitution val="s2"><![CDATA[rand(1, 5)]]></substitution></substitutions></question>
