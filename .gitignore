@@ -13,3 +13,5 @@ xml/prod
 *.swp
 *.swo
 *.swn
+application/configs/application.ini
+application/configs/general.php
