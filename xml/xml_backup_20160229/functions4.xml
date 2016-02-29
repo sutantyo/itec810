@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>functions4</concept></concepts><difficulty>1</difficulty><instructions>What is the value of result when the function bar is invoked?</instructions><problem><![CDATA[class Functions4 { //HIDE
+  public static void main(String[] args) { //HIDE
+    Functions4 obj = new Functions4(); //HIDE
+    obj.bar(); //HIDE
+  } //HIDE
+  
+  void bar() {
+    double result = foo(`s1`, `s2`);    
+    System.out.println(result); //HIDE
+  }
+  
+  double foo(int a, int b) {
+    return (a + b) / 2.0;
+  }
+} //HIDE]]></problem><substitutions><substitution val="s1"><![CDATA[rand(2, 5) * 2]]></substitution><substitution val="s2"><![CDATA[rand(2, 5) * 2 + 1]]></substitution></substitutions></question>

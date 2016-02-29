@@ -110,7 +110,9 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 
 	protected function getAvailableFiles($xml_path){
 		/* Get the appropriate files and show them in a nice little combobox */
+
 		$res = array();
+		/*
 		if ($handle = opendir($xml_path)) {
 			while (false !== ($file = readdir($handle))) {
 				if(strtolower(substr($file,-3))=="xml"){
@@ -119,6 +121,15 @@ class QuestionTemplateEditorController extends Zend_Controller_Action {
 
 			}
 			closedir($handle);
+		}
+		*/
+		if ($filearray = scandir($xml_path)) {
+			foreach ($filearray as $filename){
+				if(strtolower(substr($filename,-3))=="xml"){
+					$res[substr($filename,0,-4)] = $filename;
+				}
+
+			}
 		}
 		return $res;
 	}

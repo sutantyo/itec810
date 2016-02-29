@@ -10,10 +10,6 @@
             <url>index/available?outstanding=yes</url>
         </item>
         <item>
-            <name>Hall of Fame</name>
-            <url>index/halloffame</url>
-        </item>
-        <item>
             <name>Logout</name>
             <url>auth/logout</url>
         </item>

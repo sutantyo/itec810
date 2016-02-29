@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>loops2</concept></concepts><difficulty>1</difficulty><instructions>What is the value of result when the following code is executed?</instructions><problem><![CDATA[class Loops2 { //HIDE
+  public static void main(String[] args) { //HIDE
+    int result = 1;
+    for(int i=`s1`; i != `s3`; i+=2)
+        result`s6``s4`;
+    System.out.println(result);
+  } //HIDE
+} //HIDE]]></problem><substitutions><substitution val="s1"><![CDATA[rand(1,3)*2]]></substitution><substitution val="s3"><![CDATA[rand(4, 6)*2]]></substitution><substitution val="s4"><![CDATA[rand(2, 3)]]></substitution><substitution val="s6"><![CDATA[randset(array("+=","-="))]]></substitution></substitutions></question>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<question type="output"><estimated_time>100</estimated_time><concepts><concept>expressions</concept></concepts><difficulty>1</difficulty><instructions>What is the value of result when the following code is executed?</instructions><problem><![CDATA[class Expressions5 { //HIDE
+    public static void main(String[] args) { //HIDE
+        int result = `s1` % `s2`;
+        System.out.println(result); //HIDE
+    } //HIDE
+} //HIDE]]></problem><substitutions><substitution val="s1"><![CDATA[rand(20, 50)]]></substitution><substitution val="s2"><![CDATA[rand(4, 6)]]></substitution></substitutions></question>
